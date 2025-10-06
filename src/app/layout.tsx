@@ -22,11 +22,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en">
       <body>
         <Toaster />
         <Provider store={store}>
-          <MasterLayout showNavbar={true} showFooter={true} isAuth={true}>
+          <MasterLayout showNavbar={true} showFooter={true} isAuth={false}>
             {children}
           </MasterLayout>
         </Provider>
