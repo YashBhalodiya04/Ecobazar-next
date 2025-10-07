@@ -17,7 +17,7 @@ export function withAuth(handler: Function) {
 
       if (req.method === "POST") {
         const rawBody = await req.json();
-        body = { ...rawBody, injected: "from wrapper" };
+        body = { ...rawBody };
       }
       return handler(req, context, body);
     } catch (err) {
