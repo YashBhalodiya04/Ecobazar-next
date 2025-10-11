@@ -1,6 +1,7 @@
 import { commonResponse } from "@/helper/commonResponbeen";
 import { isNullEmpty } from "@/helper/CommonUtils";
 import { withAuth } from "@/helper/withAuth";
+import { ContexInterface, JWtUserInterface } from "@/interfaces/commonInterace";
 import {
   SignInPayload,
   SignInResponseData,
@@ -13,7 +14,7 @@ import { NextRequest } from "next/server";
 
 export const POSTHandler = async (
   req: NextRequest,
-  context: any,
+  context: ContexInterface,
   body: SignInPayload
 ) => {
   await dbconnect();
@@ -32,9 +33,14 @@ export const POSTHandler = async (
       return commonResponse(false, "Invalid credentials", null, 200);
     }
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      {
+        id: user._id?.toString(),
+        email: user.email,
+        isadmin: user.isAdmin,
+        phone: user.phone,
+      } as JWtUserInterface,
       process.env.JWT_TOKEN as string,
-      { expiresIn: "1h" }
+      { expiresIn: "10h" }
     );
 
     const { ...userData } = user.toObject();

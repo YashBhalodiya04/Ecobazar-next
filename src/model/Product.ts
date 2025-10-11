@@ -48,7 +48,7 @@ const ProductSchema: Schema<Product> = new Schema({
   },
   rating: {
     type: Number,
-    required: true,
+    required: false,
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -79,8 +79,8 @@ const ProductSchema: Schema<Product> = new Schema({
     ],
   },
 });
-const Product =
+const ProductModal =
   (mongoose.models.Product as mongoose.Model<Product>) ||
   mongoose.model<Product>("Product", ProductSchema);
 
-export default Product;
+export default ProductModal;

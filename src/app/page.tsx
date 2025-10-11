@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import PosterSlider from "@/components/HomeComponents/PosterSlider";
 import { useRequestMutation } from "@/redux/commonApi";
 import Image from "next/image";

@@ -25,3 +25,42 @@ export const signupSchema = z
   });
 
 export type SignUpSchemaType = z.infer<typeof signupSchema>;
+
+export const ProductCreateSchema = z
+  .object({
+    name: z.string().trim().min(1, "Name is required"),
+
+    description: z
+      .string()
+      .trim()
+      .min(10, "Description must be at least 10 characters"),
+
+    price: z
+      .string()
+      .trim()
+      .min(1, "Price is required")
+      .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+        message: "Price must be a positive number",
+      }),
+
+    image: z.string().trim().url("Image must be a valid URL"),
+
+    category: z.string().trim().min(1, "Category is required"),
+
+    stock: z
+      .string()
+      .trim()
+      .min(1, "Stock is required")
+      .refine(
+        (val) =>
+          !isNaN(Number(val)) &&
+          Number.isInteger(Number(val)) &&
+          Number(val) >= 0,
+        {
+          message: "Stock must be a non-negative integer",
+        }
+      ),
+  })
+  .strict();
+
+export type ProductCreateInput = z.infer<typeof ProductCreateSchema>;

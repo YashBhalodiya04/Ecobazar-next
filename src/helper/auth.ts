@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"; // or any lib you use
 
-const SECRET = process.env.JWT_SECRET || "supersecret";
+const SECRET = process.env.JWT_TOKEN || "supersecret";
 
 export function verifyToken(token: string) {
   try {
