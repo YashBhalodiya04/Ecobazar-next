@@ -28,7 +28,10 @@ export const CreateCategory = async (
 
     let duplicateCategory: any;
     if (!data?.categoryid) {
-      duplicateCategory = await CategoryModal.findOne({ name: data.name });
+      duplicateCategory = await CategoryModal.findOne({
+        name: data.name,
+        active: true,
+      });
     } else {
       const categoryId = toObjectId(data.categoryid);
       if (!categoryId) {
@@ -38,6 +41,7 @@ export const CreateCategory = async (
       duplicateCategory = await CategoryModal.findOne({
         name: data.name,
         _id: { $ne: categoryId }, // exclude current category
+        active: true,
       });
 
       const isExistCategory = await CategoryModal.findById(categoryId);
@@ -60,6 +64,7 @@ export const CreateCategory = async (
         name: data.name,
         description: data.description,
         image: imgurl,
+        active: true,
         user: context.user?.id,
       });
       await category.save();
@@ -70,6 +75,7 @@ export const CreateCategory = async (
         name: data.name,
         description: data.description,
         image: imgurl,
+        active: true,
       });
       return commonResponse(true, "", "Category updated successfully", 200);
     }

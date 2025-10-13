@@ -7,14 +7,13 @@ export const metadata: Metadata = {
   description: "Login to access your account",
 };
 
-
 export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <MasterLayout showNavbar={false} showFooter={false}>
+    <MasterLayout showNavbar={true} showFooter={true}>
       {children}
     </MasterLayout>
   );

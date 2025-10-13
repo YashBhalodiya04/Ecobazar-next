@@ -1,7 +1,7 @@
 // "use client";
 import PosterSlider from "@/components/HomeComponents/PosterSlider";
+import MasterLayout from "@/components/MasterLyout";
 import { useRequestMutation } from "@/redux/commonApi";
-import Image from "next/image";
 
 export default function Home() {
   const slides = [
@@ -26,8 +26,10 @@ export default function Home() {
   ];
 
   return (
-    <div>
-      {/* <PosterSlssider slides={slides} /> */}
-    </div>
+    <MasterLayout showNavbar={true} showFooter={true}>
+      <div className="w-full flex items-center justify-between  h-[400px] px-11  mt-8 rounded font-Poppins sm:px-0">
+        <PosterSlider slides={slides} />
+      </div>
+    </MasterLayout>
   );
 }

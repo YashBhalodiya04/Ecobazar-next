@@ -21,7 +21,7 @@ export const POST = async (req: Request) => {
     if (validationResponse) {
       return commonResponse(false, validationResponse, null, 200);
     }
-    const user = await UserModal.findOne({ email });
+    const user = await UserModal.findOne({ email, active: true });
     if (user) {
       return commonResponse(false, "User already exists", null, 200);
     }
@@ -32,9 +32,8 @@ export const POST = async (req: Request) => {
       email,
       password: hashedPassword,
       phone,
+      active: true,
     });
-
-    await newUser.save();
 
     const Environment = process.env.ENVIRONMENT;
     if (Environment === "PROD") {
@@ -55,10 +54,11 @@ export const POST = async (req: Request) => {
       });
       // console.log(respnse?.accepted?.length > 0)
     }
+    await newUser.save();
 
     return commonResponse(true, "User created successfully", "", 200);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return commonResponse(false, "Failed to signup", error);
   }
 };

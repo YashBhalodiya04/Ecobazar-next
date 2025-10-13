@@ -7,6 +7,81 @@
   --foreground: #171717;
 }
 
+.home-slider {
+  @apply w-full [&_.swiper-button-next]:bg-transparent [&_.swiper-button-next]:rounded-full [&_.swiper-button-next]:size-[30x] [&_.swiper-button-next]:p-2 [&_.swiper-button-next]:text-green-600 [&_.swiper-button-prev]:bg-transparent [&_.swiper-button-prev]:text-green-600  [&_.swiper-button-prev]:rounded-full [&_.swiper-button-prev]:size-[30x] [&_.swiper-button-prev]:p-2  [&_.swiper-pagination-bullet-active]:bg-black
+}
+
+.custom-ant-table-new {
+  @apply w-full bg-transparent 
+  /* Placeholder/Empty State */
+  [&_tr.ant-table-placeholder]:!bg-transparent
+  [&_tr.ant-table-placeholder>td]:!bg-transparent
+
+  /* Table Header Styles */
+  [&_.ant-table-thead_th]:!bg-[#1f2937] [&_.ant-table-thead_th]:!text-gray-200
+  [&_.ant-table-thead_th.ant-table-column-has-sorters:hover]:!bg-[#1f2937]
+  [&_.ant-table-thead]:!bg-[#1f2937] [&_.ant-table-thead]:!text-gray-200 [&_.ant-table-thead]:!sticky [&_.ant-table-thead]:!top-0 [&_.ant-table-thead]:!z-[100]
+  
+  /* Table Cell Styles */
+  [&_.ant-table-cell-fix-left-last]:!bg-transparent
+  [&_.ant-table-container]:!bg-transparent [&_.ant-table-container]:!text-gray-200
+  [&_.ant-table]:!bg-transparent
+  
+  /* Header Cell Padding & Font */
+  [&_.ant-table-thead>tr>th]:!p-[0.7rem] [&_.ant-table-thead>tr>th]:align-middle [&_.ant-table-thead>tr>th]:!bg-[#1f2937] [&_.ant-table-thead>tr>th]:!text-base
+  [&_.ant-table-column-title]:text-[13px] [&_.ant-table-column-title]:font-semibold
+  [&_.ant-table-cell]:text-[13px]
+  
+  /* Body Cell Styles */
+  [&_ant-table-tbody]:bg-transparent
+  [&_.ant-table-tbody>tr>td]:!border-b-0 [&_.ant-table-tbody>tr>td]:!p-[0.7rem]
+  [&_.ant-table-tbody_.ant-table-row>.ant-table-cell-row-hover]:bg-gray-700/30
+  
+  /* Border Radius */
+  [&_table>thead>tr:first-child>*:first-child]:rounded-tl-2xl [&_table>thead>tr:first-child>*:first-child]:rounded-bl-2xl
+  [&_table>thead>tr:last-child>*:last-child]:rounded-tr-2xl [&_table>thead>tr:last-child>*:last-child]:rounded-br-2xl
+  [&_td:first-child]:!rounded-tl-2xl [&_td:first-child]:!rounded-bl-2xl
+  [&_td:last-child]:!rounded-tr-2xl [&_td:last-child]:!rounded-br-2xl
+  
+  /* Row Styles */
+  [&_.ant-table-row.even-row]:!bg-gray-800/50
+  
+  /* Expand Icon */
+  [&_.ant-table-row-expand-icon]:!text-white [&_.ant-table-row-expand-icon]:!bg-green-600
+  
+  /* Sorter Styles */
+  [&_td.ant-table-column-sort]:bg-transparent
+  [&_.ant-table-column-sorter-up.active]:text-green-500 [&_.ant-table-column-sorter-down.active]:text-green-500
+  
+  /* Pagination */
+  [&_.ant-pagination_.ant-pagination-item-active]:font-semibold  [&_.ant-pagination_.ant-pagination-item-active]:bg-blue-600 [&_.ant-pagination_.ant-pagination-item-active]:!border-blue-600 [&_.ant-pagination_.ant-pagination-item-active]:!text-white
+  [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:shadow-none [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:bg-gray-700 [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:!border-green-600 [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:!text-white
+  [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:shadow-none [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:bg-gray-700 [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:!border-green-600 [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:!text-green-500
+  [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:shadow-none [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:bg-gray-700 [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:!border-green-600 [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:!text-green-500
+  [&_.ant-table-pagination.ant-pagination]:mb-0
+  [&_.pagination-text]:!text-gray-200
+  
+  /* Expanded Row */
+  [&_.ant-table-tbody_.ant-table-expanded-row]:bg-gray-800
+  [&_.ant-table-tbody_.ant-table-expanded-row_.ant-spin-container]:!pt-[10px] [&_.ant-table-tbody_.ant-table-expanded-row_.ant-spin-container]:!pb-[10px] [&_.ant-table-tbody_.ant-table-expanded-row_.ant-spin-container]:!pr-[10px]
+  [&_.ant-table-tbody_.ant-table-expanded-row_.ant-spin-container_.ant-table]:rounded-[10px]
+  [&_tr.ant-table-expanded-row>th]:!bg-gray-800 [&_tr.ant-table-expanded-row>th]:!border [&_tr.ant-table-expanded-row>th]:!border-gray-600
+  [&_tr.ant-table-expanded-row>td]:!bg-gray-800 [&_tr.ant-table-expanded-row>td]:!border [&_tr.ant-table-expanded-row>td]:!border-gray-600
+  
+  /* Input Number */
+  [&_.ant-input-number-handler-wrap]:!hidden
+  [&_.ant-input-number-input-wrap_input]:!text-right
+  
+  /* Table Spacing */
+  [&_table]:border-separate [&_table]:border-spacing-y-1
+  [&_.ant-table-thead>tr>th]:!border-b-0 [&_.ant-table-thead>tr>td]:!border-b-0
+  [&_.ant-table-measure-row]:!invisible
+  
+  /* Fixed Right Cell */
+  [&_th.ant-table-cell-fix-right]:!bg-gray-800;
+}
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

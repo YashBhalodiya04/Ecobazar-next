@@ -30,32 +30,32 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides }) => {
       effect="fade"
       pagination={{ clickable: true }}
       navigation
-      className="w-full h-[70vh]"
+      className="home-slider"
     >
       {slides.map((slide) => (
         <SwiperSlide key={slide._id}>
-          <div className="w-full flex items-center  p-4 h-[300px] ">
-            <div className="flex flex-col items-start justify-center h-full gap-3 relative z-10">
-              <p className="text-[10px] text-green-600 sm:text-sm ">
-                {slide.title}
+          <div className="w-full bg-white flex items-center justify-between p-8 rounded-3xl">
+            <div className="flex flex-col items-start justify-center h-full gap-4 w-1/2 sm:w-full z-10">
+              <p className="text-sm text-green-600 uppercase tracking-wide">
+                {slide?.title}
               </p>
-              <h1 className="text-5xl font-bold  sm:text-3xl">
-                {slide.description}
+              <h1 className="text-5xl font-bold text-gray-900 sm:text-3xl">
+                {slide?.description}
               </h1>
               <Link
                 href={"/shop"}
-                className="flex items-center gap-3 justify-center text-white  border bg-green-600 rounded-full py-3 px-6 hover:bg-white hover:border-green-400 hover:text-green-500 sm:py-2 sm:px-3 sm:text-sm"
+                className="flex items-center gap-3 justify-center text-white border bg-green-600 rounded-full py-3 px-6 hover:bg-white hover:border-green-600 hover:text-green-600 transition-all sm:py-2 sm:px-4 sm:text-sm"
               >
                 Shop now <GoArrowRight className="text-center" />
               </Link>
             </div>
-            <div className="w-full absolute top-0 right-48 h-full sm:right-0 md:right-10">
+            <div className="w-1/2 h-full flex items-center justify-end sm:hidden">
               <img
-                src={slide.image}
-                alt=""
+                src={slide?.image}
+                alt={slide?.title}
                 width={450}
-                height={300}
-                className="float-right"
+                height={400}
+                className="object-contain h-full"
               />
             </div>
           </div>

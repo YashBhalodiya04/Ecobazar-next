@@ -11,8 +11,11 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@reduxjs/toolkit": "^2.9.0",
+    "antd": "^5.27.4",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.18",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.2",
     "next": "15.5.3",
@@ -24,6 +27,7 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "swiper": "^12.0.2",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^4.1.11"
   },
   "devDependencies": {

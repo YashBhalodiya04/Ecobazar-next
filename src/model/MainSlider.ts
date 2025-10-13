@@ -7,6 +7,8 @@ export interface MainSlider extends Document {
   fromDate: Date;
   to: Date;
   createAt: Date;
+  user: Types.ObjectId;
+  active: boolean;
 }
 
 const MainSliderSchema: Schema<MainSlider> = new Schema({
@@ -38,10 +40,20 @@ const MainSliderSchema: Schema<MainSlider> = new Schema({
     default: Date.now,
     required: true,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+    required: true,
+  },
 });
 
-const MainSlider =
+const MainSliderModal =
   (mongoose.models.MainSlider as mongoose.Model<MainSlider>) ||
   mongoose.model<MainSlider>("MainSlider", MainSliderSchema);
 
-export default MainSlider;
+export default MainSliderModal;

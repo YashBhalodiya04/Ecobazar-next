@@ -31,7 +31,10 @@ export const CreateProduct = async (
       return commonResponse(false, "Invalid category ID", "", 200);
     }
 
-    const category = await CategoryModal.findById(categoryId);
+    const category = await CategoryModal.findOne({
+      _id: categoryId,
+      active: true,
+    });
     if (!category) {
       return commonResponse(false, "Category not found", "", 404);
     }
@@ -41,6 +44,7 @@ export const CreateProduct = async (
       duplicateProduct = await ProductModal.findOne({
         name: data.name,
         categoryid: categoryId,
+        active: true,
       });
     } else {
       const productId = toObjectId(data.productid);
@@ -48,6 +52,7 @@ export const CreateProduct = async (
         name: data.name,
         categoryid: categoryId,
         _id: { $ne: productId },
+        active: true,
       });
 
       const existingProduct = await ProductModal.findById(productId);
@@ -78,6 +83,7 @@ export const CreateProduct = async (
         image: imgurl,
         price: data.price,
         user: context.user?.id,
+        active: true,
       });
       await product.save();
       return commonResponse(true, "", "Product created successfully", 200);
@@ -88,6 +94,7 @@ export const CreateProduct = async (
         categoryid: categoryId,
         image: imgurl,
         price: data.price,
+        active: true,
       });
       return commonResponse(true, "", "Product updated successfully", 200);
     }

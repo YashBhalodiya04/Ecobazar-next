@@ -6,6 +6,7 @@ export interface Category extends Document {
   image: string;
   products: Types.ObjectId[];
   user: Types.ObjectId;
+  active: boolean;
 }
 
 const CategorySchema: Schema<Category> = new Schema({
@@ -22,6 +23,11 @@ const CategorySchema: Schema<Category> = new Schema({
   image: {
     type: String,
     required: true,
+  },
+  active: {
+    type: Boolean,
+    required: true,
+    default: true,
   },
   products: [
     {

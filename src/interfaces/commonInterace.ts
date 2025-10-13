@@ -16,3 +16,22 @@ export interface ContexInterface {
   user: JWtUserInterface;
   params: any;
 }
+
+export interface HomeDataResponse {
+  slidersData: MainSliderData[];
+  categoryData: categoryData[];
+  productData: categoryData[];
+}
+
+export interface MainSliderData {
+  _id: string;
+  title: string;
+  description: string;
+  image: string;
+}
+
+export interface categoryData {
+  _id: string;
+  name: string;
+  image: string;
+}

@@ -10,6 +10,7 @@ export interface Product extends Document {
   rating: number;
   reviews: Review[];
   user: Types.ObjectId;
+  active: boolean;
 }
 
 export interface Review {
@@ -37,6 +38,11 @@ const ProductSchema: Schema<Product> = new Schema({
   image: {
     type: String,
     required: true,
+  },
+  active: {
+    type: Boolean,
+    required: true,
+    default: true,
   },
   category: {
     type: String,

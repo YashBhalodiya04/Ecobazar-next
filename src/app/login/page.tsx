@@ -32,7 +32,11 @@ const LoginPage = () => {
       }).unwrap();
 
       if (response?.success) {
-        router.push("/");
+        if (response?.data?.isAdmin) {
+          router.push("/admin/profile");
+        } else {
+          router.push("/");
+        }
         localStorage.setItem("user", JSON.stringify(response?.data));
       }
     } catch (error) {

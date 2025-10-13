@@ -38,9 +38,7 @@ const Navbar = () => {
       </div>
 
       <div
-        className={`${
-          location.pathname.includes("/admin") ? "hidden" : "block"
-        } flex items-center justify-between gap-4 sm:hidden md:hidden`}
+        className={`flex items-center justify-between gap-4 sm:hidden md:hidden`}
       >
         {navbarLinks.map((item, id) => {
           return (

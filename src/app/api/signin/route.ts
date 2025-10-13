@@ -24,7 +24,7 @@ export const POSTHandler = async (
     if (validationResponse) {
       return commonResponse(false, validationResponse, null, 200);
     }
-    const user = await UserModal.findOne({ email });
+    const user = await UserModal.findOne({ email, active: true });
     if (!user) {
       return commonResponse(false, "User not found", null, 200);
     }

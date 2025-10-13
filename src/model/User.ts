@@ -9,6 +9,7 @@ export interface User  {
   cart?: CartModal[];
   billingAddress?: UserBillingAddress[];
   phone: string;
+  active: boolean;
 }
 
 export interface CartModal {
@@ -66,6 +67,11 @@ const UserScheme: Schema<User> = new Schema(
       type: String,
       default: "",
       required: false,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+      required: true,
     },
     cart: {
       type: [
