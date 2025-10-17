@@ -29,8 +29,8 @@ export function withAuth(handler: Function) {
             const text = await req.text();
             body = text ? JSON.parse(text) : {};
           } else if (contentType.includes("multipart/form-data")) {
-            body = await req.formData();
-           
+            const clonedReq = req.clone();
+            body = await clonedReq.formData();
           }
         } catch (err) {
           console.error("Error parsing body:", err);

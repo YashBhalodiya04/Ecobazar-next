@@ -81,6 +81,35 @@
   [&_th.ant-table-cell-fix-right]:!bg-gray-800;
 }
 
+.dark-modal {
+  @apply [&_.ant-modal-content]:bg-[#1a1a1a] 
+         [&_.ant-modal-content]:text-[#f1f1f1]
+         [&_.ant-modal-content]:rounded-xl 
+         [&_.ant-modal-content]:shadow-[0_0_20px_rgba(0,0,0,0.8)]
+         [&_.ant-modal-header]:bg-[#1a1a1a]
+         [&_.ant-modal-header]:border-b 
+         [&_.ant-modal-header]:border-[#333]
+         [&_.ant-modal-footer]:bg-[#1a1a1a]
+         [&_.ant-modal-footer]:border-t 
+         [&_.ant-modal-footer]:border-[#333];
+}
+
+.dark-popconfirm {
+  @apply [&_.ant-popover-inner]:bg-[#1f2937] 
+         [&_.ant-popover-inner]:rounded-md
+         [&_.ant-popover-inner]:shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+         [&_.ant-popover-inner]:text-[#e5e7eb]
+         [&_.ant-popover-title]:text-[#f9fafb]
+         [&_.ant-popover-inner-content]:p-4;
+}
+
+
+/* Mask area (outside modal tree, so scoped separately) */
+.ant-modal-mask {
+  @apply bg-[rgba(10,10,10,0.9)] transition-colors duration-300 ease-in-out;
+}
+
+
 
 @theme inline {
   --color-background: var(--background);

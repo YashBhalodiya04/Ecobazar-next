@@ -35,3 +35,9 @@ export interface categoryData {
   name: string;
   image: string;
 }
+
+export interface CommonDeletePayloadInterface {
+  categoryid?: string;
+  productid?: string;
+  id?: string;
+}

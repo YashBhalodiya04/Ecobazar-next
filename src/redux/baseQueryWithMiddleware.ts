@@ -5,7 +5,7 @@ import { fetchBaseQuery, BaseQueryFn } from "@reduxjs/toolkit/query";
 import type { FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 export const baseQueryWithMiddleware: BaseQueryFn<
-  string | FetchArgs,
+  FetchArgs,
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
@@ -15,8 +15,16 @@ export const baseQueryWithMiddleware: BaseQueryFn<
       const token: SignInResponseData = JSON.parse(
         localStorage.getItem("user") || "{}"
       );
-      headers.set("Authorization", `Bearer ${token?.token}`);
-      headers.set("Content-Type", "application/json");
+
+      if (token?.token) {
+        headers.set("Authorization", `Bearer ${token.token}`);
+      }
+
+      // ✅ Remove manual multipart content-type
+      if (!(args?.body instanceof FormData)) {
+        headers.set("Content-Type", "application/json");
+      }
+
       return headers;
     },
   });
@@ -37,6 +45,7 @@ export const baseQueryWithMiddleware: BaseQueryFn<
         case 401:
           Toast.error("Unauthorized. Redirecting to login...");
           localStorage.removeItem("token");
+          localStorage.removeItem("user");
           api.dispatch({ type: "auth/clearToken" });
           window.location.assign(`${window.location.origin}/login`);
           break;

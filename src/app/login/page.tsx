@@ -4,6 +4,7 @@ import CommonLoader from "@/components/common/CommonLoader";
 import {
   SignInResponseAPIData
 } from "@/interfaces/SignInInterface";
+import { apis } from "@/redux/apiUrls";
 import { useRequestMutation } from "@/redux/commonApi";
 import { loginSchema, LoginSchemaType } from "@/schemas/authSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +27,7 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginSchemaType) => {
     try {
       const response: SignInResponseAPIData = await request({
-        url: "/signin",
+        url: apis.AUTH.login,
         method: "POST",
         body: data,
       }).unwrap();

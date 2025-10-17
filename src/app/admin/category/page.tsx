@@ -5,48 +5,109 @@ import { Table, Button, Image, Space, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import CommonInput from "@/components/common/CommonInput";
-
-interface Category {
-  key: string;
-  name: string;
-  description: string;
-  image: string;
-}
+import { useRequestMutation } from "@/redux/commonApi";
+import {
+  CategoryGrigAPIResponse,
+  CategoryGrigRecord,
+} from "@/interfaces/CategoryInterface";
+import { apis } from "@/redux/apiUrls";
+import { useRouter } from "next/navigation";
+import CommonLoader from "@/components/common/CommonLoader";
+import AddCategoryModal from "./AddCategoryModal";
+import { CommonApiInterface } from "@/interfaces/commonInterace";
+import CommonPopconfirm from "@/components/common/CommonPopconfirm";
 
 const CategoryPage: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const router = useRouter();
+  const [request, { isLoading }] = useRequestMutation();
+
   const [loading, setLoading] = useState<boolean>(false);
-  const [SearchText, setSearchText] = useState<string>("");
-  const [pageSize, setPageSize] = useState<any>(20);
+  const [timeoutId, setTimeoutId] = useState<any>();
+
   const [sortedInfo, setSortedInfo] = useState<any>({});
+  const [pageSize, setPageSize] = useState<number>(20);
+  const [page, setpage] = useState<number>(1);
+  const [TotalData, setTotalData] = useState<number>(0);
+  const [categories, setCategories] = useState<CategoryGrigRecord[]>([]);
+  const [SearchText, setSearchText] = useState<string>("");
+
+  const [isModalOpen, setisModalOpen] = useState<boolean>(false);
+  const [editData, setEditData] = useState<CategoryGrigRecord | null>(null);
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      setEditData(null);
+    }
+  }, [isModalOpen]);
 
   const handleChange = (pagination: any, filters: any, sorter: any) => {
     setSortedInfo(sorter);
     setPageSize(pagination?.pageSize);
+    setpage(pagination?.current);
+  };
+
+  const fetchGridData = async () => {
+    try {
+      setLoading(true);
+      const payload = {
+        search: SearchText,
+        page: page,
+        pagesize: pageSize,
+      };
+      const response: CategoryGrigAPIResponse = await request({
+        url: apis.ADMIN.getCategory,
+        method: "POST",
+        body: payload,
+      }).unwrap();
+      if (response?.statuscode === 401) {
+        router.push("/login");
+      }
+      if (response?.success) {
+        setCategories(response?.data?.data || []);
+        setTotalData(response?.data?.total || 0);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message, true);
+      } else {
+        console.error("An unknown error occurred", error, true);
+      }
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setCategories([
-        {
-          key: "1",
-          name: "Organic Fertilizer",
-          description: "Eco-friendly and sustainable fertilizer for crops.",
-          image: "https://via.placeholder.com/100x70",
-        },
-        {
-          key: "2",
-          name: "Chemical Fertilizer",
-          description: "High-nutrient synthetic fertilizer for fast growth.",
-          image: "https://via.placeholder.com/100x70",
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    const id = setTimeout(() => {
+      fetchGridData();
+    }, 400);
+    setTimeoutId(id);
+    return () => {
+      clearTimeout(id);
+    };
+  }, [SearchText, pageSize, sortedInfo]);
 
-  const columns: ColumnsType<Category> = [
+  const handleDelete = async (record: CategoryGrigRecord) => {
+    setLoading(true);
+    const response: CommonApiInterface = await request({
+      url: apis.ADMIN.deleteCategory,
+      method: "POST",
+      body: { categoryid: record.categoryid },
+    }).unwrap();
+    if (response?.status === 401) {
+      router.push("/login");
+    }
+    if (response?.success) {
+      await fetchGridData();
+    }
+    setLoading(false);
+  };
+
+  const columns: ColumnsType<CategoryGrigRecord> = [
     {
       title: "Actions",
       key: "actions",
@@ -62,15 +123,21 @@ const CategoryPage: React.FC = () => {
             />
           </Tooltip>
 
-          <Tooltip title="Delete Category">
+          <CommonPopconfirm
+            title="Delete Category"
+            description={`Are you sure you want to delete ${record.name} category?`}
+            icon={<FaTrashAlt color="red" className="mt-1 me-2" />}
+            onConfirm={() => handleDelete(record)}
+            okText="Yes"
+            cancelText="No"
+          >
             <Button
               icon={<FaTrashAlt />}
               size="small"
               danger
-              onClick={() => handleDelete(record.key)}
               className="border border-red-800 bg-red-900/30 text-red-400 hover:bg-red-800 hover:text-white"
             />
-          </Tooltip>
+          </CommonPopconfirm>
         </Space>
       ),
     },
@@ -101,98 +168,95 @@ const CategoryPage: React.FC = () => {
       dataIndex: "image",
       key: "image",
       width: 200,
+      className: "flex justify-center",
       render: (url) => (
-        <div className="flex justify-center">
+        <div className="flex justify-center ">
           <Image
             src={url}
             alt="Category"
             width={80}
             height={60}
             className="rounded-md border border-zinc-700 object-cover"
-            preview={false}
+            preview={true}
           />
         </div>
       ),
     },
   ];
 
-  const handleEdit = (record: Category) => {
-    console.log("Edit:", record);
+  const handleEdit = (record: CategoryGrigRecord) => {
+    setEditData(record);
+    setisModalOpen(true);
   };
-
-  const handleDelete = (key: string) => {
-    setCategories(categories.filter((item) => item.key !== key));
-  };
-
-  const filteredData = categories?.filter((item) =>
-    Object.values(item)
-      .join(" ")
-      .toLowerCase()
-      .includes(SearchText.toLowerCase())
-  );
 
   return (
-    <div className="bg-zinc-950 text-zinc-100 p-6 rounded-lg">
-      {/* Header */}
-      <div className="flex justify-between align-end mb-6">
-        {/* 🔍 Search Input - Left Side */}
-        <div className="w-1/3 sm:w-full">
-          <CommonInput
-            id="search"
-            label=""
-            type="text"
-            placeholder="Search category..."
-            value={SearchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
+    <>
+      <CommonLoader loading={loading} />
+      <div className="bg-zinc-950 text-zinc-100 p-6 rounded-lg">
+        <div className="flex justify-between align-end mb-6">
+          <div className="w-1/3 sm:w-full">
+            <CommonInput
+              id="search"
+              label=""
+              type="text"
+              placeholder="Search category..."
+              value={SearchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-end  sm:w-auto mt-3">
+            <Button
+              icon={<FaPlus />}
+              type="primary"
+              className="bg-blue-600 hover:bg-blue-500 text-white border-none flex items-center justify-center gap-2 px-4 py-2 rounded-md"
+              onClick={() => setisModalOpen(true)}
+            >
+              Add Category
+            </Button>
+          </div>
         </div>
 
-        {/* ➕ Add Button - Right Side */}
-        <div className="flex justify-end  sm:w-auto mt-3">
-          <Button
-            icon={<FaPlus />}
-            type="primary"
-            className="bg-blue-600 hover:bg-blue-500 text-white border-none flex items-center justify-center gap-2 px-4 py-2 rounded-md"
-          >
-            Add Category
-          </Button>
-        </div>
+        <Table
+          columns={columns}
+          dataSource={categories}
+          onChange={handleChange}
+          rowKey="categoryid"
+          rowClassName={(record: any, index: number) => {
+            return index % 2 === 0 ? "odd-row" : "even-row";
+          }}
+          className="custom-ant-table-new"
+          pagination={{
+            position: ["bottomRight"],
+            pageSize: pageSize,
+            showSizeChanger: true,
+            responsive: true,
+            showTotal: (total, range) => {
+              return (
+                <span className="pagination-text">
+                  Showing {range[0]}-{range[1]} of {total} entries
+                </span>
+              );
+            },
+            total: TotalData,
+            pageSizeOptions: ["10", "20", "50", "100"],
+            defaultPageSize: 10,
+            defaultCurrent: 1,
+            current: page,
+          }}
+          scroll={{
+            x: "max-content",
+          }}
+        />
       </div>
-
-      {/* Table */}
-      {/* <div className="rounded-xl border border-zinc-800 bg-zinc-900 shadow-md overflow-hidden"> */}
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        // loading={loading}
-        rowClassName={(record: any, index: number) => {
-          return index % 2 === 0 ? "odd-row" : "even-row";
-        }}
-        className="custom-ant-table-new"
-        pagination={{
-          position: ["bottomRight"],
-          pageSize: pageSize,
-          showSizeChanger: true,
-          responsive: true,
-          showTotal: (total, range) => {
-            return (
-              <span className="pagination-text">
-                Showing {range[0]}-{range[1]} of {total} entries
-              </span>
-            );
-          },
-          total: filteredData.length,
-          pageSizeOptions: ["10", "20", "50", "100"],
-          defaultPageSize: 10,
-          defaultCurrent: 1,
-        }}
-        scroll={{
-          // y: windowSize.height - 420,
-          x: "max-content",
-        }}
+      <AddCategoryModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setisModalOpen}
+        ferchGridData={fetchGridData}
+        setLoading={setLoading}
+        editData={editData}
       />
-      {/* </div> */}
-    </div>
+    </>
   );
 };
 

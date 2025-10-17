@@ -64,7 +64,7 @@ export const CreateCategory = async (
         name: data.name,
         description: data.description,
         image: imgurl,
-        active: true,
+        active: data.active,
         user: context.user?.id,
       });
       await category.save();
@@ -75,13 +75,13 @@ export const CreateCategory = async (
         name: data.name,
         description: data.description,
         image: imgurl,
-        active: true,
+        active: data.active,
       });
       return commonResponse(true, "", "Category updated successfully", 200);
     }
   } catch (error) {
     console.error(error);
-    return commonResponse(false, "Failed to create category", error);
+    return commonResponse(false, "Error On Save Category", error);
   }
 };
 

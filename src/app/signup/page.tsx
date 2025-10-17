@@ -2,6 +2,7 @@
 import CommonInput from "@/components/common/CommonInput";
 import CommonLoader from "@/components/common/CommonLoader";
 import { CommonApiInterface } from "@/interfaces/commonInterace";
+import { apis } from "@/redux/apiUrls";
 import { useRequestMutation } from "@/redux/commonApi";
 import { signupSchema, SignUpSchemaType } from "@/schemas/authSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +35,7 @@ const SignupPage = () => {
   const onSubmit = async (data: SignUpSchemaType) => {
     try {
       const response: CommonApiInterface = await request({
-        url: "/signup",
+        url: apis.AUTH.register,
         method: "POST",
         body: data,
       }).unwrap();

@@ -64,3 +64,13 @@ export const ProductCreateSchema = z
   .strict();
 
 export type ProductCreateInput = z.infer<typeof ProductCreateSchema>;
+
+// 🔹 Zod validation schema
+export const categorySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(1, "Description is required"),
+  image: z.string().min(1, "Image is required"),
+  active: z.boolean().default(true),
+});
+
+export type CategoryFormData = z.infer<typeof categorySchema>;

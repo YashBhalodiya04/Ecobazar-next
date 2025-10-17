@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   FaHome,
   FaImages,
@@ -17,7 +17,7 @@ import clsx from "clsx";
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
-
+  const router = useRouter();
   const menuItems = [
     {
       name: "Profile",
@@ -38,6 +38,11 @@ const Sidebar = () => {
       id: 3,
     },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
 
   return (
     <div
@@ -101,7 +106,10 @@ const Sidebar = () => {
 
       {/* Footer / Logout */}
       <div className="px-4 py-3 border-t border-slate-700">
-        <button className="flex items-center w-full text-gray-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded-lg transition-all">
+        <button
+          className="flex items-center w-full text-gray-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded-lg transition-all"
+          onClick={handleLogout}
+        >
           <FaSignOutAlt size={18} className="mr-2" />
           <span className={clsx(open ? "block" : "hidden")}>Logout</span>
         </button>
