@@ -121,8 +121,9 @@ const AddCategoryModal: React.FC<ModalProps> = ({
     formdata.append("data", JSON.stringify(payload));
     if (fileList?.length > 0 && fileList[0].originFileObj) {
       formdata.append("files", fileList[0].originFileObj);
+    } else {
+      formdata.append("files", "");
     }
-    formdata.append("files", "");
 
     try {
       setLoading(true);

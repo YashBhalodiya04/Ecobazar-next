@@ -28,6 +28,7 @@ const CategoryPage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(20);
   const [page, setpage] = useState<number>(1);
   const [TotalData, setTotalData] = useState<number>(0);
+  const [totalCountOfFilter, setTotalCountOfFilter] = useState<number>(0);
   const [categories, setCategories] = useState<CategoryGrigRecord[]>([]);
   const [SearchText, setSearchText] = useState<string>("");
 
@@ -64,7 +65,12 @@ const CategoryPage: React.FC = () => {
       }
       if (response?.success) {
         setCategories(response?.data?.data || []);
-        setTotalData(response?.data?.total || 0);
+        setTotalData(Number(response?.data?.recordsTotal) || 0);
+        setTotalCountOfFilter(Number(response?.data?.recordsFiltered) || 0);
+      } else {
+        setCategories([]);
+        setTotalData(0);
+        setTotalCountOfFilter(0);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -231,14 +237,15 @@ const CategoryPage: React.FC = () => {
             pageSize: pageSize,
             showSizeChanger: true,
             responsive: true,
-            showTotal: (total, range) => {
-              return (
-                <span className="pagination-text">
-                  Showing {range[0]}-{range[1]} of {total} entries
-                </span>
-              );
-            },
-            total: TotalData,
+            showTotal: (total, range) => (
+              <span className="pagination-text">
+                Showing {range[0]} to {range[1]} of {totalCountOfFilter} entries
+                {totalCountOfFilter !== TotalData && (
+                  <>(filtered from {TotalData} total entries)</>
+                )}
+              </span>
+            ),
+            total: totalCountOfFilter,
             pageSizeOptions: ["10", "20", "50", "100"],
             defaultPageSize: 10,
             defaultCurrent: 1,

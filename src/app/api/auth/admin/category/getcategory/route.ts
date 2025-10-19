@@ -25,20 +25,26 @@ export const GetCategory = async (
     const query: any = { active: true };
     // If search is provided, add case-insensitive regex filter
     if (search.trim() !== "") {
-      query.name = { $regex: search, $options: "i" };
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
     }
-
     // Pagination logic
     const skip = (Number(page) - 1) * Number(pagesize);
 
     // Get total count for pagination
+    const totalFilteredCount = await CategoryModal.countDocuments(query);
+
     const totalCount = await CategoryModal.countDocuments({ active: true });
 
     // Fetch paginated + searched data
     const categoryList = await CategoryModal.find(query)
       .sort({ createdAt: -1 }) // latest first
       .skip(skip)
-      .limit(Number(pagesize)).select("_id active name description image").lean()
+      .limit(Number(pagesize))
+      .select("_id active name description image")
+      .lean();
 
     const FinalData = {
       data: categoryList?.map((item) => {
@@ -48,12 +54,11 @@ export const GetCategory = async (
           name: item?.name,
           description: item?.description,
           image: item?.image,
-        }
+        };
       }),
-      total: totalCount,
-      currentPage: Number(page),
+      recordsFiltered: totalFilteredCount,
+      recordsTotal: totalCount,
     };
-
     return commonResponse(true, "", FinalData, 200);
   } catch (error) {
     console.error(error);

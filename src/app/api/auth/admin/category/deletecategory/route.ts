@@ -26,7 +26,7 @@ export const DeleteCategory = async (
       return commonResponse(false, "Category ID is required");
     }
     const categoryID = toObjectId(body.categoryid);
-    const category = await CategoryModal.findById(categoryID);
+    const category = await CategoryModal.findById(categoryID, { active: true });
     if (!category) {
       return commonResponse(false, "Category not found");
     }

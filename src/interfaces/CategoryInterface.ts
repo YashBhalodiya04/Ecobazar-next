@@ -25,8 +25,8 @@ export interface CategoryGrigAPIResponse {
 
 export interface CategoryGrigAPIResponseData {
   data: CategoryGrigRecord[];
-  total: number;
-  currentPage: number;
+  recordsFiltered: number;
+  recordsTotal: number;
 }
 
 export interface CategoryGrigRecord {

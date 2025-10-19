@@ -41,3 +41,19 @@ export interface CommonDeletePayloadInterface {
   productid?: string;
   id?: string;
 }
+
+export interface TableColumn {
+  title: string;
+  dataIndex: string;
+  key: string;
+  width?: number;
+  className?: string;
+  showSorterTooltip?: boolean;
+}
+
+export interface ColumnSortConfig {
+  column: TableColumn;
+  order?: "ascend" | "descend";
+  field: string;
+  columnKey: string;
+}

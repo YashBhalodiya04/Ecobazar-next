@@ -36,7 +36,7 @@ export function parseFormDataWithFiles<T>(
   const filesRaw = formData.getAll(fileKey);
   const files: File[] = [];
 
-  if (files.length === 0) {
+  if (filesRaw.length === 0) {
     return { data, files };
   }
 

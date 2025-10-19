@@ -15,6 +15,7 @@
   @apply w-full bg-transparent 
   /* Placeholder/Empty State */
   [&_tr.ant-table-placeholder]:!bg-transparent
+  [&_tr.ant-table-placeholder>.ant-table-cell>.ant-table-expanded-row-fixed>div>.ant-empty-description]:!text-white
   [&_tr.ant-table-placeholder>td]:!bg-transparent
 
   /* Table Header Styles */
@@ -103,11 +104,130 @@
          [&_.ant-popover-inner-content]:p-4;
 }
 
+.dark-popover {
+  @apply 
+    [&_.ant-popover-inner]:bg-[#1f2937]
+    [&_.ant-popover-inner]:text-[#e5e7eb]
+    [&_.ant-popover-inner]:border
+    [&_.ant-popover-inner]:border-[#374151]
+    [&_.ant-popover-inner]:rounded-lg
+    [&_.ant-popover-inner]:shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+    [&_.ant-select-selector]:bg-[#111827]
+    [&_.ant-select-selector]:text-[#e5e7eb]
+    [&_.ant-select-selector]:border-[#374151]
+    [&_.ant-select-arrow]:text-[#9ca3af]
+    [&_.ant-popover-arrow:before]:bg-[#1f2937]
+    [&_.ant-popover-arrow:before]:border-[#374151]
+}
 
 /* Mask area (outside modal tree, so scoped separately) */
 .ant-modal-mask {
   @apply bg-[rgba(10,10,10,0.9)] transition-colors duration-300 ease-in-out;
 }
+
+/* 🌑 Base Dark Button */
+.btn-dark {
+  background-color: #1f2937 !important; /* dark gray */
+  color: #e5e7eb !important; /* light text */
+  border: 1px solid #374151 !important;
+  transition: all 0.2s ease;
+}
+.btn-dark:hover {
+  background-color: #374151 !important;
+  color: #fff !important;
+}
+
+/* 🟢 Confirm / Primary Button */
+.btn-primary-dark {
+  background-color: #2563eb !important; /* blue-600 */
+  color: #fff !important;
+  border: none !important;
+}
+.btn-primary-dark:hover {
+  background-color: #1d4ed8 !important;
+}
+
+/* 🟥 Danger Button */
+.btn-danger-dark {
+  background-color: #dc2626 !important; /* red-600 */
+  color: #fff !important;
+  border: none !important;
+}
+.btn-danger-dark:hover {
+  background-color: #b91c1c !important;
+}
+
+/* ⚪ Cancel Button */
+.btn-cancel-dark {
+  background-color: transparent !important;
+  color: #e5e7eb !important;
+  border: 1px solid #4b5563 !important;
+}
+.btn-cancel-dark:hover {
+  background-color: #374151 !important;
+}
+
+/* 🌑 Dark Default Button */
+.btn-dark {
+  @apply bg-zinc-800 text-zinc-200 border border-zinc-700 rounded-md 
+         shadow-sm hover:bg-zinc-700 hover:text-white
+         active:bg-zinc-600 transition-all duration-200;
+}
+
+/* 🟦 Primary */
+.btn-primary-dark {
+  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-md 
+         shadow-md hover:from-blue-500 hover:to-blue-400
+         active:from-blue-700 active:to-blue-600
+         transition-all duration-200;
+}
+
+/* ⚪ Cancel / Secondary */
+.btn-cancel-dark {
+  @apply bg-transparent text-zinc-300 border border-zinc-600 rounded-md 
+         hover:bg-zinc-800 hover:text-white
+         active:bg-zinc-700 transition-all duration-200;
+}
+
+/* 🟥 Danger */
+.btn-danger-dark {
+  @apply bg-gradient-to-r from-red-600 to-red-500 text-white rounded-md 
+         shadow-md hover:from-red-500 hover:to-red-400
+         active:from-red-700 active:to-red-600
+         transition-all duration-200;
+}
+
+/* 🟩 Success */
+.btn-success-dark {
+  @apply bg-gradient-to-r from-green-600 to-green-500 text-white rounded-md
+         shadow-md hover:from-green-500 hover:to-green-400
+         active:from-green-700 active:to-green-600
+         transition-all duration-200;
+}
+
+/* 🟨 Warning */
+.btn-warning-dark {
+  @apply bg-gradient-to-r from-yellow-500 to-yellow-400 text-zinc-900 rounded-md
+         shadow-md hover:from-yellow-400 hover:to-yellow-300
+         active:from-yellow-600 active:to-yellow-500
+         transition-all duration-200;
+}
+
+/* 🟪 Info / Indigo */
+.btn-info-dark {
+  @apply bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-md
+         shadow-md hover:from-indigo-500 hover:to-indigo-400
+         active:from-indigo-700 active:to-indigo-600
+         transition-all duration-200;
+}
+
+/* ⚫ Outline / Ghost */
+.btn-outline-dark {
+  @apply border border-zinc-600 text-zinc-200 bg-transparent rounded-md
+         hover:bg-zinc-800 hover:text-white transition-all duration-200;
+}
+
+
 
 
 

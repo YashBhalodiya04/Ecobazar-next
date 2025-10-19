@@ -9,6 +9,7 @@ interface CommonInputProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
   isForgate?: boolean;
   isPassword?: boolean;
+  focusColor?: "green" | "blue";
 }
 
 const CommonInput: React.FC<CommonInputProps> = ({
@@ -17,11 +18,16 @@ const CommonInput: React.FC<CommonInputProps> = ({
   errorMessage,
   isForgate,
   isPassword = false,
+  focusColor = "green",
   ...rest
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(true);
 
   const togglePassword = () => setShowPassword(!showPassword);
+  const focusClasses =
+    focusColor === "green"
+      ? "focus:ring-1 focus:ring-green-700 focus:border-green-500"
+      : "focus:ring-1 focus:ring-blue-700 focus:border-blue-500";
 
   return (
     <div className="w-full relative">
@@ -43,7 +49,8 @@ const CommonInput: React.FC<CommonInputProps> = ({
         <input
           type={isPassword ? (!showPassword ? "text" : "password") : "text"}
           id={id}
-          className="w-full px-3 py-2 rounded-md bg-transparent border border-white/40 placeholder:text-white/50 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          // className="w-full px-3 py-2 rounded-md bg-transparent border border-white/40 placeholder:text-white/50 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          className={`w-full px-3 py-2 rounded-md bg-transparent border border-white/40 placeholder:text-white/50 text-white focus:outline-none ${focusClasses}`}
           {...rest}
         />
         {isPassword && (
