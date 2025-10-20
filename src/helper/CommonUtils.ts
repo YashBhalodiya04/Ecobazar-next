@@ -35,21 +35,27 @@ export function parseFormDataWithFiles<T>(
   // ✅ Parse files (could be empty array)
   const filesRaw = formData.getAll(fileKey);
   const files: File[] = [];
-
   if (filesRaw.length === 0) {
     return { data, files };
   }
 
   for (const f of filesRaw) {
-    if (!(f instanceof File))
+    if (f instanceof File) {
+      files.push(f);
+    } else if (typeof f === "string" && f.trim() === "") {
+      // ignore empty string
+      continue;
+    } else {
       throw new Error(`Value for key "${fileKey}" is not a File`);
-    files.push(f);
+    }
   }
 
   return { data, files };
 }
 
-export const isRestrictedFile = (filePath: any) => {
+export const isRestrictedFile = (
+  filePath: any
+): { valid: boolean; message: string } => {
   const restrictedWords = [
     "xss",
     "comment",

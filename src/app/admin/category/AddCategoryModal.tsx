@@ -21,16 +21,8 @@ import { useRequestMutation } from "@/redux/commonApi";
 import { CommonApiInterface } from "@/interfaces/commonInterace";
 import { apis } from "@/redux/apiUrls";
 import { CategoryGrigRecord } from "@/interfaces/CategoryInterface";
+import { CategoryFormData, categorySchema } from "@/schemas/authSchemas";
 
-// ✅ Zod Schema
-const categorySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  active: z.boolean().optional(),
-  imagepath: z.string().optional(),
-});
-
-type CategoryFormData = z.infer<typeof categorySchema>;
 
 interface ModalProps {
   isModalOpen: boolean;
@@ -65,14 +57,6 @@ const AddCategoryModal: React.FC<ModalProps> = ({
     },
   });
 
-  // useEffect(() => {
-  //   if (editData && isModalOpen) {
-  //     setValue("name", editData.name);
-  //     setValue("description", editData.description);
-  //     setValue("active", editData.active);
-  //     setValue("imagepath", editData.image);
-  //   }
-  // }, [editData, isModalOpen]);
   useEffect(() => {
     if (editData && isModalOpen) {
       setValue("name", editData.name);
@@ -157,7 +141,7 @@ const AddCategoryModal: React.FC<ModalProps> = ({
       const lastFile = newFileList[newFileList.length - 1]; // Get the last file object
       if (lastFile.originFileObj) {
         const isRestrict = isRestrictedFile(lastFile.originFileObj?.name);
-        if (isRestrict.valid == true) {
+        if (isRestrict?.valid == true) {
           Toast.error(`${isRestrict?.message}`);
           return;
         }

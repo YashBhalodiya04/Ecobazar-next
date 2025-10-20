@@ -79,11 +79,12 @@ export const CreateProduct = async (
       const product = new ProductModal({
         name: data.name,
         description: data.description,
-        categoryid: categoryId,
+        category: categoryId,
         image: imgurl,
         price: data.price,
         user: context.user?.id,
-        active: true,
+        active: data?.active,
+        stock: data?.stock
       });
       await product.save();
       return commonResponse(true, "", "Product created successfully", 200);
@@ -91,10 +92,11 @@ export const CreateProduct = async (
       await ProductModal.findByIdAndUpdate(toObjectId(data.productid), {
         name: data.name,
         description: data.description,
-        categoryid: categoryId,
+        category: categoryId,
         image: imgurl,
         price: data.price,
-        active: true,
+        active: data?.active,
+        stock: data?.stock
       });
       return commonResponse(true, "", "Product updated successfully", 200);
     }

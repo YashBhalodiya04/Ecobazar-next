@@ -29,12 +29,10 @@ export type SignUpSchemaType = z.infer<typeof signupSchema>;
 export const ProductCreateSchema = z
   .object({
     name: z.string().trim().min(1, "Name is required"),
-
     description: z
       .string()
       .trim()
       .min(10, "Description must be at least 10 characters"),
-
     price: z
       .string()
       .trim()
@@ -42,11 +40,6 @@ export const ProductCreateSchema = z
       .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Price must be a positive number",
       }),
-
-    image: z.string().trim().url("Image must be a valid URL"),
-
-    category: z.string().trim().min(1, "Category is required"),
-
     stock: z
       .string()
       .trim()
@@ -60,17 +53,19 @@ export const ProductCreateSchema = z
           message: "Stock must be a non-negative integer",
         }
       ),
+    active: z.boolean().optional(),
+    imagepath: z.string().optional(),
   })
   .strict();
 
 export type ProductCreateInput = z.infer<typeof ProductCreateSchema>;
 
-// 🔹 Zod validation schema
+// ✅ Zod Schema
 export const categorySchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
-  image: z.string().min(1, "Image is required"),
-  active: z.boolean().default(true),
+  active: z.boolean().optional(),
+  imagepath: z.string().optional(),
 });
 
 export type CategoryFormData = z.infer<typeof categorySchema>;

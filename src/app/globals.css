@@ -227,6 +227,40 @@
          hover:bg-zinc-800 hover:text-white transition-all duration-200;
 }
 
+.ant-select {
+  @apply !h-[42px] [&_.ant-select-selector]:!bg-[#1a1a1a]
+         [&_.ant-select-selector]:!text-[#e5e7eb]
+         [&_.ant-select-selector]:!border-[#ffffff66]
+         [&_.ant-select-selector]:!py-4
+         [&_.ant-select-selection-placeholder]:!text-white
+         [&_.ant-select-selector]:rounded-md
+         [&_.ant-select-selector]:transition-all
+         [&_.ant-select-selector]:duration-200
+         [&_.ant-select-selector:hover]:border-[#60a5fa]
+         [&_.ant-select-focused_.ant-select-selector]:border-[#60a5fa]
+         [&_.ant-select-arrow]:text-[#9ca3af]
+         [&_.ant-select-clear]:text-[#9ca3af]
+         [&_.ant-select-clear:hover]:text-[#f87171]
+         [&_.ant-select-disabled_.ant-select-selector]:bg-[#2d3748]
+         [&_.ant-select-disabled_.ant-select-selector]:text-[#6b7280]
+         [&_.ant-select-disabled_.ant-select-selector]:border-[#4b5563]
+         [&_.ant-select-disabled_.ant-select-selector]:opacity-60;
+}
+
+.ant-select-dropdown {
+  @apply bg-[#111827]
+         text-[#e5e7eb]
+         rounded-md
+         shadow-[0_4px_16px_rgba(0,0,0,0.6)];
+
+  /* dropdown options */
+  @apply [&_.ant-select-item]:text-[#d1d5db]
+         [&_.ant-select-item-option-active]:bg-[#374151]
+         [&_.ant-select-item-option-active]:text-white
+         [&_.ant-select-item-option-selected]:bg-[#2563eb]
+         [&_.ant-select-item-option-selected]:text-white;
+}
+
 
 
 

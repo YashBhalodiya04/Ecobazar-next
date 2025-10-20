@@ -11,9 +11,15 @@ export const apis = {
     createCategory: "/auth/admin/category/createcategory",
     getCategory: "/auth/admin/category/getcategory",
     deleteCategory: "/auth/admin/category/deletecategory",
+    categoryDropdown: "/auth/admin/product/getallcategory",
 
     // SLIDER
     createSlider: "/auth/admin/category/saveslider",
     getSlider: "/auth/admin/category/getslider",
+
+    // PRODUCT
+    saveProduct: "/auth/admin/product/createproduct",
+    getProduct: "/auth/admin/product/getproduct",
+    deleteProduct: "/auth/admin/product/deleteproduct",
   },
 };

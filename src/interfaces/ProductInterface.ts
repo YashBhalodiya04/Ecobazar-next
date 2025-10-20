@@ -13,6 +13,7 @@ export interface ProductCreatePayload {
   categoryid: string;
   stock: number;
   productid: string;
+  active: boolean;
 }
 
 export interface ProductGrigAPIResponse {
@@ -29,12 +30,13 @@ export interface ProductGrigAPIResponseData {
 }
 
 export interface ProductGrigRecord {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  stock: number;
   active: boolean;
+  category: string;
+  categoryid: string;
+  description: string;
+  id: string;
+  image: string;
+  name: string;
+  price: number;
+  stock: number;
 }

@@ -25,6 +25,7 @@ interface SingleSelectProps {
   id?: string;
   showSearch?: boolean;
   containerRef?: React.RefObject<HTMLDivElement>; // Ref for the container
+  focusColor?: "green" | "blue";
 }
 
 const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
@@ -37,15 +38,21 @@ const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
       value,
       placeholder = "Select an option",
       className = "",
-      valueKey = "value",
-      labelKey = "label",
+      valueKey = "id",
+      labelKey = "value",
       id,
       containerRef,
       showSearch = true,
+      focusColor = "green",
     },
     ref // This is the forwarded ref
   ) => {
     const [Open, setOpen] = useState<boolean>(false);
+
+    const focusClasses =
+      focusColor === "green"
+        ? "[&_.ant-select-selector:focus-within]:!border-green-500 [&_.ant-select-selector:focus-within]:!ring-1 [&_.ant-select-selector:focus-within]:!ring-green-700"
+        : "[&_.ant-select-selector:focus-within]:!border-blue-500 [&_.ant-select-selector:focus-within]:!ring-1 [&_.ant-select-selector:focus-within]:!ring-blue-700";
 
     const refmain = useRef(null);
 
@@ -69,23 +76,9 @@ const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
         setOpen(true);
       }
     };
-    const handleDropdownVisibleChange = (open: boolean) => {
-      if (open) {
-        setTimeout(() => {
-          const dropdown = document.querySelector(".ant-select-dropdown");
-          (dropdown as HTMLElement | null)?.focus();
-        }, 0);
-      }
-      if (open) {
-        setTimeout(() => {
-          const dropdown = document.querySelector(".rc-virtual-list");
-          dropdown?.scrollIntoView({ block: "nearest" });
-        }, 0);
-      }
-    };
 
     return (
-      <div ref={refmain}>
+      <div ref={refmain} className={`w-full ${focusClasses}`}>
         <Select
           value={value ? value[valueKey] : undefined}
           defaultValue={defaultValue ? defaultValue[valueKey] : undefined}
@@ -93,7 +86,7 @@ const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
           showSearch={showSearch}
           id={id}
           open={Open}
-          className={"w-100 " + className}
+         className={`w-full [&_.ant-select-selector]:!bg-transparent [&_.ant-select-selector]:!text-white [&_.ant-select-selector]:!border-white/40 [&_.ant-select-arrow]:!text-white [&_.ant-select-selection-placeholder]:!text-white/50 ${className}`}
           placeholder={placeholder}
           disabled={disabled}
           onChange={handleChange}
@@ -118,7 +111,6 @@ const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
           // onFocus={() => setOpen(true)}
           onClick={() => setOpen(!Open)}
           onBlur={() => setOpen(false)}
-          onDropdownVisibleChange={handleDropdownVisibleChange}
         />
       </div>
     );

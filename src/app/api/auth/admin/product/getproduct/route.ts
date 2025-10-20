@@ -25,7 +25,7 @@ export const GetProduct = async (
 
     const query: FilterQuery<Product> = { active: true };
     if (categoryid) {
-      query.category = toObjectId(categoryid);
+      query.category = categoryid;
     }
 
     if (search?.trim() != "") {
@@ -36,6 +36,7 @@ export const GetProduct = async (
       ];
       if (isNumeric) {
         query.$or.push({ price: Number(search) });
+        query.$or.push({ stock: Number(search) });
       }
     }
 
@@ -44,26 +45,65 @@ export const GetProduct = async (
     const totalFilteredCount = await ProductModal.countDocuments(query);
     const totalCount = await ProductModal.countDocuments({ active: true });
 
-    const productList = await ProductModal.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(Number(pagesize))
-      .select("_id name description price image category stock rating active")
-      .lean();
-
+    // ✅ Populate category name
+    const productList = await ProductModal.aggregate([
+      { $match: query },
+      {
+        $addFields: {
+          categoryObjectId: {
+            $cond: [
+              {
+                $regexMatch: { input: "$category", regex: /^[0-9a-fA-F]{24}$/ },
+              },
+              { $toObjectId: "$category" },
+              null,
+            ],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryObjectId",
+          foreignField: "_id",
+          as: "categoryInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$categoryInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          description: 1,
+          price: 1,
+          image: 1,
+          stock: 1,
+          active: 1,
+          categoryName: "$categoryInfo.name",
+          categoryid: "$category",
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: (Number(page) - 1) * Number(pagesize) },
+      { $limit: Number(pagesize) },
+    ]);
     const ResponseBody = {
-      data: productList?.map((item) => {
-        return {
-          id: item?._id,
-          name: item?.name,
-          description: item?.description,
-          price: item?.price,
-          image: item?.image,
-          category: item?.category,
-          stock: item?.stock,
-          active: item?.active,
-        };
-      }),
+      data: productList?.map((item) => ({
+        id: item?._id,
+        name: item?.name,
+        description: item?.description,
+        price: item?.price,
+        image: item?.image,
+        category: item?.categoryName ?? "",
+        stock: item?.stock,
+        active: item?.active,
+        categoryid: item?.categoryid,
+      })),
       recordsFiltered: totalFilteredCount,
       recordsTotal: totalCount,
     };

@@ -57,3 +57,15 @@ export interface ColumnSortConfig {
   field: string;
   columnKey: string;
 }
+
+export interface CommonDropdownAPIResponse {
+  success: boolean;
+  message: string;
+  data: CommonDropdownOptions[];
+  status: number;
+}
+
+export interface CommonDropdownOptions {
+  id?: string;
+  value?: string;
+}
