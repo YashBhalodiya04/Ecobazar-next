@@ -5,7 +5,7 @@ export interface MainSlider extends Document {
   description: string;
   image: string;
   fromDate: Date;
-  to: Date;
+  toDate: Date;
   createAt: Date;
   user: Types.ObjectId;
   active: boolean;
@@ -31,7 +31,7 @@ const MainSliderSchema: Schema<MainSlider> = new Schema({
     required: true,
     default: Date.now,
   },
-  to: {
+  toDate: {
     type: Date,
     required: true,
   },

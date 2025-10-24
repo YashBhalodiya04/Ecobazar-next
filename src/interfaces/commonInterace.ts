@@ -69,3 +69,10 @@ export interface CommonDropdownOptions {
   id?: string;
   value?: string;
 }
+
+
+export interface CommoPayloadGrid {
+  page: number;
+  pagesize: number;
+  search?: string;
+}

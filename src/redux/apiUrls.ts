@@ -14,8 +14,9 @@ export const apis = {
     categoryDropdown: "/auth/admin/product/getallcategory",
 
     // SLIDER
-    createSlider: "/auth/admin/category/saveslider",
-    getSlider: "/auth/admin/category/getslider",
+    createSlider: "/auth/admin/slider/saveslider",
+    getSlider: "/auth/admin/slider/getsliders",
+    deleteSlider: "/auth/admin/slider/deleteslider",
 
     // PRODUCT
     saveProduct: "/auth/admin/product/createproduct",

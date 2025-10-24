@@ -1,63 +1,64 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Table, Button, Image, Space, Tooltip } from "antd";
+import { Table, Button, Image, Space, Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import CommonInput from "@/components/common/CommonInput";
 import { useRequestMutation } from "@/redux/commonApi";
-import {
-  CategoryGrigAPIResponse,
-  CategoryGrigRecord,
-} from "@/interfaces/CategoryInterface";
-import { apis } from "@/redux/apiUrls";
 import { useRouter } from "next/navigation";
 import CommonLoader from "@/components/common/CommonLoader";
-import AddCategoryModal from "./AddCategoryModal";
-import { CommonApiInterface } from "@/interfaces/commonInterace";
-import CommonPopconfirm from "@/components/common/CommonPopconfirm";
 import CommonButton from "@/components/common/CommonButton";
+import CommonPopconfirm from "@/components/common/CommonPopconfirm";
+import { apis } from "@/redux/apiUrls";
+import { CommonApiInterface } from "@/interfaces/commonInterace";
+import {
+  MainSliderGrigAPIResponse,
+  MainSliderGrigRecord,
+} from "@/interfaces/MainSliderInterface";
+import AddSlidersModal from "./AddSlidersModal";
+import dayjs from "dayjs";
 
-const CategoryPage: React.FC = () => {
+const SliderPage: React.FC = () => {
   const router = useRouter();
-  const [request, { isLoading }] = useRequestMutation();
+  const [request] = useRequestMutation();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [timeoutId, setTimeoutId] = useState<any>();
-
   const [sortedInfo, setSortedInfo] = useState<any>({});
   const [pageSize, setPageSize] = useState<number>(20);
-  const [page, setpage] = useState<number>(1);
-  const [TotalData, setTotalData] = useState<number>(0);
-  const [totalCountOfFilter, setTotalCountOfFilter] = useState<number>(0);
-  const [categories, setCategories] = useState<CategoryGrigRecord[]>([]);
-  const [SearchText, setSearchText] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [totalData, setTotalData] = useState<number>(0);
+  const [totalFiltered, setTotalFiltered] = useState<number>(0);
+  const [sliderList, setSliderList] = useState<MainSliderGrigRecord[]>([]);
+  const [searchText, setSearchText] = useState<string>("");
 
-  const [isModalOpen, setisModalOpen] = useState<boolean>(false);
-  const [editData, setEditData] = useState<CategoryGrigRecord | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editData, setEditData] = useState<MainSliderGrigRecord | null>(null);
 
+  // Reset edit data when modal closes
   useEffect(() => {
     if (!isModalOpen) {
       setEditData(null);
     }
   }, [isModalOpen]);
 
-  const handleChange = (pagination: any, filters: any, sorter: any) => {
+  const handleChange = (pagination: any, _: any, sorter: any) => {
     setSortedInfo(sorter);
-    setPageSize(pagination?.pageSize);
-    setpage(pagination?.current);
+    setPageSize(pagination.pageSize);
+    setPage(pagination.current);
   };
 
   const fetchGridData = async () => {
     try {
       setLoading(true);
       const payload = {
-        search: SearchText,
+        search: searchText,
         page: page,
         pagesize: pageSize,
       };
-      const response: CategoryGrigAPIResponse = await request({
-        url: apis.ADMIN.getCategory,
+      const response: MainSliderGrigAPIResponse = await request({
+        url: apis.ADMIN.getSlider,
         method: "POST",
         body: payload,
       }).unwrap();
@@ -65,21 +66,16 @@ const CategoryPage: React.FC = () => {
         router.push("/login");
       }
       if (response?.success) {
-        setCategories(response?.data?.data || []);
+        setSliderList(response?.data?.data || []);
         setTotalData(Number(response?.data?.recordsTotal) || 0);
-        setTotalCountOfFilter(Number(response?.data?.recordsFiltered) || 0);
+        setTotalFiltered(Number(response?.data?.recordsFiltered) || 0);
       } else {
-        setCategories([]);
+        setSliderList([]);
         setTotalData(0);
-        setTotalCountOfFilter(0);
+        setTotalFiltered(0);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message, true);
-      } else {
-        console.error("An unknown error occurred", error, true);
-      }
-      setLoading(false);
+      console.error("Error fetching sliders:", error);
     } finally {
       setLoading(false);
     }
@@ -96,14 +92,14 @@ const CategoryPage: React.FC = () => {
     return () => {
       clearTimeout(id);
     };
-  }, [SearchText, pageSize, sortedInfo]);
+  }, [searchText, pageSize, sortedInfo]);
 
-  const handleDelete = async (record: CategoryGrigRecord) => {
+  const handleDelete = async (record: MainSliderGrigRecord) => {
     setLoading(true);
     const response: CommonApiInterface = await request({
-      url: apis.ADMIN.deleteCategory,
+      url: apis.ADMIN.deleteSlider,
       method: "POST",
-      body: { categoryid: record.categoryid },
+      body: { id: record?.sliderid },
     }).unwrap();
     if (response?.status === 401) {
       router.push("/login");
@@ -114,14 +110,19 @@ const CategoryPage: React.FC = () => {
     setLoading(false);
   };
 
-  const columns: ColumnsType<CategoryGrigRecord> = [
+  const handleEdit = (record: MainSliderGrigRecord) => {
+    setEditData(record);
+    setIsModalOpen(true);
+  };
+
+  const columns: ColumnsType<MainSliderGrigRecord> = [
     {
       title: "Actions",
       key: "actions",
       width: 150,
       render: (_, record) => (
         <Space>
-          <Tooltip title="Edit Category">
+          <Tooltip title="Edit Slider">
             <Button
               icon={<FaEdit />}
               size="small"
@@ -131,8 +132,8 @@ const CategoryPage: React.FC = () => {
           </Tooltip>
 
           <CommonPopconfirm
-            title="Delete Category"
-            description={`Are you sure you want to delete ${record.name} category?`}
+            title="Delete Slider"
+            description={`Are you sure you want to delete ${record.title}?`}
             icon={<FaTrashAlt color="red" className="mt-1 me-2" />}
             onConfirm={() => handleDelete(record)}
             okText="Yes"
@@ -149,26 +150,35 @@ const CategoryPage: React.FC = () => {
       ),
     },
     {
-      title: "Category Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      title: "Active",
+      dataIndex: "active",
+      key: "active",
+      width: 120,
+      render: (active: boolean) =>
+        active ? (
+          <Tag color="green">Active</Tag>
+        ) : (
+          <Tag color="red">Inactive</Tag>
+        ),
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      sorter: (a, b) => a.title.localeCompare(b.title),
       render: (text) => (
-        <span className="text-zinc-100 font-medium tracking-wide">{text}</span>
+        <span className="text-zinc-100 font-medium">{text}</span>
       ),
-      showSorterTooltip: false,
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      sorter: (a, b) => a.description.localeCompare(b.description),
       render: (text) => (
         <span className="text-zinc-400 text-sm max-w-xs line-clamp-2">
           {text}
         </span>
       ),
-      showSorterTooltip: false,
     },
     {
       title: "Image",
@@ -189,12 +199,27 @@ const CategoryPage: React.FC = () => {
         </div>
       ),
     },
+    {
+      title: "From Date",
+      dataIndex: "fromDate",
+      key: "fromDate",
+      render: (text) => (
+        <span className="text-zinc-400 text-sm">
+          {text ? dayjs(text).format("DD-MM-YYYY") : "-"}
+        </span>
+      ),
+    },
+    {
+      title: "To Date",
+      dataIndex: "toDate",
+      key: "toDate",
+      render: (text) => (
+        <span className="text-zinc-400 text-sm">
+          {text ? dayjs(text).format("DD-MM-YYYY") : "-"}
+        </span>
+      ),
+    },
   ];
-
-  const handleEdit = (record: CategoryGrigRecord) => {
-    setEditData(record);
-    setisModalOpen(true);
-  };
 
   return (
     <>
@@ -206,59 +231,53 @@ const CategoryPage: React.FC = () => {
               id="search"
               label=""
               type="text"
-              placeholder="Search category..."
-              value={SearchText}
+              placeholder="Search Slider..."
+              value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
+              focusColor="blue"
             />
           </div>
 
-          <div className="flex justify-end  sm:w-auto mt-3">
+          <div className="flex justify-end sm:w-auto mt-3">
             <CommonButton
               themeType="dark"
               icon={<FaPlus />}
-              onClick={() => setisModalOpen(true)}
+              onClick={() => setIsModalOpen(true)}
             >
               Add
             </CommonButton>
           </div>
         </div>
-
         <Table
           columns={columns}
-          dataSource={categories}
+          dataSource={sliderList}
           onChange={handleChange}
-          rowKey="categoryid"
-          rowClassName={(record: any, index: number) => {
-            return index % 2 === 0 ? "odd-row" : "even-row";
-          }}
+          rowKey="sliderid"
           className="custom-ant-table-new"
           pagination={{
             position: ["bottomRight"],
             pageSize: pageSize,
             showSizeChanger: true,
             responsive: true,
+            total: totalFiltered,
             showTotal: (total, range) => (
               <span className="pagination-text">
-                Showing {range[0]} to {range[1]} of {totalCountOfFilter} entries
-                {totalCountOfFilter !== TotalData && (
-                  <>(filtered from {TotalData} total entries)</>
+                Showing {range[0]} to {range[1]} of {totalFiltered} entries
+                {totalFiltered !== totalData && (
+                  <> (filtered from {totalData} total entries)</>
                 )}
               </span>
             ),
-            total: totalCountOfFilter,
             pageSizeOptions: ["10", "20", "50", "100"],
-            defaultPageSize: 10,
-            defaultCurrent: 1,
             current: page,
           }}
-          scroll={{
-            x: "max-content",
-          }}
+          scroll={{ x: "max-content" }}
         />
       </div>
-      <AddCategoryModal
+
+      <AddSlidersModal
         isModalOpen={isModalOpen}
-        setIsModalOpen={setisModalOpen}
+        setIsModalOpen={setIsModalOpen}
         ferchGridData={fetchGridData}
         setLoading={setLoading}
         editData={editData}
@@ -267,4 +286,4 @@ const CategoryPage: React.FC = () => {
   );
 };
 
-export default CategoryPage;
+export default SliderPage;

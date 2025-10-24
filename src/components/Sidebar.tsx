@@ -13,6 +13,9 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import clsx from "clsx";
+import { MdCategory } from "react-icons/md";
+import { AiFillProduct } from "react-icons/ai";
+import { FaUser } from "react-icons/fa6";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
@@ -21,21 +24,27 @@ const Sidebar = () => {
   const menuItems = [
     {
       name: "Profile",
-      icon: <FaCog size={18} />,
+      icon: <FaUser size={18} />,
       href: "/admin/profile",
       id: 1,
     },
     {
       name: "Category",
-      icon: <FaHome size={18} />,
+      icon: <MdCategory size={18} />,
       href: "/admin/category",
       id: 2,
     },
     {
       name: "Product",
-      icon: <FaImages size={18} />,
+      icon: <AiFillProduct size={18} />,
       href: "/admin/product",
       id: 3,
+    },
+    {
+      name: "Slider",
+      icon: <FaImages size={18} />,
+      href: "/admin/slider",
+      id: 4,
     },
   ];
 

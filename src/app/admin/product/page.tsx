@@ -301,7 +301,7 @@ const ProductPage: React.FC = () => {
               id="search"
               label=""
               type="text"
-              placeholder="Search category..."
+              placeholder="Search Product..."
               value={SearchText}
               onChange={(e) => setSearchText(e.target.value)}
               focusColor="blue"

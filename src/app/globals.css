@@ -8,15 +8,20 @@
 }
 
 .home-slider {
-  @apply w-full [&_.swiper-button-next]:bg-transparent [&_.swiper-button-next]:rounded-full [&_.swiper-button-next]:size-[30x] [&_.swiper-button-next]:p-2 [&_.swiper-button-next]:text-green-600 [&_.swiper-button-prev]:bg-transparent [&_.swiper-button-prev]:text-green-600  [&_.swiper-button-prev]:rounded-full [&_.swiper-button-prev]:size-[30x] [&_.swiper-button-prev]:p-2  [&_.swiper-pagination-bullet-active]:bg-black
+  @apply w-full [&_.swiper-button-next]:!right-[-10px] [&_.swiper-button-next]:bg-transparent [&_.swiper-button-next]:rounded-full [&_.swiper-button-next]:size-[30x] [&_.swiper-button-next]:p-2 [&_.swiper-button-next]:text-green-600 [&_.swiper-button-prev]:!left-[-10px] [&_.swiper-button-prev]:bg-transparent [&_.swiper-button-prev]:text-green-600  [&_.swiper-button-prev]:rounded-full [&_.swiper-button-prev]:size-[30x] [&_.swiper-button-prev]:p-2  [&_.swiper-pagination-bullet-active]:bg-black
 }
 
+/* ant-table-wrapper */
 .custom-ant-table-new {
   @apply w-full bg-transparent 
   /* Placeholder/Empty State */
   [&_tr.ant-table-placeholder]:!bg-transparent
   [&_tr.ant-table-placeholder>.ant-table-cell>.ant-table-expanded-row-fixed>div>.ant-empty-description]:!text-white
   [&_tr.ant-table-placeholder>td]:!bg-transparent
+
+    /* Table Scroll Height and Overflow */
+  [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!h-[calc(100vh-285px)]
+  [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!overflow-auto
 
   /* Table Header Styles */
   [&_.ant-table-thead_th]:!bg-[#1f2937] [&_.ant-table-thead_th]:!text-gray-200
@@ -55,12 +60,41 @@
   [&_.ant-table-column-sorter-up.active]:text-green-500 [&_.ant-table-column-sorter-down.active]:text-green-500
   
   /* Pagination */
-  [&_.ant-pagination_.ant-pagination-item-active]:font-semibold  [&_.ant-pagination_.ant-pagination-item-active]:bg-blue-600 [&_.ant-pagination_.ant-pagination-item-active]:!border-blue-600 [&_.ant-pagination_.ant-pagination-item-active]:!text-white
-  [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:shadow-none [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:bg-gray-700 [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:!border-green-600 [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:!text-white
-  [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:shadow-none [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:bg-gray-700 [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:!border-green-600 [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:!text-green-500
-  [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:shadow-none [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:bg-gray-700 [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:!border-green-600 [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:!text-green-500
+  [&_.ant-pagination_.ant-pagination-item-active]:font-semibold  [&_.ant-pagination_.ant-pagination-item-active]:bg-blue-600 [&_.ant-pagination_.ant-pagination-item-active]:!border-blue-600 [&_.ant-pagination_.ant-pagination-item-active_a]:!text-white
+  [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:shadow-none [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:bg-gray-700 [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:!border-blue-600 [&_.ant-pagination_.ant-pagination-item:not(.ant-pagination-item-active):hover]:!text-white
+  [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:shadow-none
+  [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:shadow-none
   [&_.ant-table-pagination.ant-pagination]:mb-0
   [&_.pagination-text]:!text-gray-200
+
+    /* Pagination: Normal (Enabled) Prev/Next Buttons - Dark Mode */
+  [&_.ant-pagination_.ant-pagination-next_.ant-pagination-item-link]:!bg-gray-700/10 
+  [&_.ant-pagination_.ant-pagination-next_.ant-pagination-item-link]:!border-gray-700 
+  [&_.ant-pagination_.ant-pagination-next_.ant-pagination-item-link]:!text-gray-300 
+  [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:!bg-gray-700 
+  [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:!border-blue-600 
+  [&_.ant-pagination_.ant-pagination-next:hover_.ant-pagination-item-link]:!text-white 
+
+  [&_.ant-pagination_.ant-pagination-prev_.ant-pagination-item-link]:!bg-gray-700/10
+  [&_.ant-pagination_.ant-pagination-prev_.ant-pagination-item-link]:!border-gray-700 
+  [&_.ant-pagination_.ant-pagination-prev_.ant-pagination-item-link]:!text-gray-300 
+  [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:!bg-gray-700 
+  [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:!border-blue-600 
+  [&_.ant-pagination_.ant-pagination-prev:hover_.ant-pagination-item-link]:!text-white
+
+
+  /* Disabled Pagination Buttons */
+  [&_.ant-pagination_.ant-pagination-next.ant-pagination-disabled_.ant-pagination-item-link]:!bg-gray-800 
+  [&_.ant-pagination_.ant-pagination-next.ant-pagination-disabled_.ant-pagination-item-link]:!border-gray-600 
+  [&_.ant-pagination_.ant-pagination-next.ant-pagination-disabled_.ant-pagination-item-link]:!text-gray-400 
+  [&_.ant-pagination_.ant-pagination-next.ant-pagination-disabled_.ant-pagination-item-link]:!cursor-not-allowed
+
+  [&_.ant-pagination_.ant-pagination-prev.ant-pagination-disabled_.ant-pagination-item-link]:!bg-gray-800
+  [&_.ant-pagination_.ant-pagination-prev.ant-pagination-disabled_.ant-pagination-item-link]:!border-gray-600 
+  [&_.ant-pagination_.ant-pagination-prev.ant-pagination-disabled_.ant-pagination-item-link]:!text-gray-400 
+  [&_.ant-pagination_.ant-pagination-prev.ant-pagination-disabled_.ant-pagination-item-link]:!cursor-not-allowed
+
+
   
   /* Expanded Row */
   [&_.ant-table-tbody_.ant-table-expanded-row]:bg-gray-800
@@ -260,6 +294,61 @@
          [&_.ant-select-item-option-selected]:bg-[#2563eb]
          [&_.ant-select-item-option-selected]:text-white;
 }
+::placeholder {
+  @apply !text-white/50;
+}
+
+/* Base dark-mode date picker */
+.common-datepicker {
+  @apply w-full rounded-md px-3 py-2 !bg-[#1a1a1a] text-[#f1f1f1] border border-[#ffffff66] placeholder:!text-white/50 focus:outline-none;
+  
+}
+
+/* Green focus */
+.common-datepicker-green:focus, .common-datepicker-green.ant-picker-outlined:hover {
+  @apply !ring-1 !ring-green-700 !border-green-500;
+}
+
+/* Blue focus */
+.common-datepicker-blue:focus, .common-datepicker-blue.ant-picker-outlined:hover {
+  @apply !ring-1 !ring-blue-700 !border-blue-500;
+}
+
+
+.ant-picker-dropdown-dark .ant-picker-dropdown
+	.ant-picker-cell-in-view.ant-picker-cell-selected:not(.ant-picker-cell-disabled)
+	.ant-picker-cell-inner,
+.ant-picker-dropdown-dark .ant-picker-dropdown
+	.ant-picker-cell-in-view.ant-picker-cell-range-start:not(.ant-picker-cell-disabled)
+	.ant-picker-cell-inner,
+.ant-picker-dropdown-dark .ant-picker-dropdown
+	.ant-picker-cell-in-view.ant-picker-cell-range-end:not(.ant-picker-cell-disabled)
+	.ant-picker-cell-inner {
+	color: #ffffff !important;
+	background: #1d4ed8 !important;
+}
+
+.ant-picker-dropdown-dark .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+	border: 1px solid #1d4ed8 !important;
+}
+
+.ant-picker-dropdown-light .ant-picker-dropdown
+	.ant-picker-cell-in-view.ant-picker-cell-selected:not(.ant-picker-cell-disabled)
+	.ant-picker-cell-inner,
+.ant-picker-dropdown-light .ant-picker-dropdown
+	.ant-picker-cell-in-view.ant-picker-cell-range-start:not(.ant-picker-cell-disabled)
+	.ant-picker-cell-inner,
+.ant-picker-dropdown-light .ant-picker-dropdown
+	.ant-picker-cell-in-view.ant-picker-cell-range-end:not(.ant-picker-cell-disabled)
+	.ant-picker-cell-inner {
+	color: #ffffff !important;
+	background: #15803d !important;
+}
+
+.ant-picker-dropdown-light .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+	border: 1px solid #15803d !important;
+}
+
 
 
 

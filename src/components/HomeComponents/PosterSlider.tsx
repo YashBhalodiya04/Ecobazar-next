@@ -30,11 +30,11 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides }) => {
       effect="fade"
       pagination={{ clickable: true }}
       navigation
-      className="home-slider"
+      className="home-slider mt-4"
     >
       {slides.map((slide) => (
         <SwiperSlide key={slide._id}>
-          <div className="w-full bg-white flex items-center justify-between p-8 rounded-3xl">
+          <div className="w-full bg-white flex items-center justify-between p-8 rounded-2xl">
             <div className="flex flex-col items-start justify-center h-full gap-4 w-1/2 sm:w-full z-10">
               <p className="text-sm text-green-600 uppercase tracking-wide">
                 {slide?.title}

@@ -22,7 +22,9 @@ import { CommonApiInterface } from "@/interfaces/commonInterace";
 import { apis } from "@/redux/apiUrls";
 import { CategoryGrigRecord } from "@/interfaces/CategoryInterface";
 import { CategoryFormData, categorySchema } from "@/schemas/authSchemas";
-
+import CommonButton from "@/components/common/CommonButton";
+import { RxCross1 } from "react-icons/rx";
+import { FaSave } from "react-icons/fa";
 
 interface ModalProps {
   isModalOpen: boolean;
@@ -188,27 +190,27 @@ const AddCategoryModal: React.FC<ModalProps> = ({
           setIsModalOpen(false);
         }}
         footer={[
-          <Button
-            key="cancel"
+          <CommonButton
+            themeType="cancel"
             onClick={() => {
               reset();
               setFileList([]);
               setIsModalOpen(false);
             }}
-            className="!bg-gray-700 !text-white hover:!bg-gray-600 rounded-lg"
-          >
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            htmlType="submit"
+            icon={<RxCross1 />}
+            children="Cancel"
+            key="cancel"
+            className="mt-3"
+          />,
+          <CommonButton
+            themeType="dark"
             form="addCategoryForm"
-            className="!bg-blue-600 hover:!bg-blue-500 !text-white rounded-lg shadow-md"
+            htmlType="submit"
+            icon={<FaSave />}
+            key="save"
             onClick={handleOk}
-          >
-            Add
-          </Button>,
+            children={editData ? "Update" : "Add"}
+          />,
         ]}
         centered
         className="dark-modal rounded-xl"
@@ -253,7 +255,7 @@ const AddCategoryModal: React.FC<ModalProps> = ({
               maxCount={1}
             >
               {fileList.length >= 1 ? null : (
-                <div>
+                <div className="text-white">
                   <UploadOutlined />
                   <div style={{ marginTop: 8 }}>Upload</div>
                 </div>

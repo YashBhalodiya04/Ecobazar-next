@@ -52,7 +52,6 @@ export const POST = async (req: Request) => {
         subject: `New message from ${name}`,
         text: name,
       });
-      // console.log(respnse?.accepted?.length > 0)
     }
     await newUser.save();
 

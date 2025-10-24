@@ -46,6 +46,18 @@ export const SaveSlider = async (
       if (!isExistSlider) {
         return commonResponse(false, "Slider not found", "", 404);
       }
+
+      if (isExistSlider?.active && !data.active) {
+        const activeCount = await MainSliderModal.countDocuments({
+          active: true,
+        });
+        if (activeCount <= 1) {
+          return commonResponse(
+            false,
+            "At least one slider must remain active. You cannot deactivate all sliders."
+          );
+        }
+      }
     }
 
     if (duplicate) {
@@ -56,7 +68,7 @@ export const SaveSlider = async (
     const toDate = dayjs(data.todate);
 
     if (!fromDate.isValid() || !toDate.isValid()) {
-      return commonResponse(false, "Invalid date format", "", 400);
+      return commonResponse(false, "Invalid date format", "", 200);
     }
 
     if (fromDate.isAfter(toDate)) {
@@ -64,14 +76,14 @@ export const SaveSlider = async (
         false,
         "'From Date' cannot be after 'To Date'",
         "",
-        400
+        200
       );
     }
 
     // ✅ Check overlap
     const overlapQuery: any = {
       fromDate: { $lte: toDate.toDate() },
-      to: { $gte: fromDate.toDate() },
+      toDate: { $gte: fromDate.toDate() },
       active: true,
     };
 
@@ -100,9 +112,9 @@ export const SaveSlider = async (
         description: data.description,
         image: imgurl,
         fromDate: fromDate.toDate(),
-        to: toDate.toDate(),
+        toDate: toDate.toDate(),
         user: toObjectId(context?.user?.id),
-        active: true,
+        active: data?.active,
       });
       await slider.save();
       return commonResponse(true, "", "Slider created successfully", 200);
@@ -113,8 +125,8 @@ export const SaveSlider = async (
         description: data.description,
         image: imgurl,
         fromDate: fromDate.toDate(),
-        to: toDate.toDate(),
-        active: true,
+        toDate: toDate.toDate(),
+        active: data?.active,
       });
       return commonResponse(true, "", "Slider updated successfully", 200);
     }

@@ -10,6 +10,7 @@ interface CommonInputProps extends InputHTMLAttributes<HTMLInputElement> {
   isForgate?: boolean;
   isPassword?: boolean;
   focusColor?: "green" | "blue";
+  render?: React.ReactNode; // <-- add this
 }
 
 const CommonInput: React.FC<CommonInputProps> = ({
@@ -19,6 +20,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
   isForgate,
   isPassword = false,
   focusColor = "green",
+  render, // <-- new
   ...rest
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(true);
@@ -26,8 +28,8 @@ const CommonInput: React.FC<CommonInputProps> = ({
   const togglePassword = () => setShowPassword(!showPassword);
   const focusClasses =
     focusColor === "green"
-      ? "focus:ring-1 focus:ring-green-700 focus:border-green-500"
-      : "focus:ring-1 focus:ring-blue-700 focus:border-blue-500";
+      ? "focus:ring-1 focus:ring-green-700 focus:border-green-500 hover:border-green-500"
+      : "focus:ring-1 focus:ring-blue-700 focus:border-blue-500 hover:border-blue-500";
 
   return (
     <div className="w-full relative">
@@ -46,25 +48,31 @@ const CommonInput: React.FC<CommonInputProps> = ({
       </div>
 
       <div className="mt-2 relative">
-        <input
-          type={isPassword ? (!showPassword ? "text" : "password") : "text"}
-          id={id}
-          // className="w-full px-3 py-2 rounded-md bg-transparent border border-white/40 placeholder:text-white/50 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-          className={`w-full px-3 py-2 rounded-md bg-transparent border border-white/40 placeholder:text-white/50 text-white focus:outline-none ${focusClasses}`}
-          {...rest}
-        />
-        {isPassword && (
-          <button
-            type="button"
-            onClick={togglePassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
-          >
-            {showPassword ? (
-              <MdVisibilityOff size={20} />
-            ) : (
-              <MdVisibility size={20} />
+        {render ? (
+          render
+        ) : (
+          <>
+            <input
+              type={isPassword ? (!showPassword ? "text" : "password") : "text"}
+              id={id}
+              // className="w-full px-3 py-2 rounded-md bg-transparent border border-white/40 placeholder:text-white/50 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className={`w-full px-3 py-2 rounded-md bg-transparent border border-white/40 placeholder:text-white/50 text-white focus:outline-none ${focusClasses}`}
+              {...rest}
+            />
+            {isPassword && (
+              <button
+                type="button"
+                onClick={togglePassword}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
+              >
+                {showPassword ? (
+                  <MdVisibilityOff size={20} />
+                ) : (
+                  <MdVisibility size={20} />
+                )}
+              </button>
             )}
-          </button>
+          </>
         )}
       </div>
 

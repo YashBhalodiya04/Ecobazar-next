@@ -69,3 +69,15 @@ export const categorySchema = z.object({
 });
 
 export type CategoryFormData = z.infer<typeof categorySchema>;
+
+export const mainSliderSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  imagepath: z.string().optional(),
+  sliderid: z.string().optional(),
+  fromdate: z.string().min(1, "From date is required"),
+  todate: z.string().min(1, "To date is required"),
+  active: z.boolean(),
+});
+
+export type MainSliderSchemaType = z.infer<typeof mainSliderSchema>;

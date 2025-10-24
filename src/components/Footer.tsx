@@ -88,7 +88,7 @@ const Footer = () => {
       </div>
       <hr className="w-full" />
       <div className="w-full flex items-center justify-center ">
-        <p>Ecobazar eCommerce © 2024. All Rights Reserved</p>
+        <p>Ecobazar eCommerce © {new Date().getFullYear()}. All Rights Reserved</p>
       </div>
     </div>
   );
