@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useState } from "react";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "./Navbar";
@@ -24,41 +24,66 @@ export default function MasterLayout({
   masterName = "",
 }: MasterLayoutProps) {
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  //   useEffect(() => {
-  //     if (isAuth) {
-  //       const token = localStorage.getItem("token");
-  //       if (!token) {
-  //         router.push("/"); // redirect if not logged in
-  //       }
-  //     }
-  //   }, [isAuth, router]);
+  // Uncomment if you want auth protection:
+  // useEffect(() => {
+  //   if (isAuth) {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) router.push("/");
+  //   }
+  // }, [isAuth, router]);
 
   if (isShowSidebar) {
     return (
-      <div className="flex min-h-screen bg-black text-white">
-        {/* Sidebar */}
-        <Sidebar />
+      <div className="flex h-screen bg-black text-white overflow-hidden">
+        <Sidebar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="sticky top-0 z-30 flex items-center justify-between bg-zinc-900 border-b border-zinc-800 px-4 md:px-6 py-3 shadow-sm">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="md:hidden p-2 rounded-lg hover:bg-zinc-800 transition-colors"
+                aria-label="Toggle menu"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
 
-        {/* Main Section */}
-        <div className="flex-1 flex flex-col">
-          {/* ✅ Top Navbar */}
-          <header className="sticky top-0 z-20 flex items-center justify-between bg-zinc-900 border-b border-zinc-800 px-6 py-3 shadow-sm">
-            <h1 className="text-xl font-semibold tracking-wide text-white">
-              {masterName}
-            </h1>
+              <h1 className="text-lg md:text-xl font-semibold tracking-wide text-white truncate">
+                {masterName}
+              </h1>
+            </div>
           </header>
 
-          {/* ✅ Page Content */}
-          <main className="flex-1 p-6 overflow-y-auto ">{children}</main>
+          {/* Page Content */}
+          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-zinc-950 p-4 md:p-6">
+            <div className="max-w-full">{children}</div>
+          </main>
         </div>
       </div>
     );
   }
+
+  // Layout without sidebar
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen  text-white">
       {showNavbar && <Navbar />}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 p-4 md:p-6">{children}</main>
       {showFooter && <Footer />}
     </div>
   );

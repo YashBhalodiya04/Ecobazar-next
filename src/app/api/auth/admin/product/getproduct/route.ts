@@ -3,7 +3,12 @@ import { withAuth } from "@/helper/withAuth";
 import { ContexInterface } from "@/interfaces/commonInterace";
 import { ProductGetAllPayload } from "@/interfaces/ProductInterface";
 import dbconnect from "@/lib/dbConnect";
-import ProductModal, { Product } from "@/model/Product";
+import ProductModal, {
+  Product,
+  ProductImage,
+  ProductInfoField,
+  ProductInfoSection,
+} from "@/model/Product";
 import { NextRequest } from "next/server";
 import { toObjectId } from "../../../../../../lib/helper";
 import { FilterQuery } from "mongoose";
@@ -23,7 +28,7 @@ export const GetProduct = async (
     }
     const { search = "", page = 1, pagesize = 10, categoryid } = body;
 
-    const query: FilterQuery<Product> = { active: true };
+    const query: FilterQuery<Product> = {};
     if (categoryid) {
       query.category = categoryid;
     }
@@ -81,11 +86,13 @@ export const GetProduct = async (
           name: 1,
           description: 1,
           price: 1,
-          image: 1,
+          images: 1,
           stock: 1,
           active: 1,
           categoryName: "$categoryInfo.name",
           categoryid: "$category",
+          offer: { $ifNull: ["$offer", {}] },
+          additionalInfo: { $ifNull: ["$additionalInfo", []] },
         },
       },
       { $sort: { createdAt: -1 } },
@@ -98,11 +105,33 @@ export const GetProduct = async (
         name: item?.name,
         description: item?.description,
         price: item?.price,
-        image: item?.image,
         category: item?.categoryName ?? "",
         stock: item?.stock,
         active: item?.active,
         categoryid: item?.categoryid,
+        images:
+          item?.images?.map((image: ProductImage) => {
+            return {
+              id: image?._id,
+              url: image?.url,
+            };
+          }) ?? [],
+        offer: item?.offer,
+        additionalInfo: item?.additionalInfo?.map(
+          (item: ProductInfoSection) => {
+            return {
+              id: item?._id,
+              title: item?.title,
+              fields: item?.fields?.map((item: ProductInfoField) => {
+                return {
+                  id: item?._id,
+                  label: item?.label,
+                  value: item?.value,
+                };
+              }),
+            };
+          }
+        ),
       })),
       recordsFiltered: totalFilteredCount,
       recordsTotal: totalCount,

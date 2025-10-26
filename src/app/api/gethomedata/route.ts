@@ -34,7 +34,7 @@ export const GetSliders = async (
       "name image _id"
     );
     const productdata = await ProductModal.find({ active: true }).select(
-      "name image _id stock price"
+      "name images price _id averageRating"
     );
     const response: HomeDataResponse = {
       slidersData: sliderdata?.map((item) => {
@@ -56,10 +56,9 @@ export const GetSliders = async (
         return {
           id: item?._id?.toString() || "",
           name: item?.name || "",
-          image: item?.image || "",
+          image: item?.images?.find((img) => img?.isMain)?.url || "",
           price: item?.price || 0,
           rating: item?.averageRating || 0,
-          stock: item?.stock || 0,
         };
       }),
     };

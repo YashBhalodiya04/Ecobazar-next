@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BsCartCheck, BsFillPersonFill } from "react-icons/bs";
 import { FiMenu } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
+
 const navbarLinks = [
   {
     path: "/",
@@ -26,68 +27,88 @@ const navbarLinks = [
 const Navbar = () => {
   const [isManuOpen, setIsManuOpen] = useState<boolean>(false);
   const isLoggedIn = false;
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isManuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isManuOpen]);
+
   return (
-    <nav className="w-full flex justify-between items-center rounded overflow-hidden shadow-md px-20 py-4 sm:px-2 sm:py-3 bg-white">
-      <div className="flex flex-row justify-between items-center cursor-pointer select-none ">
-        <Link href="/" className="flex flex-row justify-between items-center">
-          <img src="/media/logo.svg" alt="LOGO" className="h-full" />
-          {/* <h1 className=" font-serif font-medium text-[32px] text-white sm:text-lg">
-            Ecobazar
-          </h1> */}
+    <nav className="w-full flex justify-between items-center shadow-md px-4 sm:px-6 md:px-10 lg:px-20 py-3 md:py-4 bg-white sticky top-0 z-50">
+      {/* Logo */}
+      <div className="flex items-center cursor-pointer select-none">
+        <Link href="/" className="flex items-center">
+          <img
+            src="/media/logo.svg"
+            alt="LOGO"
+            className="h-8 md:h-10 lg:h-12 w-auto"
+          />
         </Link>
       </div>
 
-      <div
-        className={`flex items-center justify-between gap-4 sm:hidden md:hidden`}
-      >
-        {navbarLinks.map((item, id) => {
-          return (
-            <Link href={item.path} key={id}>
-              <li className=" block text-black p-2">{item.name}</li>
-            </Link>
-          );
-        })}
-      </div>
+      {/* Desktop Navigation Links */}
+      <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-8">
+        {navbarLinks.map((item, id) => (
+          <Link href={item.path} key={id}>
+            <li className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 cursor-pointer">
+              {item.name}
+            </li>
+          </Link>
+        ))}
+      </ul>
 
-      <div className="flex items-center justify-end gap-4 sm:hidden md:hidden ">
+      {/* Desktop Action Buttons */}
+      <div className="hidden lg:flex items-center gap-3">
         {!isLoggedIn && (
           <>
-            <button
-              type="button"
-              className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            >
-              <Link href="/login">Login</Link>
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            >
-              <Link href="/signup">Signup</Link>
-            </button>
+            <Link href="/login">
+              <button
+                type="button"
+                className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-green-600 border-2 border-green-600 transition-all duration-200"
+              >
+                Login
+              </button>
+            </Link>
+            <Link href="/signup">
+              <button
+                type="button"
+                className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-green-600 border-2 border-green-600 transition-all duration-200"
+              >
+                Signup
+              </button>
+            </Link>
           </>
         )}
         {isLoggedIn && (
           <>
-            <button
-              type="button"
-              className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            >
-              <Link href="/api/v1/user/cart">
+            <Link href="/api/v1/user/cart">
+              <button
+                type="button"
+                className="rounded-md bg-green-600 p-2.5 text-white shadow-sm hover:bg-white hover:text-green-600 border-2 border-green-600 transition-all duration-200"
+                aria-label="Cart"
+              >
                 <BsCartCheck className="text-xl" />
-              </Link>
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            >
-              <Link href="/api/v1/user/profile">
+              </button>
+            </Link>
+            <Link href="/api/v1/user/profile">
+              <button
+                type="button"
+                className="rounded-md bg-green-600 p-2.5 text-white shadow-sm hover:bg-white hover:text-green-600 border-2 border-green-600 transition-all duration-200"
+                aria-label="Profile"
+              >
                 <BsFillPersonFill className="text-xl" />
-              </Link>
-            </button>
+              </button>
+            </Link>
             <button
               type="button"
-              // onClick={Logoutbtn}
-              className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+              className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-green-600 border-2 border-green-600 transition-all duration-200"
             >
               Logout
             </button>
@@ -95,105 +116,126 @@ const Navbar = () => {
         )}
       </div>
 
-      <div className="lg:hidden sm:block md:block z-0">
-        <FiMenu
-          className="text-3xl text-gray-700 cursor-pointer"
-          onClick={() => setIsManuOpen(true)}
-        />
-      </div>
-
-      {/* Sidebar */}
-
-      <div
-        className={`${
-          isManuOpen
-            ? " visible md:w-full md:fixed md:h-full md:top-0  md:backdrop-blur-sm  md:right-0 z-[900]"
-            : "-right-full hidden"
-        }`}
+      {/* Mobile Menu Button */}
+      <button
+        className="lg:hidden text-gray-700 hover:text-green-600 transition-colors"
+        onClick={() => setIsManuOpen(true)}
+        aria-label="Open menu"
       >
-        <nav className="w-[40%] sm:w-[60%] h-full absolute top-0 right-0 p-8 flex flex-col justify-between bg-gray-100 gap-6 lg:hidden">
-          <div className="self-end mr-10">
-            <IoMdClose
-              className="text-3xl text-gray-600 cursor-pointer hover:text-black"
+        <FiMenu className="text-3xl" />
+      </button>
+
+      {/* Mobile Sidebar Overlay */}
+      {isManuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[998] lg:hidden"
+          onClick={() => setIsManuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <aside
+        className={`
+          fixed top-0 right-0 h-full w-[280px] sm:w-[320px] md:w-[360px]
+          bg-white shadow-2xl z-[999]
+          transform transition-transform duration-300 ease-in-out
+          lg:hidden
+          ${isManuOpen ? "translate-x-0" : "translate-x-full"}
+        `}
+      >
+        <div className="flex flex-col h-full p-6">
+          {/* Close Button */}
+          <div className="flex justify-end mb-8">
+            <button
               onClick={() => setIsManuOpen(false)}
-            />
+              className="text-gray-600 hover:text-green-600 transition-colors"
+              aria-label="Close menu"
+            >
+              <IoMdClose className="text-3xl" />
+            </button>
           </div>
 
-          <div className="flex flex-col gap-12 md:gap-6">
-            {navbarLinks.map((item, id) => {
-              return (
-                <Link
-                  href={item.path}
-                  key={id}
-                  onClick={() => setIsManuOpen(false)}
-                  className="text-lg hover:font-semibold hover:pl-1 transition-all cursor-pointer"
-                >
-                  {item.name}
-                </Link>
-              );
-            })}
-          </div>
+          {/* Mobile Navigation Links */}
+          <nav className="flex flex-col gap-6 mb-8 flex-1">
+            {navbarLinks.map((item, id) => (
+              <Link
+                href={item.path}
+                key={id}
+                onClick={() => setIsManuOpen(false)}
+                className="text-lg font-medium text-gray-700 hover:text-green-600 hover:pl-2 transition-all duration-200"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
 
-          <div className="flex items-center justify-center gap-3">
+          {/* Mobile Action Buttons */}
+          <div className="flex flex-col gap-3 pt-6 border-t border-gray-200">
             {!isLoggedIn && (
               <>
-                <button
-                  type="button"
-                  className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                >
-                  <Link href="/login" onClick={() => setIsManuOpen(false)}>
+                <Link href="/login" onClick={() => setIsManuOpen(false)}>
+                  <button
+                    type="button"
+                    className="w-full rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-700 transition-colors duration-200"
+                  >
                     Login
-                  </Link>
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                >
-                  <Link href="/signup" onClick={() => setIsManuOpen(false)}>
+                  </button>
+                </Link>
+                <Link href="/signup" onClick={() => setIsManuOpen(false)}>
+                  <button
+                    type="button"
+                    className="w-full rounded-md bg-white border-2 border-green-600 px-4 py-3 text-sm font-semibold text-green-600 shadow-sm hover:bg-green-50 transition-colors duration-200"
+                  >
                     Signup
-                  </Link>
-                </button>
+                  </button>
+                </Link>
               </>
             )}
             {isLoggedIn && (
-              <>
-                <button
-                  type="button"
-                  className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                >
-                  <Link href="/api/v1/user/cart">
-                    <BsCartCheck
-                      className="text-xl"
-                      onClick={() => setIsManuOpen(false)}
-                    />
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-3">
+                  <Link
+                    href="/api/v1/user/cart"
+                    onClick={() => setIsManuOpen(false)}
+                    className="flex-1"
+                  >
+                    <button
+                      type="button"
+                      className="w-full rounded-md bg-green-600 p-3 text-white shadow-sm hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                    >
+                      <BsCartCheck className="text-xl" />
+                      <span className="text-sm font-semibold">Cart</span>
+                    </button>
                   </Link>
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                >
-                  <Link href="/api/v1/user/profile">
-                    <BsFillPersonFill
-                      className="text-xl"
-                      onClick={() => setIsManuOpen(false)}
-                    />
+                  <Link
+                    href="/api/v1/user/profile"
+                    onClick={() => setIsManuOpen(false)}
+                    className="flex-1"
+                  >
+                    <button
+                      type="button"
+                      className="w-full rounded-md bg-green-600 p-3 text-white shadow-sm hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                    >
+                      <BsFillPersonFill className="text-xl" />
+                      <span className="text-sm font-semibold">Profile</span>
+                    </button>
                   </Link>
-                </button>
+                </div>
                 <button
                   type="button"
                   onClick={() => {
                     // Logoutbtn();
                     setIsManuOpen(false);
                   }}
-                  className="rounded-md bg-green-600 px-3 py-2 text-sm hover:text-green-700 hover:bg-white font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                  className="w-full rounded-md bg-white border-2 border-green-600 px-4 py-3 text-sm font-semibold text-green-600 shadow-sm hover:bg-green-50 transition-colors duration-200"
                 >
                   Logout
                 </button>
-              </>
+              </div>
             )}
           </div>
-        </nav>
-      </div>
+        </div>
+      </aside>
     </nav>
   );
 };

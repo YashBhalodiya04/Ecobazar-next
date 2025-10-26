@@ -63,8 +63,27 @@ export interface ProductGrigRecord {
   categoryid: string;
   description: string;
   id: string;
-  image: string;
+  images: ProductImages[];
   name: string;
   price: number;
   stock: number;
+  offer?: ProductOffer;
+  additionalInfo: ProductInfoSectionData[];
+}
+
+export interface ProductImages {
+  id: string;
+  url: string;
+}
+
+export interface ProductInfoData {
+  id?: string;
+  label: string;
+  value: string;
+}
+
+export interface ProductInfoSectionData {
+  id?: string;
+  title: string;
+  fields: ProductInfoData[];
 }

@@ -12,6 +12,7 @@ interface CommonInputProps extends InputHTMLAttributes<HTMLInputElement> {
   focusColor?: "green" | "blue";
   render?: React.ReactNode; // <-- add this
   required?: boolean;
+  islabelShow?: boolean;
 }
 
 const CommonInput: React.FC<CommonInputProps> = ({
@@ -23,6 +24,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
   focusColor = "green",
   render, // <-- new
   required = false,
+  islabelShow = true,
   ...rest
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(true);
@@ -36,9 +38,11 @@ const CommonInput: React.FC<CommonInputProps> = ({
   return (
     <div className="w-full relative">
       <div className="flex items-center justify-between">
-        <label htmlFor={id} className="text-base font-medium text-white/90">
-          {label} {required && <span className="text-red-400">*</span>}
-        </label>
+        {islabelShow && (
+          <label htmlFor={id} className="text-base font-medium text-white/90">
+            {label} {required && <span className="text-red-400">*</span>}
+          </label>
+        )}
         {isForgate && (
           <Link
             href="/"

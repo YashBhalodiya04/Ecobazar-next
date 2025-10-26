@@ -22,8 +22,10 @@ import { ColumnsType } from "antd/es/table";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { FaFilter, FaPlus } from "react-icons/fa6";
+import { FaEye, FaFilter, FaPlus } from "react-icons/fa6";
 import AddProductModal from "./AddProductModal";
+import ViewUploadFileModal from "./ViewUploadFileModal";
+import AddOtherInformationModal from "./AddOtherInformationModal";
 
 const ProductPage: React.FC = () => {
   const router = useRouter();
@@ -40,8 +42,12 @@ const ProductPage: React.FC = () => {
   const [categories, setCategories] = useState<ProductGrigRecord[]>([]);
   const [SearchText, setSearchText] = useState<string>("");
 
+  const [isImageModalOpen, setisImageModalOpen] = useState<boolean>(false);
+  const [isOtherInformationModalOpen, setisOtherInformationModalOpen] =
+    useState<boolean>(false);
+
   const [isModalOpen, setisModalOpen] = useState<boolean>(false);
-  const [editData, setEditData] = useState<any | null>(null);
+  const [editData, setEditData] = useState<ProductGrigRecord | null>(null);
 
   const [isFIlterOpen, setisFIlterOpen] = useState<boolean>(false);
   const [selectedCategory, setselectedCategory] = useState<any>({});
@@ -54,10 +60,10 @@ const ProductPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!isModalOpen) {
+    if (!isModalOpen && !isImageModalOpen) {
       setEditData(null);
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, isImageModalOpen]);
 
   const handleEdit = (record: ProductGrigRecord) => {
     setEditData(record);
@@ -190,20 +196,33 @@ const ProductPage: React.FC = () => {
       width: 100,
     },
     {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
+      title: "Images",
       width: 200,
-      className: "flex justify-center",
-      render: (url) => (
-        <div className="flex justify-center ">
-          <Image
-            src={url}
-            alt="Category"
-            width={80}
-            height={60}
-            className="rounded-md border border-zinc-700 object-cover"
-            preview={true}
+      align: "center",
+      render: (_, field) => (
+        <div className="flex justify-center">
+          <FaEye
+            className="cursor-pointer"
+            onClick={() => {
+              setEditData(field);
+              setisImageModalOpen(true);
+            }}
+          />
+        </div>
+      ),
+    },
+    {
+      title: "Additional Info",
+      width: 200,
+      align: "center",
+      render: (_, field) => (
+        <div className="flex justify-center">
+          <FaPlus
+            className="cursor-pointer"
+            onClick={() => {
+              setEditData(field);
+              setisOtherInformationModalOpen(true);
+            }}
           />
         </div>
       ),
@@ -294,7 +313,7 @@ const ProductPage: React.FC = () => {
   return (
     <>
       <CommonLoader loading={loading} />
-      <div className="bg-zinc-950 text-zinc-100 p-6 rounded-lg">
+      <div className="bg-zinc-950 text-zinc-100 p-6 h-full w-full rounded-lg">
         <div className="flex justify-between align-end mb-6">
           <div className="w-1/3 sm:w-full">
             <CommonInput
@@ -372,7 +391,7 @@ const ProductPage: React.FC = () => {
           columns={columns}
           dataSource={categories}
           onChange={handleChange}
-          rowKey="categoryid"
+          rowKey="id"
           rowClassName={(record: any, index: number) => {
             return index % 2 === 0 ? "odd-row" : "even-row";
           }}
@@ -408,6 +427,18 @@ const ProductPage: React.FC = () => {
         setLoading={setLoading}
         editData={editData}
         categoryDropdownData={dropdownData}
+      />
+      <ViewUploadFileModal
+        isModalOpen={isImageModalOpen}
+        setIsModalOpen={setisImageModalOpen}
+        editData={editData}
+      />
+      <AddOtherInformationModal
+        isModalOpen={isOtherInformationModalOpen}
+        setIsModalOpen={setisOtherInformationModalOpen}
+        editData={editData}
+        setLoading={setLoading}
+        ferchGridData={fetchGridData}
       />
     </>
   );

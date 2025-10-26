@@ -28,6 +28,8 @@ import { apis } from "@/redux/apiUrls";
 import CommonButton from "@/components/common/CommonButton";
 import { RxCross1 } from "react-icons/rx";
 import { FaSave } from "react-icons/fa";
+import CommonDatePicker from "@/components/common/CommonDatePicker";
+import dayjs from "dayjs";
 
 interface ModalProps {
   isModalOpen: boolean;
@@ -49,12 +51,20 @@ const AddProductModal: React.FC<ModalProps> = ({
   const router = useRouter();
   const [request, { isLoading }] = useRequestMutation();
 
+  const [isOfferEnabled, setIsOfferEnabled] = useState<boolean>(false);
+
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] = useState<string>("");
+
   const {
     register,
     handleSubmit,
     setValue,
     reset,
     watch,
+    control,
+    getValues,
     formState: { errors },
   } = useForm<ProductCreateInput>({
     resolver: zodResolver(ProductCreateSchema),
@@ -64,13 +74,15 @@ const AddProductModal: React.FC<ModalProps> = ({
       price: "",
       stock: "",
       active: true,
+      hasOffer: false,
+      offer: {
+        title: "",
+        discountPercent: "",
+        validUntil: "",
+        description: "",
+      },
     },
   });
-
-  // Upload state
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
-  const [previewImage, setPreviewImage] = useState<string>("");
 
   const [selectedCategory, setselectedCategory] =
     useState<CommonDropdownOptions>();
@@ -85,17 +97,23 @@ const AddProductModal: React.FC<ModalProps> = ({
       setselectedCategory(
         categoryDropdownData?.find((item) => item?.id == editData?.categoryid)
       );
-
-      if (editData.image) {
-        setFileList([
-          {
-            uid: "-1",
-            name: "existing_image.png",
-            status: "done",
-            url: editData.image, // this should be a full URL
-          },
-        ]);
-        setPreviewImage(editData.image);
+      const offerData = {
+        title: editData?.offer?.title || "",
+        discountPercent: String(editData?.offer?.discountPercent) || "",
+        validUntil: editData?.offer?.validUntil || "",
+        description: editData?.offer?.description || "",
+      };
+      setIsOfferEnabled(!!editData?.offer?.title);
+      setValue("offer", offerData);
+      setValue("hasOffer", !!editData?.offer?.title);
+      if (editData?.images) {
+        const images: UploadFile[] = editData.images.map((image) => ({
+          uid: image.id,
+          name: "existing_image.png",
+          status: "done" as UploadFile["status"], // <-- assert the correct type
+          url: image.url,
+        }));
+        setFileList(images);
       }
     }
   }, [editData, isModalOpen]);
@@ -108,17 +126,21 @@ const AddProductModal: React.FC<ModalProps> = ({
   const handleChange: UploadProps["onChange"] = async ({
     fileList: newFileList,
   }) => {
-    // Limit to max 5 files
     if (newFileList.length > 5) {
       Toast.error("You can upload a maximum of 5 images.");
       return;
     }
 
-    // Validate each new file
     const validatedFiles: typeof newFileList = [];
-    for (const file of newFileList) {
-      if (!file.originFileObj) continue;
 
+    for (const file of newFileList) {
+      // Keep existing files from DB
+      if (!file.originFileObj) {
+        validatedFiles.push(file);
+        continue;
+      }
+
+      // Validate new files
       const isRestrict = isRestrictedFile(file.originFileObj.name);
       if (isRestrict?.valid) {
         Toast.error(`${isRestrict?.message}`);
@@ -158,10 +180,30 @@ const AddProductModal: React.FC<ModalProps> = ({
   };
 
   const handleOk = handleSubmit(async (data) => {
-    if (!data?.imagepath && fileList?.length === 0) {
+    if (fileList?.length === 0) {
       Toast.error("Please upload an image");
       return;
     }
+
+    if (!selectedCategory?.id) {
+      Toast.error("Please select a category");
+      return;
+    }
+
+    const imageData = fileList?.map((item) => {
+      return {
+        id: item?.name === "existing_image.png" ? "" : item?.uid,
+        url: item?.url || "",
+      };
+    });
+    const offerData = isOfferEnabled
+      ? {
+          title: data.offer?.title || "",
+          discountPercent: Number(data.offer?.discountPercent) || 0,
+          validUntil: data.offer?.validUntil || "",
+          description: data.offer?.description || "",
+        }
+      : undefined;
 
     const payload = {
       name: data?.name,
@@ -171,11 +213,17 @@ const AddProductModal: React.FC<ModalProps> = ({
       stock: Number(data?.stock),
       productid: editData?.id,
       active: data?.active,
+      images: imageData,
+      offer: offerData,
     };
     const formdata = new FormData();
     formdata.append("data", JSON.stringify(payload));
-    if (fileList?.length > 0 && fileList[0].originFileObj) {
-      formdata.append("files", fileList[0].originFileObj);
+    if (fileList?.length > 0) {
+      fileList.forEach((file) => {
+        if (file.originFileObj) {
+          formdata.append("files", file.originFileObj);
+        }
+      });
     } else {
       formdata.append("files", "");
     }
@@ -212,6 +260,7 @@ const AddProductModal: React.FC<ModalProps> = ({
           {editData ? "Edit" : "Add"} Product
         </span>
       }
+      width={900}
       open={isModalOpen}
       onCancel={() => {
         setFileList([]);
@@ -251,69 +300,64 @@ const AddProductModal: React.FC<ModalProps> = ({
         className="space-y-4 text-gray-200"
         onSubmit={handleOk}
       >
-        {/* Name */}
-        <CommonInput
-          id="name"
-          label="Name"
-          type="text"
-          placeholder="Enter product name"
-          {...register("name")}
-          errorMessage={errors.name?.message}
-          focusColor="blue"
-          required
-        />
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+          <CommonInput
+            id="name"
+            label="Product Name"
+            type="text"
+            placeholder="Enter product name"
+            {...register("name")}
+            errorMessage={errors.name?.message}
+            focusColor="blue"
+            required
+          />
 
-        {/* Description */}
+          <CommonInput
+            id="price"
+            label="Price"
+            type="text"
+            placeholder="Enter price"
+            {...register("price")}
+            errorMessage={errors.price?.message}
+            focusColor="blue"
+            required
+          />
+
+          <CommonInput
+            id="stock"
+            label="Stock"
+            type="text"
+            placeholder="Enter stock quantity"
+            {...register("stock")}
+            errorMessage={errors.stock?.message}
+            focusColor="blue"
+            required
+          />
+
+          <div>
+            <label className="block font-medium mb-2 text-gray-300">
+              Category <span className="text-red-400">*</span>
+            </label>
+            <CommonSelect
+              options={categoryDropdownData}
+              onChange={(e) => setselectedCategory(e)}
+              value={selectedCategory}
+              placeholder="Select category"
+            />
+          </div>
+        </div>
         <CommonInput
           id="description"
           label="Description"
           type="text"
-          placeholder="Enter description"
+          placeholder="Enter product description"
           {...register("description")}
           errorMessage={errors.description?.message}
-          focusColor="blue"
           required
+          focusColor="blue"
         />
 
-        {/* Price */}
-        <CommonInput
-          id="price"
-          label="Price"
-          type="text"
-          placeholder="Enter price"
-          {...register("price")}
-          errorMessage={errors.price?.message}
-          focusColor="blue"
-          required
-        />
-
-        {/* Stock */}
-        <CommonInput
-          id="stock"
-          label="Stock"
-          type="text"
-          placeholder="Enter stock quantity"
-          {...register("stock")}
-          errorMessage={errors.stock?.message}
-          focusColor="blue"
-          required
-        />
-
-        {/* Category Dropdown */}
-        <div>
-          <label className="block font-medium mb-1 text-gray-300">
-            Category <span className="text-red-400">*</span>
-          </label>
-          <CommonSelect
-            options={categoryDropdownData}
-            onChange={(e) => setselectedCategory(e)}
-            value={selectedCategory}
-            placeholder="Select category"
-            focusColor="blue"
-          />
-        </div>
-
-        {/* Image Upload */}
+        {/* === Image Upload === */}
         <div>
           <label className="block font-medium mb-1 text-gray-300">
             Images <span className="text-red-400">*</span>
@@ -334,12 +378,6 @@ const AddProductModal: React.FC<ModalProps> = ({
               </div>
             )}
           </Upload>
-          {errors.imagepath && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.imagepath.message}
-            </p>
-          )}
-
           {previewImage && (
             <Image
               wrapperStyle={{ display: "none" }}
@@ -353,7 +391,69 @@ const AddProductModal: React.FC<ModalProps> = ({
           )}
         </div>
 
-        {/* Active Switch */}
+        {/* === Offer Section === */}
+        <div className="flex items-center justify-between pt-4">
+          <label className="font-medium text-gray-300">Offer</label>
+          <Switch
+            checked={isOfferEnabled}
+            onChange={(checked) => setIsOfferEnabled(checked)}
+            className="bg-gray-600"
+          />
+        </div>
+
+        {isOfferEnabled && (
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mt-3 ">
+            <CommonInput
+              id="offerTitle"
+              label="Offer Title"
+              type="text"
+              placeholder="Enter offer title"
+              {...register("offer.title")}
+              errorMessage={errors.offer?.title?.message}
+              focusColor="blue"
+              required
+            />
+            <CommonInput
+              id="discountPercent"
+              label="Discount (%)"
+              type="number"
+              placeholder="Enter discount percentage"
+              {...register("offer.discountPercent")}
+              errorMessage={errors.offer?.discountPercent?.message}
+              focusColor="blue"
+              required
+            />
+            <CommonDatePicker
+              id="validUntil"
+              label="Valid Until"
+              control={control}
+              name="offer.validUntil"
+              errorMessage={errors.offer?.validUntil?.message}
+              focusColor="blue"
+              minDate={
+                getValues("offer.validUntil")
+                  ? dayjs(getValues("offer.validUntil"))
+                  : dayjs()
+              }
+              placeholder="Select to date"
+              format={{
+                format: "DD-MM-YYYY",
+                type: "mask",
+              }}
+            />
+            <CommonInput
+              id="offerDescription"
+              label="Offer Description"
+              type="text"
+              placeholder="Enter offer description"
+              {...register("offer.description")}
+              errorMessage={errors.offer?.description?.message}
+              focusColor="blue"
+            />
+          </div>
+        )}
+
+        {/* === Active Switch === */}
         <div className="flex items-center justify-between pt-2">
           <label className="font-medium text-gray-300">Active</label>
           <Switch

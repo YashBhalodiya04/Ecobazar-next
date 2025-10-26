@@ -79,7 +79,6 @@ export const CreateProduct = async (
       url: img.url,
       isMain: img.isMain || false,
     }));
-
     // --- Handle new uploads ---
     if (files && files.length > 0) {
       const uploadPromises = files.map((file) =>
@@ -93,7 +92,7 @@ export const CreateProduct = async (
         isMain: uploadedImages?.length ? false : i === 0, // first if none main
       }));
 
-      uploadedImages = [...(uploadedImages || []), ...newUploads];
+      uploadedImages = [...(uploadedImages || []), ...newUploads].filter((item) => item?.url);
     }
 
     // --- If editing (data.productid exists), remove deleted images from Cloudinary ---

@@ -26,7 +26,7 @@
   /* Table Header Styles */
   [&_.ant-table-thead_th]:!bg-[#1f2937] [&_.ant-table-thead_th]:!text-gray-200
   [&_.ant-table-thead_th.ant-table-column-has-sorters:hover]:!bg-[#1f2937]
-  [&_.ant-table-thead]:!bg-[#1f2937] [&_.ant-table-thead]:!text-gray-200 [&_.ant-table-thead]:!sticky [&_.ant-table-thead]:!top-0 [&_.ant-table-thead]:!z-[100]
+  [&_.ant-table-thead]:!bg-[#1f2937] [&_.ant-table-thead]:!text-gray-200 [&_.ant-table-thead]:!sticky [&_.ant-table-thead]:!top-0 [&_.ant-table-thead]:!z-[38]
   
   /* Table Cell Styles */
   [&_.ant-table-cell-fix-left-last]:!bg-transparent
@@ -158,108 +158,96 @@
 .ant-modal-mask {
   @apply bg-[rgba(10,10,10,0.9)] transition-colors duration-300 ease-in-out;
 }
-
-/* 🌑 Base Dark Button */
+/* ⚫ Dark / Default */
 .btn-dark {
-  background-color: #1f2937 !important; /* dark gray */
-  color: #e5e7eb !important; /* light text */
-  border: 1px solid #374151 !important;
-  transition: all 0.2s ease;
+  @apply bg-zinc-800 text-zinc-200 border border-zinc-700 rounded-md shadow-md transition-all duration-300;
 }
 .btn-dark:hover {
-  background-color: #374151 !important;
-  color: #fff !important;
+  @apply !bg-zinc-700 !text-white !shadow-lg !scale-105;
 }
-
-/* 🟢 Confirm / Primary Button */
-.btn-primary-dark {
-  background-color: #2563eb !important; /* blue-600 */
-  color: #fff !important;
-  border: none !important;
-}
-.btn-primary-dark:hover {
-  background-color: #1d4ed8 !important;
-}
-
-/* 🟥 Danger Button */
-.btn-danger-dark {
-  background-color: #dc2626 !important; /* red-600 */
-  color: #fff !important;
-  border: none !important;
-}
-.btn-danger-dark:hover {
-  background-color: #b91c1c !important;
-}
-
-/* ⚪ Cancel Button */
-.btn-cancel-dark {
-  background-color: transparent !important;
-  color: #e5e7eb !important;
-  border: 1px solid #4b5563 !important;
-}
-.btn-cancel-dark:hover {
-  background-color: #374151 !important;
-}
-
-/* 🌑 Dark Default Button */
-.btn-dark {
-  @apply bg-zinc-800 text-zinc-200 border border-zinc-700 rounded-md 
-         shadow-sm hover:bg-zinc-700 hover:text-white
-         active:bg-zinc-600 transition-all duration-200;
+.btn-dark:active {
+  @apply !bg-zinc-600 !text-white !shadow-inner !scale-95;
 }
 
 /* 🟦 Primary */
 .btn-primary-dark {
-  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-md 
-         shadow-md hover:from-blue-500 hover:to-blue-400
-         active:from-blue-700 active:to-blue-600
-         transition-all duration-200;
+  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white border !border-blue-700 rounded-md shadow-md transition-all duration-300;
+}
+.btn-primary-dark:hover {
+  @apply !from-blue-500 !to-blue-400 !shadow-lg !scale-105 !bg-blue-200 !text-blue-700;
+}
+.btn-primary-dark:active {
+  @apply !from-blue-500 !to-blue-400 !shadow-inner !scale-95 !bg-blue-200 !text-blue-700;
 }
 
 /* ⚪ Cancel / Secondary */
 .btn-cancel-dark {
-  @apply bg-transparent text-zinc-300 border border-zinc-600 rounded-md 
-         hover:bg-zinc-800 hover:text-white
-         active:bg-zinc-700 transition-all duration-200;
+  @apply bg-transparent text-zinc-300 border !border-zinc-600 rounded-md transition-all duration-300;
+}
+.btn-cancel-dark:hover {
+  @apply !bg-zinc-800 !text-white !shadow-lg !scale-105;
+}
+.btn-cancel-dark:active {
+  @apply !bg-zinc-700 !text-white !shadow-inner !scale-95;
 }
 
 /* 🟥 Danger */
 .btn-danger-dark {
-  @apply bg-gradient-to-r from-red-600 to-red-500 text-white rounded-md 
-         shadow-md hover:from-red-500 hover:to-red-400
-         active:from-red-700 active:to-red-600
-         transition-all duration-200;
+  @apply bg-gradient-to-r from-red-600 to-red-500 text-white border !border-red-700 rounded-md shadow-md transition-all duration-300;
+}
+.btn-danger-dark:hover {
+  @apply !from-red-500 !to-red-400 !shadow-lg !scale-105 !bg-red-200 !text-red-700;
+}
+.btn-danger-dark:active {
+  @apply !from-red-500 !to-red-400 !shadow-inner !scale-95 !bg-red-200 !text-red-700;
 }
 
 /* 🟩 Success */
 .btn-success-dark {
-  @apply bg-gradient-to-r from-green-600 to-green-500 text-white rounded-md
-         shadow-md hover:from-green-500 hover:to-green-400
-         active:from-green-700 active:to-green-600
-         transition-all duration-200;
+  @apply bg-gradient-to-r from-green-600 to-green-500 text-white border !border-green-700 rounded-md shadow-md transition-all duration-300;
+}
+.btn-success-dark:hover {
+  @apply !from-green-500 !to-green-400 !shadow-lg !scale-105 !bg-green-200 !text-green-700;
+}
+.btn-success-dark:active {
+  @apply !from-green-500 !to-green-400 !shadow-inner !scale-95 !bg-green-200 !text-green-700;
 }
 
 /* 🟨 Warning */
 .btn-warning-dark {
-  @apply bg-gradient-to-r from-yellow-500 to-yellow-400 text-zinc-900 rounded-md
-         shadow-md hover:from-yellow-400 hover:to-yellow-300
-         active:from-yellow-600 active:to-yellow-500
-         transition-all duration-200;
+  @apply bg-gradient-to-r from-yellow-500 to-yellow-400 text-zinc-900 border !border-yellow-600 rounded-md shadow-md transition-all duration-300;
+}
+.btn-warning-dark:hover {
+  @apply !from-yellow-400 !to-yellow-300 !shadow-lg !scale-105 !bg-yellow-200 !text-yellow-900;
+}
+.btn-warning-dark:active {
+  @apply !from-yellow-400 !to-yellow-300 !shadow-inner !scale-95 !bg-yellow-200 !text-yellow-900;
 }
 
 /* 🟪 Info / Indigo */
 .btn-info-dark {
-  @apply bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-md
-         shadow-md hover:from-indigo-500 hover:to-indigo-400
-         active:from-indigo-700 active:to-indigo-600
-         transition-all duration-200;
+  @apply bg-gradient-to-r from-indigo-600 to-indigo-500 text-white border !border-indigo-700 rounded-md shadow-md transition-all duration-300;
+}
+.btn-info-dark:hover {
+  @apply !from-indigo-500 !to-indigo-400 !shadow-lg !scale-105 !bg-indigo-200 !text-indigo-700;
+}
+.btn-info-dark:active {
+  @apply !from-indigo-500 !to-indigo-400 !shadow-inner !scale-95 !bg-indigo-200 !text-indigo-700;
 }
 
 /* ⚫ Outline / Ghost */
 .btn-outline-dark {
-  @apply border border-zinc-600 text-zinc-200 bg-transparent rounded-md
-         hover:bg-zinc-800 hover:text-white transition-all duration-200;
+  @apply bg-transparent text-zinc-200 border !border-zinc-600 rounded-md transition-all duration-300;
 }
+.btn-outline-dark:hover {
+  @apply !bg-zinc-800 !text-white !shadow-lg !scale-105;
+}
+.btn-outline-dark:active {
+  @apply !bg-zinc-700 !text-white !shadow-inner !scale-95;
+}
+
+
+
 
 .ant-select {
   @apply !h-[42px] [&_.ant-select-selector]:!bg-[#1a1a1a]

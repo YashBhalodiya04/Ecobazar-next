@@ -49,12 +49,27 @@ export const ProductCreateSchema = z
           !isNaN(Number(val)) &&
           Number.isInteger(Number(val)) &&
           Number(val) >= 0,
-        {
-          message: "Stock must be a non-negative integer",
-        }
+        { message: "Stock must be a non-negative integer" }
       ),
-    active: z.boolean().optional(),
-    imagepath: z.string().optional(),
+    active: z.boolean(),
+    hasOffer: z.boolean(),
+    offer: z
+      .object({
+        title: z.string().trim().min(1, "Offer title is required"),
+        discountPercent: z
+          .string()
+          .trim()
+          .min(1, "Discount is required")
+          .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+            message: "Discount must be a positive number",
+          }),
+        validUntil: z.string().trim().min(1, "Valid until date is required"),
+        description: z
+          .string()
+          .trim()
+          .min(10, "Offer description must be at least 10 characters"),
+      })
+      .optional(),
   })
   .strict();
 
@@ -79,3 +94,27 @@ export const mainSliderSchema = z.object({
 });
 
 export type MainSliderSchemaType = z.infer<typeof mainSliderSchema>;
+
+// --- Zod Schema ---
+
+export const FieldSchema = z.object({
+  id: z.string(),
+  srno: z.string().optional(),
+  label: z.string().min(1, "Label is required"),
+  value: z.string().min(1, "Value is required"),
+});
+
+export const SectionSchema = z.object({
+  id: z.string(),
+  srno: z.string().optional(),
+  title: z.string().min(1, "Section title is required"),
+  fields: z.array(FieldSchema).min(1),
+});
+
+export const ProductAdditionalInfoSchema = z.object({
+  sections: z.array(SectionSchema).min(1),
+});
+
+export type ProductAdditionalInfoType = z.infer<
+  typeof ProductAdditionalInfoSchema
+>;
