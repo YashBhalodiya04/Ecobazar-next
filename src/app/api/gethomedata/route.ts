@@ -24,22 +24,44 @@ export const GetSliders = async (
 
     // Fetch sliders where "to" is today or later
     const sliderdata = await MainSliderModal.find({
-      to: { $gte: today },
+      toDate: { $gte: today },
       active: true,
     })
       .sort({ fromDate: 1 })
-      .select("title description image");
+      .select("title description image _id");
 
     const categorydata = await CategoryModal.find({ active: true }).select(
-      "name image"
+      "name image _id"
     );
     const productdata = await ProductModal.find({ active: true }).select(
-      "name image"
+      "name image _id stock price"
     );
     const response: HomeDataResponse = {
-      slidersData: sliderdata as MainSliderData[],
-      categoryData: categorydata as categoryData[],
-      productData: productdata as categoryData[],
+      slidersData: sliderdata?.map((item) => {
+        return {
+          id: item?._id?.toString() || "",
+          title: item?.title || "",
+          description: item?.description || "",
+          image: item?.image || "",
+        };
+      }),
+      categoryData: categorydata?.map((item) => {
+        return {
+          id: item?._id?.toString() || "",
+          name: item?.name || "",
+          image: item?.image || "",
+        };
+      }),
+      productData: productdata?.map((item) => {
+        return {
+          id: item?._id?.toString() || "",
+          name: item?.name || "",
+          image: item?.image || "",
+          price: item?.price || 0,
+          rating: item?.averageRating || 0,
+          stock: item?.stock || 0,
+        };
+      }),
     };
 
     return commonResponse(true, "", response, 200);

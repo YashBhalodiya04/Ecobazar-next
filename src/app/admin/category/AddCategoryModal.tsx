@@ -228,6 +228,7 @@ const AddCategoryModal: React.FC<ModalProps> = ({
             placeholder="Enter category name"
             {...register("name")}
             errorMessage={errors.name?.message}
+            focusColor="blue"
           />
 
           {/* Description */}
@@ -238,6 +239,7 @@ const AddCategoryModal: React.FC<ModalProps> = ({
             placeholder="Enter description"
             {...register("description")}
             errorMessage={errors.description?.message}
+            focusColor="blue"
           />
 
           {/* Image Upload */}

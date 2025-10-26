@@ -1,3 +1,5 @@
+import { UploadFile } from "antd";
+
 export interface ProductGetAllPayload {
   page: number;
   pagesize: number;
@@ -9,13 +11,39 @@ export interface ProductCreatePayload {
   name: string;
   description: string;
   price: number;
-  imagepath: string;
   categoryid: string;
   stock: number;
-  productid: string;
+  productid?: string;
   active: boolean;
+  images: ProductImagesPayload[];
+  additionalInfo?: ProductInfoSection[];
+  offer?: ProductOffer;
 }
 
+export interface ProductImagesPayload {
+  id: string;
+  url: string;
+  isMain?: boolean;
+}
+
+export interface ProductInfoSection {
+  id: string;
+  title: string;
+  fields: ProductSubFieldData[];
+}
+
+export interface ProductSubFieldData {
+  id: string;
+  label: string;
+  value: string;
+}
+
+export interface ProductOffer {
+  title: string;
+  discountPercent: number;
+  validUntil: string;
+  description?: string;
+}
 export interface ProductGrigAPIResponse {
   success: boolean;
   message: string;

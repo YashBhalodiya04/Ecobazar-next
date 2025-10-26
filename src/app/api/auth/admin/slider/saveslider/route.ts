@@ -24,6 +24,7 @@ export const SaveSlider = async (
     if (!validatePayload(data) || (files?.length === 0 && !data?.imagepath)) {
       return commonResponse(false, "Please Fill All Fields", "", 200);
     }
+    console.log(data)
     let duplicate: any;
     if (!data?.sliderid) {
       duplicate = await MainSliderModal.findOne({
@@ -81,23 +82,23 @@ export const SaveSlider = async (
     }
 
     // ✅ Check overlap
-    const overlapQuery: any = {
-      fromDate: { $lte: toDate.toDate() },
-      toDate: { $gte: fromDate.toDate() },
-      active: true,
-    };
+    // const overlapQuery: any = {
+    //   fromDate: { $lte: toDate.toDate() },
+    //   toDate: { $gte: fromDate.toDate() },
+    //   active: true,
+    // };
 
-    if (data.sliderid) overlapQuery._id = { $ne: toObjectId(data.sliderid) };
+    // if (data.sliderid) overlapQuery._id = { $ne: toObjectId(data.sliderid) };
 
-    const overlappingSlider = await MainSliderModal.findOne(overlapQuery);
-    if (overlappingSlider) {
-      return commonResponse(
-        false,
-        `Another slider (${overlappingSlider.title}) already exists in this date range.`,
-        "",
-        200
-      );
-    }
+    // const overlappingSlider = await MainSliderModal.findOne(overlapQuery);
+    // if (overlappingSlider) {
+    //   return commonResponse(
+    //     false,
+    //     `Another slider (${overlappingSlider.title}) already exists in this date range.`,
+    //     "",
+    //     200
+    //   );
+    // }
 
     // ✅ Upload or reuse image
     let imgurl: string = data.imagepath || "";

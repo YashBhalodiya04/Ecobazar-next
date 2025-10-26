@@ -63,7 +63,6 @@ const AddProductModal: React.FC<ModalProps> = ({
       description: "",
       price: "",
       stock: "",
-      imagepath: "",
       active: true,
     },
   });
@@ -81,7 +80,6 @@ const AddProductModal: React.FC<ModalProps> = ({
       setValue("name", editData.name);
       setValue("description", editData.description);
       setValue("active", editData.active);
-      setValue("imagepath", editData.image);
       setValue("price", String(editData.price));
       setValue("stock", String(editData.stock));
       setselectedCategory(
@@ -110,37 +108,53 @@ const AddProductModal: React.FC<ModalProps> = ({
   const handleChange: UploadProps["onChange"] = async ({
     fileList: newFileList,
   }) => {
-    if (newFileList.length > 0 && newFileList[0].originFileObj) {
-      const lastFile = newFileList[newFileList.length - 1];
-      if (lastFile.originFileObj) {
-        const isRestrict = isRestrictedFile(lastFile.originFileObj?.name);
-        if (isRestrict?.valid == true) {
-          Toast.error(`${isRestrict?.message}`);
-          return;
-        }
-
-        const fileType = lastFile.originFileObj.type;
-        const allowedTypes = ["image/jpeg", "image/png"];
-        if (!allowedTypes.includes(fileType)) {
-          Toast.error("Invalid file type. Please upload a JPEG or PNG file.");
-          return;
-        }
-
-        if (lastFile.originFileObj.size > 5 * 1024 * 1024) {
-          Toast.error("File size exceeds the maximum limit of 5 MB");
-          return;
-        }
-
-        setFileList([lastFile]);
-      }
+    // Limit to max 5 files
+    if (newFileList.length > 5) {
+      Toast.error("You can upload a maximum of 5 images.");
+      return;
     }
+
+    // Validate each new file
+    const validatedFiles: typeof newFileList = [];
+    for (const file of newFileList) {
+      if (!file.originFileObj) continue;
+
+      const isRestrict = isRestrictedFile(file.originFileObj.name);
+      if (isRestrict?.valid) {
+        Toast.error(`${isRestrict?.message}`);
+        continue;
+      }
+
+      const fileType = file.originFileObj.type;
+      const allowedTypes = ["image/jpeg", "image/png"];
+      if (!allowedTypes.includes(fileType)) {
+        Toast.error("Invalid file type. Please upload a JPEG or PNG file.");
+        continue;
+      }
+
+      if (file.originFileObj.size > 5 * 1024 * 1024) {
+        Toast.error("File size exceeds the maximum limit of 5 MB");
+        continue;
+      }
+
+      validatedFiles.push(file);
+    }
+
+    setFileList(validatedFiles);
   };
 
-  const handleRemove = () => {
-    setFileList([]);
-    setValue("imagepath", "");
-    setPreviewImage("");
-    setPreviewOpen(false);
+  const handleRemove = (file: any) => {
+    // Remove the selected file from the fileList
+    const newList = fileList.filter((f) => f.uid !== file.uid);
+    setFileList(newList);
+
+    // Reset preview if removed file was being previewed
+    if (previewImage === file.url || previewImage === file.thumbUrl) {
+      setPreviewImage("");
+      setPreviewOpen(false);
+    }
+
+    return true; // allow removal
   };
 
   const handleOk = handleSubmit(async (data) => {
@@ -153,7 +167,6 @@ const AddProductModal: React.FC<ModalProps> = ({
       name: data?.name,
       description: data?.description,
       price: Number(data?.price),
-      imagepath: data?.imagepath || "",
       categoryid: selectedCategory?.id || "",
       stock: Number(data?.stock),
       productid: editData?.id,
@@ -247,6 +260,7 @@ const AddProductModal: React.FC<ModalProps> = ({
           {...register("name")}
           errorMessage={errors.name?.message}
           focusColor="blue"
+          required
         />
 
         {/* Description */}
@@ -258,6 +272,7 @@ const AddProductModal: React.FC<ModalProps> = ({
           {...register("description")}
           errorMessage={errors.description?.message}
           focusColor="blue"
+          required
         />
 
         {/* Price */}
@@ -269,6 +284,7 @@ const AddProductModal: React.FC<ModalProps> = ({
           {...register("price")}
           errorMessage={errors.price?.message}
           focusColor="blue"
+          required
         />
 
         {/* Stock */}
@@ -280,6 +296,7 @@ const AddProductModal: React.FC<ModalProps> = ({
           {...register("stock")}
           errorMessage={errors.stock?.message}
           focusColor="blue"
+          required
         />
 
         {/* Category Dropdown */}
@@ -299,7 +316,7 @@ const AddProductModal: React.FC<ModalProps> = ({
         {/* Image Upload */}
         <div>
           <label className="block font-medium mb-1 text-gray-300">
-            Image <span className="text-red-400">*</span>
+            Images <span className="text-red-400">*</span>
           </label>
           <Upload
             listType="picture-card"
@@ -308,9 +325,9 @@ const AddProductModal: React.FC<ModalProps> = ({
             onRemove={handleRemove}
             onChange={handleChange}
             accept="image/jpeg, image/png"
-            maxCount={1}
+            maxCount={5}
           >
-            {fileList.length >= 1 ? null : (
+            {fileList.length >= 5 ? null : (
               <div className="text-white">
                 <UploadOutlined />
                 <div style={{ marginTop: 8 }}>Upload</div>
@@ -322,6 +339,7 @@ const AddProductModal: React.FC<ModalProps> = ({
               {errors.imagepath.message}
             </p>
           )}
+
           {previewImage && (
             <Image
               wrapperStyle={{ display: "none" }}

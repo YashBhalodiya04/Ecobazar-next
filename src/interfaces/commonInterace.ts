@@ -17,22 +17,37 @@ export interface ContexInterface {
   params: any;
 }
 
+export interface HomePageAPIResponse {
+  success: boolean;
+  message: string;
+  data: HomeDataResponse;
+  statuscode: number;
+}
+
 export interface HomeDataResponse {
   slidersData: MainSliderData[];
   categoryData: categoryData[];
-  productData: categoryData[];
+  productData: ProductData[];
 }
 
 export interface MainSliderData {
-  _id: string;
+  id: string;
   title: string;
   description: string;
   image: string;
 }
 
 export interface categoryData {
-  _id: string;
+  id: string;
   name: string;
+  image: string;
+}
+
+export interface ProductData {
+  id: string;
+  name: string;
+  price: number;
+  rating: number;
   image: string;
 }
 
@@ -69,7 +84,6 @@ export interface CommonDropdownOptions {
   id?: string;
   value?: string;
 }
-
 
 export interface CommoPayloadGrid {
   page: number;

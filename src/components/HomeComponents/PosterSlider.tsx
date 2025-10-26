@@ -10,14 +10,10 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Link from "next/link";
 import { GoArrowRight } from "react-icons/go";
+import { MainSliderData } from "@/interfaces/commonInterace";
 
 interface PosterSliderProps {
-  slides: {
-    _id: string;
-    title: string;
-    description: string;
-    image: string;
-  }[];
+  slides: MainSliderData[];
 }
 
 const PosterSlider: React.FC<PosterSliderProps> = ({ slides }) => {
@@ -33,7 +29,7 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides }) => {
       className="home-slider mt-4"
     >
       {slides.map((slide) => (
-        <SwiperSlide key={slide._id}>
+        <SwiperSlide key={slide.id}>
           <div className="w-full bg-white flex items-center justify-between p-8 rounded-2xl">
             <div className="flex flex-col items-start justify-center h-full gap-4 w-1/2 sm:w-full z-10">
               <p className="text-sm text-green-600 uppercase tracking-wide">
@@ -55,7 +51,7 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides }) => {
                 alt={slide?.title}
                 width={450}
                 height={400}
-                className="object-contain h-full"
+                className="object-contain h-full rounded-3xl"
               />
             </div>
           </div>

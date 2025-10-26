@@ -3,17 +3,11 @@ import React from "react";
 import { Card, Row, Col, Button } from "antd";
 import { GoArrowRight } from "react-icons/go";
 import CommonButton from "../common/CommonButton";
+import { categoryData } from "@/interfaces/commonInterace";
 
 const { Meta } = Card;
-
-interface Category {
-  id: number;
-  name: string;
-  image: string;
-}
-
 interface CategoriesProps {
-  categories: Category[];
+  categories: categoryData[];
 }
 
 const Categories: React.FC<CategoriesProps> = ({ categories }) => {
@@ -54,7 +48,7 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
             <Card
               hoverable
               variant="borderless"
-              className="shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl text-center bg-white border border-gray-100 hover:border-green-400 w-[180px] h-[180px] flex flex-col justify-center items-center"
+              className="[&_.ant-card-body]:!p-4 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl text-center bg-white border border-gray-100 hover:border-green-400 w-[180px] h-[180px] flex flex-col justify-center items-center"
               onClick={handleViewCategory}
               cover={null}
             >
@@ -62,7 +56,7 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
                 <img
                   alt={category.name}
                   src={category.image}
-                  className="w-16 h-16 object-contain mb-3"
+                  className="w-full h-16 object-contain mb-3 rounded-xl"
                 />
                 <Meta
                   title={

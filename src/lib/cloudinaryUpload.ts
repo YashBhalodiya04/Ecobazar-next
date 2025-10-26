@@ -7,6 +7,9 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
+/**
+ * Upload file to Cloudinary
+ */
 export async function uploadToCloudinary(
   file: File,
   folder: string = "nextjs_uploads"
@@ -28,4 +31,20 @@ export async function uploadToCloudinary(
   });
 
   return result.secure_url; // return the uploaded file URL
+}
+
+/**
+ * Delete file from Cloudinary by its public ID
+ * @param publicId Cloudinary public_id (e.g. "nextjs_uploads/abcd1234")
+ */
+export async function deleteFromCloudinary(publicId: string): Promise<boolean> {
+  if (!publicId) throw new Error("Public ID is required for deletion");
+
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result.result === "ok" || result.result === "not found"; // return true if deleted or already not found
+  } catch (error) {
+    console.error("Error deleting file from Cloudinary:", error);
+    return false;
+  }
 }

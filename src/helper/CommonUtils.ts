@@ -87,3 +87,14 @@ export const isRestrictedFile = (
 
   return { valid: false, message: "File is valid for upload." };
 };
+
+export function getPublicIdFromUrl(url: string): string | null {
+  try {
+    const parts = url.split("/upload/");
+    if (parts.length < 2) return null;
+    const path = parts[1].split(".")[0]; // remove file extension
+    return path; // e.g., "products/abc123"
+  } catch {
+    return null;
+  }
+}

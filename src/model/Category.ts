@@ -4,7 +4,6 @@ export interface Category extends Document {
   name: string;
   description: string;
   image: string;
-  products: Types.ObjectId[];
   user: Types.ObjectId;
   active: boolean;
 }
@@ -29,12 +28,6 @@ const CategorySchema: Schema<Category> = new Schema({
     required: true,
     default: true,
   },
-  products: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-    },
-  ],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

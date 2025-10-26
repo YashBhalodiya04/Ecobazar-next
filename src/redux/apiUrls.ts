@@ -23,4 +23,7 @@ export const apis = {
     getProduct: "/auth/admin/product/getproduct",
     deleteProduct: "/auth/admin/product/deleteproduct",
   },
+  WITHOUTTOKEN: {
+    getHomeData: '/gethomedata'
+  }
 };

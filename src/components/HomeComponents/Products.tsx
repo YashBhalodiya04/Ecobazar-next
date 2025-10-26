@@ -4,21 +4,13 @@ import { Card, Row, Col, Button, Rate } from "antd";
 import { GoArrowRight } from "react-icons/go";
 import Link from "next/link";
 import CommonButton from "../common/CommonButton";
+import { ProductData } from "@/interfaces/commonInterace";
 
 const { Meta } = Card;
 
-// ✅ Type for product data
-interface ProductType {
-  id: number;
-  name: string;
-  price: number;
-  rating: number;
-  image: string;
-}
-
 // ✅ Props type for component
 interface ProductsProps {
-  productList: ProductType[];
+  productList: ProductData[];
 }
 
 const Products: React.FC<ProductsProps> = ({ productList }) => {
@@ -61,7 +53,7 @@ const Products: React.FC<ProductsProps> = ({ productList }) => {
               variant="borderless"
               className="shadow-md hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden text-center bg-white border border-gray-100 hover:border-green-400 w-[200px]"
               cover={
-                <div className="flex justify-center items-center py-4 bg-[#f9fafb] rounded-t-2xl">
+                <div className="!flex !justify-center !items-center py-4 bg-[#f9fafb] rounded-t-2xl">
                   <img
                     alt={item?.name}
                     src={item?.image}
