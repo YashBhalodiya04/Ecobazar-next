@@ -12,7 +12,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <MasterLayout showNavbar={false} showFooter={false} isAuth={false}>
+    <MasterLayout showNavbar={true} showFooter={true} isAuth={false}>
       {children}
     </MasterLayout>
   );
