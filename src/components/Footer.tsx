@@ -42,7 +42,7 @@ const Footer = () => {
         <div className="flex flex-col gap-1 items-start justify-start">
           <h1>Help</h1>
           <Link
-            href="/contact"
+            href="/contactus"
             className="mt-4 text-sm opacity-60 hover:opacity-100"
           >
             Contect
@@ -55,14 +55,14 @@ const Footer = () => {
         <div className="flex flex-col gap-1 items-start justify-start">
           <h1>Proxy</h1>
           <Link
-            href="/about"
+            href="/aboutus"
             className="mt-4 text-sm opacity-60 hover:opacity-100"
           >
             About
           </Link>
-          <Link href="/shop" className="text-sm opacity-60 hover:opacity-100">
+          {/* <Link href="/shop" className="text-sm opacity-60 hover:opacity-100">
             Shop
-          </Link>
+          </Link> */}
         </div>
         <div className="flex flex-col gap-1 items-start justify-start">
           <h1>Categories</h1>

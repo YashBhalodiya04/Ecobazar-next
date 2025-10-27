@@ -11,10 +11,10 @@ const navbarLinks = [
     path: "/",
     name: "Home",
   },
-  {
-    path: "/shop",
-    name: "Shop",
-  },
+  // {
+  //   path: "/shop",
+  //   name: "Shop",
+  // },
   {
     path: "/aboutus",
     name: "About us",
