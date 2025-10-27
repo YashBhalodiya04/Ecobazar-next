@@ -80,6 +80,7 @@ export const categorySchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
   active: z.boolean().optional(),
+  imagepath: z.string().optional(),
 });
 
 export type CategoryFormData = z.infer<typeof categorySchema>;
@@ -91,6 +92,7 @@ export const mainSliderSchema = z.object({
   fromdate: z.string().min(1, "From date is required"),
   todate: z.string().min(1, "To date is required"),
   active: z.boolean(),
+  imagepath: z.string().optional(),
 });
 
 export type MainSliderSchemaType = z.infer<typeof mainSliderSchema>;
