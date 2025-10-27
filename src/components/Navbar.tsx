@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { BsCartCheck, BsFillPersonFill } from "react-icons/bs";
 import { FiMenu } from "react-icons/fi";
@@ -15,16 +16,17 @@ const navbarLinks = [
     name: "Shop",
   },
   {
-    path: "/about",
+    path: "/aboutus",
     name: "About us",
   },
   {
-    path: "/contact",
+    path: "/contactus",
     name: "Contact us",
   },
 ];
 
 const Navbar = () => {
+  const pathname = usePathname();
   const [isManuOpen, setIsManuOpen] = useState<boolean>(false);
   const isLoggedIn = false;
 
@@ -55,13 +57,22 @@ const Navbar = () => {
 
       {/* Desktop Navigation Links */}
       <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-8">
-        {navbarLinks.map((item, id) => (
-          <Link href={item.path} key={id}>
-            <li className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 cursor-pointer">
-              {item.name}
-            </li>
-          </Link>
-        ))}
+        {navbarLinks.map((item, id) => {
+          const isActive = pathname === item.path;
+          return (
+            <Link href={item.path} key={id}>
+              <li
+                className={`font-medium transition-colors duration-200 cursor-pointer ${
+                  isActive
+                    ? "text-green-600 border-b-2 border-green-600"
+                    : "text-gray-700 hover:text-green-600"
+                }`}
+              >
+                {item.name}
+              </li>
+            </Link>
+          );
+        })}
       </ul>
 
       {/* Desktop Action Buttons */}
@@ -157,16 +168,23 @@ const Navbar = () => {
 
           {/* Mobile Navigation Links */}
           <nav className="flex flex-col gap-6 mb-8 flex-1">
-            {navbarLinks.map((item, id) => (
-              <Link
-                href={item.path}
-                key={id}
-                onClick={() => setIsManuOpen(false)}
-                className="text-lg font-medium text-gray-700 hover:text-green-600 hover:pl-2 transition-all duration-200"
-              >
-                {item.name}
-              </Link>
-            ))}
+            {navbarLinks.map((item, id) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link
+                  href={item.path}
+                  key={id}
+                  onClick={() => setIsManuOpen(false)}
+                  className={`text-lg font-medium transition-all duration-200 ${
+                    isActive
+                      ? "text-green-600 pl-2 border-l-4 border-green-600"
+                      : "text-gray-700 hover:text-green-600 hover:pl-2"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Mobile Action Buttons */}

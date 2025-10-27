@@ -90,3 +90,8 @@ export interface CommoPayloadGrid {
   pagesize: number;
   search?: string;
 }
+
+export interface ContactEmailPayload {
+  email: string;
+  message: string;
+}

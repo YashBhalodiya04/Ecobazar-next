@@ -5,8 +5,9 @@ import dbconnect from "@/lib/dbConnect";
 import UserModal, { User } from "../../../model/User";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
+import { withAuth } from "@/helper/withAuth";
 
-export const POST = async (req: Request) => {
+export const SignUp = async (req: Request) => {
   await dbconnect();
   try {
     const { name, email, password, confirmPassword, phone }: SignUpPayload =
@@ -61,6 +62,8 @@ export const POST = async (req: Request) => {
     return commonResponse(false, "Failed to signup", error);
   }
 };
+
+export const POST = withAuth(SignUp);
 
 const validateSignUpPayload = (payload: SignUpPayload): string => {
   const { name, email, password, confirmPassword, phone } = payload;

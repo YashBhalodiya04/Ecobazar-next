@@ -2,6 +2,7 @@ export const apis = {
   AUTH: {
     login: "/signin",
     register: "/signup",
+    contactus: "/contactussendemail",
   },
   USER: {
     getProfile: "/auth/user/profile",

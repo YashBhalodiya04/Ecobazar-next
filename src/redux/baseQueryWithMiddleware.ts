@@ -31,8 +31,11 @@ export const baseQueryWithMiddleware: BaseQueryFn<
 
   try {
     const result: any = await rawBaseQuery(args, api, extraOptions);
-    if (result?.data?.success === false) {
+    if (result?.data?.success === false && result?.data?.message) {
       Toast.error(result?.data?.message || "An unexpected error occurred");
+    }
+    if (result?.data?.success === true && result?.data?.message) {
+      Toast.success(result?.data?.message || "An unexpected error occurred");
     }
     if (result.error) {
       const err = result.error;

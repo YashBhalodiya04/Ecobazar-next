@@ -120,3 +120,12 @@ export const ProductAdditionalInfoSchema = z.object({
 export type ProductAdditionalInfoType = z.infer<
   typeof ProductAdditionalInfoSchema
 >;
+
+export const contactSchema = z.object({
+  aboutemail: z.string().email("Please enter a valid email address."),
+  description: z
+    .string()
+    .min(5, "Message should be at least 5 characters long."),
+});
+
+export type ContactFormData = z.infer<typeof contactSchema>;
