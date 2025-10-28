@@ -7,6 +7,7 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { getCookieValue } from "@/helper/CommonUtils";
 import { JWtUserInterface } from "@/interfaces/commonInterace";
+import { SignInResponseData } from "@/interfaces/SignInInterface";
 
 interface MasterLayoutProps {
   children: ReactNode;
@@ -29,8 +30,8 @@ export default function MasterLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const user = getCookieValue("user");
-  const userData: JWtUserInterface = JSON.parse(user || "{}");
-  if (userData && userData?.isadmin === true && isShowSidebar) {
+  const userData: SignInResponseData = JSON.parse(user || "{}");
+  if (userData && userData?.isAdmin === true && isShowSidebar) {
     return (
       <div className="flex h-screen bg-black text-white overflow-hidden">
         <Sidebar
