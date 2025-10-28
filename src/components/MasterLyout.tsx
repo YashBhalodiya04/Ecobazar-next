@@ -30,7 +30,7 @@ export default function MasterLayout({
 
   const user = getCookieValue("user");
   const userData: JWtUserInterface = JSON.parse(user || "{}");
-  if (userData && userData?.isAdmin === true && isShowSidebar) {
+  if (userData && userData?.isadmin === true && isShowSidebar) {
     return (
       <div className="flex h-screen bg-black text-white overflow-hidden">
         <Sidebar

@@ -37,7 +37,7 @@ export const POSTHandler = async (
       {
         id: user._id?.toString(),
         email: user.email,
-        isAdmin: user.isAdmin,
+        isadmin: user.isAdmin,
         phone: user.phone,
       } as JWtUserInterface,
       process.env.JWT_TOKEN as string,
