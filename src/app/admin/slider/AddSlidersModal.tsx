@@ -168,7 +168,7 @@ const AddSlidersModal: React.FC<ModalProps> = ({
         method: "POST",
         body: formdata,
       }).unwrap();
-      if (response?.status === 401) {
+      if (response?.statuscode === 401) {
         router.push("/login");
       }
       if (response?.success) {

@@ -1,6 +1,10 @@
 "use client";
+import { getCookieValue } from "@/helper/CommonUtils";
+import { CommonApiInterface } from "@/interfaces/commonInterace";
+import { apis } from "@/redux/apiUrls";
+import { useRequestMutation } from "@/redux/commonApi";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { BsCartCheck, BsFillPersonFill } from "react-icons/bs";
 import { FiMenu } from "react-icons/fi";
@@ -27,8 +31,26 @@ const navbarLinks = [
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [request] = useRequestMutation();
   const [isManuOpen, setIsManuOpen] = useState<boolean>(false);
-  const isLoggedIn = false;
+
+  let isLoggedIn = false;
+
+  const user = getCookieValue("user");
+  if (user) {
+    isLoggedIn = true;
+  }
+
+  const handleLogout = async () => {
+    const response: CommonApiInterface = await request({
+      url: apis.AUTH.logout,
+      method: "POST",
+    }).unwrap();
+    if (response?.success) {
+      router.push("/");
+    }
+  };
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -118,6 +140,7 @@ const Navbar = () => {
               </button>
             </Link>
             <button
+              onClick={() => handleLogout()}
               type="button"
               className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-green-600 border-2 border-green-600 transition-all duration-200"
             >

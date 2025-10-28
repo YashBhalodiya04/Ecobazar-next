@@ -3,6 +3,7 @@ export const apis = {
     login: "/signin",
     register: "/signup",
     contactus: "/contactussendemail",
+    logout: "/auth/logout"
   },
   USER: {
     getProfile: "/auth/user/profile",

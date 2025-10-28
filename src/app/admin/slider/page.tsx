@@ -101,7 +101,7 @@ const SliderPage: React.FC = () => {
       method: "POST",
       body: { id: record?.sliderid },
     }).unwrap();
-    if (response?.status === 401) {
+    if (response?.statuscode === 401) {
       router.push("/login");
     }
     if (response?.success) {

@@ -16,6 +16,9 @@ import clsx from "clsx";
 import { MdCategory } from "react-icons/md";
 import { AiFillProduct } from "react-icons/ai";
 import { FaUser } from "react-icons/fa6";
+import { useRequestMutation } from "@/redux/commonApi";
+import { CommonApiInterface } from "@/interfaces/commonInterace";
+import { apis } from "@/redux/apiUrls";
 
 interface SideBarProps {
   isSidebarOpen: boolean;
@@ -25,6 +28,7 @@ interface SideBarProps {
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SideBarProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const [request] = useRequestMutation();
 
   const menuItems = [
     {
@@ -53,9 +57,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SideBarProps) => {
     },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    router.push("/login");
+  const handleLogout = async () => {
+    const response: CommonApiInterface = await request({
+      url: apis.AUTH.logout,
+      method: "POST",
+    }).unwrap();
+    if (response?.success) {
+      router.push("/login");
+    }
   };
 
   const handleLinkClick = () => {
@@ -209,11 +218,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SideBarProps) => {
 
 export default Sidebar;
 
-
-
-
-
-
 // "use client";
 
 // import React, { useState } from "react";
@@ -268,10 +272,6 @@ export default Sidebar;
 //     },
 //   ];
 
-//   const handleLogout = () => {
-//     localStorage.removeItem("user");
-//     router.push("/login");
-//   };
 
 //   return (
 //     <div

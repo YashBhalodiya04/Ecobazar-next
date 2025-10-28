@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 import "swiper/css";
@@ -10,18 +9,43 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Link from "next/link";
 import { GoArrowRight } from "react-icons/go";
+import { Skeleton } from "antd";
 import { MainSliderData } from "@/interfaces/commonInterace";
 
 interface PosterSliderProps {
   slides: MainSliderData[];
+  isLoading?: boolean;
 }
 
-const PosterSlider: React.FC<PosterSliderProps> = ({ slides }) => {
+const PosterSlider: React.FC<PosterSliderProps> = ({ slides, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div className="mt-4 w-full">
+        <Skeleton active avatar paragraph={{ rows: 1 }} className="mb-4" />
+        <div className="w-full bg-white p-8 rounded-2xl flex justify-between items-center">
+          <div className="w-full">
+            {/* <Skeleton.Input active style={{ width: 150, height: 20, marginBottom: 10 }} /> */}
+            <Skeleton.Input
+              active
+              style={{ width: 250, height: 30, marginBottom: 20 }}
+            />
+            <Skeleton.Button active size="large" style={{ width: 120 }} />
+          </div>
+          <div className="w-1/2 flex justify-end sm:hidden">
+            <Skeleton.Image
+              active
+              style={{ width: 450, height: 300, borderRadius: 16 }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <Swiper
       modules={[Autoplay, Pagination, Navigation, EffectFade]}
       slidesPerView={1}
-      loop={true}
+      loop={slides.length > 1}
       autoplay={{ delay: 5000 }}
       effect="fade"
       pagination={{ clickable: true }}
@@ -39,7 +63,7 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides }) => {
                 {slide?.description}
               </h1>
               <Link
-                href={"/shop"}
+                href="/aboutus"
                 className="flex items-center gap-3 justify-center text-white border bg-green-600 rounded-full py-3 px-6 hover:bg-white hover:border-green-600 hover:text-green-600 transition-all sm:py-2 sm:px-4 sm:text-sm"
               >
                 Shop now <GoArrowRight className="text-center" />

@@ -32,7 +32,6 @@ export default function Home() {
       if (response?.statuscode === 401) {
         router.push("/login");
       }
-      console.log(response)
       if (response?.success) {
         sethomeData(response?.data);
       } else {
@@ -54,10 +53,10 @@ export default function Home() {
       {/* <CommonLoader loading={loading} /> */}
       <MasterLayout showNavbar={true} showFooter={true}>
         <div className="flex flex-col justify-between items-center w-full px-20 sm:px-10 ">
-          <PosterSlider slides={homeData?.slidersData || []} />
+          <PosterSlider slides={homeData?.slidersData || []} isLoading={loading} />
           <Features />
-          <Categories categories={homeData?.categoryData || []} />
-          <Products productList={homeData?.productData || []} />
+          <Categories categories={homeData?.categoryData || []} isLoading={loading} />
+          <Products productList={homeData?.productData || []} isLoading={loading} />
         </div>
       </MasterLayout>
     </>

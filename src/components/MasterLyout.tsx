@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import { getCookieValue } from "@/helper/CommonUtils";
+import { JWtUserInterface } from "@/interfaces/commonInterace";
 
 interface MasterLayoutProps {
   children: ReactNode;
@@ -26,15 +28,15 @@ export default function MasterLayout({
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Uncomment if you want auth protection:
-  // useEffect(() => {
-  //   if (isAuth) {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) router.push("/");
-  //   }
-  // }, [isAuth, router]);
+  let isAdmin = false;
 
-  if (isShowSidebar) {
+  const user = getCookieValue("user");
+  const userData: JWtUserInterface = JSON.parse(user || "{}");
+  if (userData && userData.isadmin) {
+    isAdmin = true;
+  }
+
+  if (isShowSidebar && isAdmin) {
     return (
       <div className="flex h-screen bg-black text-white overflow-hidden">
         <Sidebar

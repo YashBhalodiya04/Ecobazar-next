@@ -12,14 +12,6 @@ export const baseQueryWithMiddleware: BaseQueryFn<
   const rawBaseQuery = fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || "",
     prepareHeaders: (headers) => {
-      const token: SignInResponseData = JSON.parse(
-        localStorage.getItem("user") || "{}"
-      );
-
-      if (token?.token) {
-        headers.set("Authorization", `Bearer ${token.token}`);
-      }
-
       // ✅ Remove manual multipart content-type
       if (!(args?.body instanceof FormData)) {
         headers.set("Content-Type", "application/json");
@@ -47,8 +39,6 @@ export const baseQueryWithMiddleware: BaseQueryFn<
           break;
         case 401:
           Toast.error("Unauthorized. Redirecting to login...");
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
           api.dispatch({ type: "auth/clearToken" });
           window.location.assign(`${window.location.origin}/login`);
           break;

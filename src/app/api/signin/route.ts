@@ -10,6 +10,7 @@ import dbconnect from "@/lib/dbConnect";
 import UserModal from "@/model/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 export const POSTHandler = async (
@@ -52,8 +53,23 @@ export const POSTHandler = async (
       phone: userData?.phone || "",
       userimage: userData?.userimage || "",
       _id: userData?._id?.toString() || "",
-      token: token,
     };
+
+    (await cookies()).set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 10, // 10 hours
+    });
+
+    (await cookies()).set("user", JSON.stringify(responseData), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 10, // 10 hours
+    });
 
     return commonResponse(true, "", responseData, 200);
   } catch (error) {

@@ -6,12 +6,17 @@ import UserModal, { User } from "../../../model/User";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import { withAuth } from "@/helper/withAuth";
+import { NextRequest } from "next/server";
+import { ContexInterface } from "@/interfaces/commonInterace";
 
-export const SignUp = async (req: Request) => {
+export const SignUp = async (
+  req: NextRequest,
+  context: ContexInterface,
+  body: SignUpPayload
+) => {
   await dbconnect();
   try {
-    const { name, email, password, confirmPassword, phone }: SignUpPayload =
-      await req.json();
+    const { name, email, password, confirmPassword, phone } = body
     const validationResponse = validateSignUpPayload({
       name,
       email,

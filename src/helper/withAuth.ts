@@ -8,11 +8,11 @@ export function withAuth(handler: Function) {
     try {
       let user: JWtUserInterface | null = null;
       if (req.nextUrl.pathname.startsWith("/api/auth")) {
-        const authHeader = req.headers.get("authorization");
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-          return commonResponse(false, "Unauthorized access", "", 401);
-        }
-        const token = authHeader?.split(" ")[1];
+        // const authHeader = req.headers.get("authorization");
+        // if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        //   return commonResponse(false, "Unauthorized access", "", 401);
+        // }
+        const token = req.cookies.get("token")?.value;
         const isvarify = verifyToken(token);
         if (!token || !isvarify) {
           return commonResponse(false, "Invalid token", "", 401);

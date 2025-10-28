@@ -64,7 +64,7 @@ const Footer = () => {
             Shop
           </Link> */}
         </div>
-        <div className="flex flex-col gap-1 items-start justify-start">
+        {/* <div className="flex flex-col gap-1 items-start justify-start">
           <h1>Categories</h1>
           <Link
             href="/shop"
@@ -78,7 +78,7 @@ const Footer = () => {
           <Link href="/shop" className="text-sm opacity-60 hover:opacity-100">
             Snacks
           </Link>
-        </div>
+        </div> */}
       </div>
       <div className="flex items-center justify-center gap-4 w-full text-4xl">
         <BsFacebook className="cursor-pointer hover:bg-green-500 rounded-full p-1" />

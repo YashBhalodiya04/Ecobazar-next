@@ -98,3 +98,13 @@ export function getPublicIdFromUrl(url: string): string | null {
     return null;
   }
 }
+
+export const getCookieValue = (name: string): string | null => {
+  if (typeof document === "undefined") {
+    // We're on the server — no access to document.cookie
+    return null;
+  }
+
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? decodeURIComponent(match[2]) : null;
+};

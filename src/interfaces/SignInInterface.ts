@@ -17,5 +17,4 @@ export interface SignInResponseData {
   phone: string;
   userimage: string;
   _id: string;
-  token: string;
 }
