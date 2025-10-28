@@ -28,15 +28,9 @@ export default function MasterLayout({
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  let isAdmin = false;
-
   const user = getCookieValue("user");
   const userData: JWtUserInterface = JSON.parse(user || "{}");
-  if (userData && userData.isadmin) {
-    isAdmin = true;
-  }
-
-  if (isShowSidebar && isAdmin) {
+  if (userData && userData?.isAdmin === true && isShowSidebar) {
     return (
       <div className="flex h-screen bg-black text-white overflow-hidden">
         <Sidebar

@@ -37,7 +37,7 @@ export const POSTHandler = async (
       {
         id: user._id?.toString(),
         email: user.email,
-        isadmin: user.isAdmin,
+        isAdmin: user.isAdmin,
         phone: user.phone,
       } as JWtUserInterface,
       process.env.JWT_TOKEN as string,
@@ -64,7 +64,7 @@ export const POSTHandler = async (
     });
 
     (await cookies()).set("user", JSON.stringify(responseData), {
-      httpOnly: false,
+      httpOnly: false, // 
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
