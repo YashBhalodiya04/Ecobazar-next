@@ -246,6 +246,29 @@
   @apply !bg-zinc-700 !text-white !shadow-inner !scale-95;
 }
 
+/* Custom Carousel Dots */
+.custom-dots li button {
+  @apply bg-white/50 h-2 rounded;
+}
+
+.custom-dots li.slick-active button {
+  @apply bg-white w-8;
+}
+
+/* Ant Design Checkbox - Blue Theme */
+.ant-checkbox-checked .ant-checkbox-inner {
+  @apply bg-blue-500 border-blue-500;
+}
+
+/* Ant Design Radio - Blue Theme */
+.ant-radio-checked .ant-radio-inner {
+  @apply border-blue-500;
+}
+
+.ant-radio-checked .ant-radio-inner::after {
+  @apply bg-blue-500;
+}
+
 
 
 

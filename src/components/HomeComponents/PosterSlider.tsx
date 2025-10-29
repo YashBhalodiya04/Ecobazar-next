@@ -21,15 +21,15 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides, isLoading }) => {
   if (isLoading) {
     return (
       <div className="mt-4 w-full">
-        <Skeleton active avatar paragraph={{ rows: 1 }} className="mb-4" />
+        {/* <Skeleton active avatar paragraph={{ rows: 1 }} className="mb-4" /> */}
         <div className="w-full bg-white p-8 rounded-2xl flex justify-between items-center">
-          <div className="w-full">
-            {/* <Skeleton.Input active style={{ width: 150, height: 20, marginBottom: 10 }} /> */}
+          <div className="w-full flex flex-col items-start justify-center h-full gap-3">
+            <Skeleton.Input active style={{ width: 150, height: 20, marginBottom: 10 }} />
             <Skeleton.Input
               active
-              style={{ width: 250, height: 30, marginBottom: 20 }}
+              style={{ width: 450, height: 30, marginBottom: 20 }}
             />
-            <Skeleton.Button active size="large" style={{ width: 120 }} />
+            <Skeleton.Button active size="large" style={{ width: 200 }} />
           </div>
           <div className="w-1/2 flex justify-end sm:hidden">
             <Skeleton.Image

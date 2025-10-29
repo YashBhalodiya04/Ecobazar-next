@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { Col, Row, Skeleton } from "antd";
 import {
   FaLeaf,
   FaHeadset,
@@ -9,6 +12,8 @@ import {
 } from "react-icons/fa";
 
 const AboutUsPage = () => {
+  const [loading, setLoading] = useState(true);
+
   const features = [
     {
       icon: <FaLeaf className="text-green-600 text-3xl" />,
@@ -42,11 +47,58 @@ const AboutUsPage = () => {
     },
   ];
 
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full flex flex-col px-20 sm:px-6 mt-10">
+        <Row gutter={[24, 24]} align="middle">
+          <Col xs={24} md={18}>
+            <Skeleton active paragraph={{ rows: 6 }} />
+          </Col>
+          <Col xs={24} md={6}>
+            <Skeleton.Image
+              active
+              style={{ width: 450, height: 300, borderRadius: 16 }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={[24, 24]} align="middle" justify="space-between">
+          <Col xs={24} md={6}>
+            <Skeleton.Image
+              active
+              style={{ width: 450, height: 300, borderRadius: 16 }}
+            />
+          </Col>
+          <Col xs={24} md={17}>
+            <Skeleton active paragraph={{ rows: 6 }} />
+          </Col>
+        </Row>
+
+        <Row gutter={[24, 24]} align="middle" justify="space-between">
+          <Col xs={24} md={18}>
+            <Skeleton active paragraph={{ rows: 6 }} />
+          </Col>
+
+          <Col xs={24} md={6}>
+            <Skeleton.Image
+              active
+              style={{ width: 450, height: 300, borderRadius: 16 }}
+            />
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+
+  // ✅ Actual Content
   return (
     <div className="w-full flex flex-col items-start justify-between overflow-y-auto custom-scrollbar bg-white text-gray-900">
-      {/* CONTENT */}
       <div className="w-full flex flex-col justify-between items-start gap-16 px-20 sm:px-6 mt-10 font-Poppins">
-        
         {/* SECTION 1 */}
         <div className="w-full flex sm:flex-col md:flex-col justify-between items-center gap-10">
           <div className="sm:block md:block hidden w-full">
@@ -129,9 +181,9 @@ const AboutUsPage = () => {
               We Deliver, You Enjoy
             </h1>
             <p className="md:w-[550px] text-gray-600">
-              Our logistics team ensures that every order is delivered fresh,
-              on time, and in perfect condition. Whether you’re shopping for
-              daily groceries or planning a weekend feast, our reliable delivery
+              Our logistics team ensures that every order is delivered fresh, on
+              time, and in perfect condition. Whether you’re shopping for daily
+              groceries or planning a weekend feast, our reliable delivery
               service brings organic goodness right to your doorstep. Freshness
               and flavor — guaranteed in every bite.
             </p>

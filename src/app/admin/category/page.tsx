@@ -209,6 +209,7 @@ const CategoryPage: React.FC = () => {
               placeholder="Search category..."
               value={SearchText}
               onChange={(e) => setSearchText(e.target.value)}
+              focusColor="blue"
             />
           </div>
 

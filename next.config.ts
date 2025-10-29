@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '10mb', // ✅ for Server Actions
     },
   },
+  images: {
+    domains: ['images.unsplash.com'], // ✅ Allow Unsplash
+  },
 };
 
 export default nextConfig;

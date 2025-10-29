@@ -15,10 +15,10 @@ const navbarLinks = [
     path: "/",
     name: "Home",
   },
-  // {
-  //   path: "/shop",
-  //   name: "Shop",
-  // },
+  {
+    path: "/product",
+    name: "Shop",
+  },
   {
     path: "/aboutus",
     name: "About us",
@@ -80,7 +80,9 @@ const Navbar = () => {
       {/* Desktop Navigation Links */}
       <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-8">
         {navbarLinks.map((item, id) => {
-          const isActive = pathname === item.path;
+          const isActive =
+            pathname === item.path ||
+            (item.path !== "/" && pathname.startsWith(item.path));
           return (
             <Link href={item.path} key={id}>
               <li
