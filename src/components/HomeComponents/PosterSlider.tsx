@@ -20,7 +20,7 @@ interface PosterSliderProps {
 const PosterSlider: React.FC<PosterSliderProps> = ({ slides, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="mt-4 w-full">
+      <div className=" w-full">
         {/* <Skeleton active avatar paragraph={{ rows: 1 }} className="mb-4" /> */}
         <div className="w-full bg-white p-8 rounded-2xl flex justify-between items-center">
           <div className="w-full flex flex-col items-start justify-center h-full gap-3">
@@ -50,7 +50,7 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides, isLoading }) => {
       effect="fade"
       pagination={{ clickable: true }}
       navigation
-      className="home-slider mt-4"
+      className="home-slider"
     >
       {slides.map((slide) => (
         <SwiperSlide key={slide.id}>

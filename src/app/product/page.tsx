@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -7,14 +7,14 @@ import {
   Radio,
   Select,
   Pagination,
-  Card,
+  Drawer,
   Carousel,
 } from "antd";
 import Image from "next/image";
 import CommonButton from "@/components/common/CommonButton";
 import CommonProductCard from "@/components/common/CommonProductCard";
+import { BsFilter } from "react-icons/bs";
 
-const { Meta } = Card;
 const { Option } = Select;
 
 const ProductPage = () => {
@@ -23,7 +23,7 @@ const ProductPage = () => {
   const [sortOption, setSortOption] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(8);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   // 🧺 Static product data
   const products = [
@@ -151,18 +151,76 @@ const ProductPage = () => {
   const startIdx = (currentPage - 1) * perPage;
   const currentProducts = filteredProducts.slice(startIdx, startIdx + perPage);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 w-full px-20 sm:px-10">
-      <div className="relative mb-8 overflow-hidden">
-        <Carousel
-          autoplay
-          autoplaySpeed={4000}
-          dots={{ className: "custom-dots" }}
-          effect="fade"
+  useEffect(() => {
+    if (filterDrawerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [filterDrawerOpen]);
+
+  // Filter Sidebar Component
+  const FilterSidebar = () => (
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+      <div className="mb-6">
+        <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
+          Categories
+        </h3>
+        <Checkbox.Group
+          options={categories}
+          value={selectedCategories}
+          onChange={(checkedValues) =>
+            setSelectedCategories(checkedValues as string[])
+          }
+          className="flex flex-col gap-3"
+        />
+      </div>
+
+      <div className="border-t pt-6 mb-6">
+        <h3 className="text-lg font-bold mb-4 text-gray-800">Price Range</h3>
+        <Radio.Group
+          onChange={(e) => setSelectedPrice(e.target.value)}
+          value={selectedPrice}
+          className="flex flex-col gap-3"
         >
+          {priceOptions.map((p) => (
+            <Radio key={p.value} value={p.value} className="text-gray-700">
+              {p.label}
+            </Radio>
+          ))}
+        </Radio.Group>
+      </div>
+
+      <div className="border-t pt-6">
+        <h3 className="text-lg font-bold mb-4 text-gray-800">Sort By</h3>
+        <Select
+          style={{ width: "100%" }}
+          placeholder="Select option"
+          onChange={(val) => setSortOption(val)}
+          className="rounded-lg"
+          size="large"
+        >
+          {sortOptions.map((opt) => (
+            <Option key={opt} value={opt}>
+              {opt}
+            </Option>
+          ))}
+        </Select>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50 w-full px-4 sm:px-6 md:px-10 lg:px-20">
+      <div className="relative mb-8 overflow-hidden rounded-xl">
+        <Carousel autoplay autoplaySpeed={4000} effect="fade">
           {carouselImages.map((img, idx) => (
             <div key={idx}>
-              <div className="relative h-96 w-full">
+              <div className="relative h-[300px] sm:h-[400px] md:h-[500px] w-full">
                 <Image
                   src={img}
                   alt={`Slide ${idx}`}
@@ -170,19 +228,19 @@ const ProductPage = () => {
                   height={600}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
-                  <div className="max-w-7xl mx-auto px-8 text-white">
-                    <h1 className="text-5xl font-bold mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
+                  <div className="px-6 sm:px-10 md:px-16 text-white">
+                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
                       Discover Amazing Products
                     </h1>
-                    <p className="text-xl mb-6">
+                    <p className="text-base sm:text-lg md:text-xl mb-6">
                       Up to 50% off on selected items
                     </p>
                     <CommonButton
                       children="Shop Now"
                       type="text"
                       themeType="cancel"
-                      className="!bg-white !text-gray-900 !px-8 !py-6 !rounded-full !font-semibold hover:!bg-gray-100 hover:!text-gray-900 !transition-all !transform hover:!scale-105"
+                      className="!bg-white !text-gray-900 !px-6 sm:!px-8 !py-3 sm:!py-4 !rounded-full !font-semibold hover:!bg-gray-100 hover:!scale-105 transition-transform"
                     />
                   </div>
                 </div>
@@ -192,81 +250,44 @@ const ProductPage = () => {
         </Carousel>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 pb-12">
+      {/* Main Content */}
+      <div className="w-full px-8 md:px-6 sm:px-4 pb-12">
+        {/* Mobile Filter Button */}
+        <div className="lg:hidden mb-6">
+          <CommonButton
+            onClick={() => setFilterDrawerOpen(true)}
+            className="!w-full !bg-white !text-gray-800 !border !border-gray-300 !rounded-xl !py-3 !font-semibold !flex !items-center !justify-center !gap-2"
+          >
+            <BsFilter size={20} />
+            Filters & Sort
+          </CommonButton>
+        </div>
+
         <Row gutter={[32, 32]}>
-          <Col xs={24} sm={8} md={6} lg={5}>
+          {/* Desktop Sidebar - Hidden on Mobile */}
+          <Col xs={0} sm={0} md={0} lg={6} xl={5}>
             <div className="sticky top-16">
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
-                    Categories
-                  </h3>
-                  <Checkbox.Group
-                    options={categories}
-                    value={selectedCategories}
-                    onChange={(checkedValues) =>
-                      setSelectedCategories(checkedValues as string[])
-                    }
-                    className="flex flex-col gap-3"
-                  />
-                </div>
-
-                <div className="border-t pt-6 mb-6">
-                  <h3 className="text-lg font-bold mb-4 text-gray-800">
-                    Price Range
-                  </h3>
-                  <Radio.Group
-                    onChange={(e) => setSelectedPrice(e.target.value)}
-                    value={selectedPrice}
-                    className="flex flex-col gap-3"
-                  >
-                    {priceOptions.map((p) => (
-                      <Radio
-                        key={p.value}
-                        value={p.value}
-                        className="text-gray-700"
-                      >
-                        {p.label}
-                      </Radio>
-                    ))}
-                  </Radio.Group>
-                </div>
-
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-bold mb-4 text-gray-800">
-                    Sort By
-                  </h3>
-                  <Select
-                    style={{ width: "100%" }}
-                    placeholder="Select option"
-                    onChange={(val) => setSortOption(val)}
-                    className="rounded-lg"
-                    size="large"
-                  >
-                    {sortOptions.map((opt) => (
-                      <Option key={opt} value={opt}>
-                        {opt}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
+              <FilterSidebar />
             </div>
           </Col>
-          <Col xs={24} sm={16} md={18} lg={19}>
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
+
+          {/* Product Grid */}
+          <Col xs={24} sm={24} md={24} lg={18} xl={19}>
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <h2 className="text-2xl md:text-xl sm:text-lg font-bold text-gray-800">
                 {filteredProducts.length} Products Found
               </h2>
             </div>
 
-            <Row gutter={[24, 24]}>
+            <Row gutter={[16, 16]}>
               {currentProducts.map((item) => (
-                <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
+                <Col xs={12} sm={12} md={8} lg={8} xl={6} key={item.id}>
                   <CommonProductCard item={item} />
                 </Col>
               ))}
             </Row>
+
+            {/* Pagination */}
             <div className="flex justify-center mt-12">
               <Pagination
                 current={currentPage}
@@ -275,11 +296,47 @@ const ProductPage = () => {
                 onChange={(page) => setCurrentPage(page)}
                 showSizeChanger={false}
                 className="custom-pagination"
+                responsive
+                simple={window.innerWidth < 640}
               />
             </div>
           </Col>
         </Row>
       </div>
+
+      {/* Mobile Filter Drawer */}
+      <Drawer
+        title={
+          <div className="flex items-center gap-2 text-lg font-bold">
+            <BsFilter size={22} />
+            Filters & Sort
+          </div>
+        }
+        placement="left"
+        onClose={() => setFilterDrawerOpen(false)}
+        open={filterDrawerOpen}
+        width={300}
+      >
+        <FilterSidebar />
+        <div className="mt-6 flex gap-3">
+          <CommonButton
+            onClick={() => {
+              setSelectedCategories([]);
+              setSelectedPrice("");
+              setSortOption("");
+            }}
+            className="!flex-1 !bg-gray-100 !text-gray-800 !rounded-lg !py-2"
+          >
+            Clear All
+          </CommonButton>
+          <CommonButton
+            onClick={() => setFilterDrawerOpen(false)}
+            className="!flex-1 !bg-blue-500 !text-white !rounded-lg !py-2"
+          >
+            Apply
+          </CommonButton>
+        </div>
+      </Drawer>
     </div>
   );
 };

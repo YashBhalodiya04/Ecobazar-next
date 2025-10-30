@@ -32,7 +32,7 @@ const CommonProductCard = ({ item }: { item: CommonProductList }) => {
               <Image
                 src={item.image}
                 alt={item.name}
-                width={300}
+                width={320}
                 height={256}
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
               />
