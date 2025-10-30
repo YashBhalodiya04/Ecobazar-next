@@ -150,16 +150,21 @@ const ProductPage = () => {
 
   const startIdx = (currentPage - 1) * perPage;
   const currentProducts = filteredProducts.slice(startIdx, startIdx + perPage);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
 
-  useEffect(() => {
+
+useEffect(() => {
+    if (typeof window === "undefined") return; // Prevent SSR crash
+
+    const body = document.body;
     if (filterDrawerOpen) {
-      document.body.style.overflow = "hidden";
+      body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto";
+      body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = "auto";
+      body.style.overflow = "auto";
     };
   }, [filterDrawerOpen]);
 
@@ -297,7 +302,7 @@ const ProductPage = () => {
                 showSizeChanger={false}
                 className="custom-pagination"
                 responsive
-                simple={window.innerWidth < 640}
+                simple={isMobile}
               />
             </div>
           </Col>
