@@ -77,7 +77,7 @@ export interface CommonDropdownAPIResponse {
   success: boolean;
   message: string;
   data: CommonDropdownOptions[];
-  status: number;
+  statuscode: number;
 }
 
 export interface CommonDropdownOptions {

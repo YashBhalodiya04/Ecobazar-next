@@ -288,7 +288,7 @@ const ProductPage: React.FC = () => {
         method: "POST",
       }).unwrap();
 
-      if (response?.status === 401) {
+      if (response?.statuscode === 401) {
         router.push("/login");
       }
 

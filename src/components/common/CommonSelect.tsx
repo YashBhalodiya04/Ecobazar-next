@@ -54,6 +54,11 @@ const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
         ? "[&_.ant-select-selector:focus-within]:!border-green-500 [&_.ant-select-selector:focus-within]:!ring-1 [&_.ant-select-selector:focus-within]:!ring-green-700"
         : "[&_.ant-select-selector:focus-within]:!border-blue-500 [&_.ant-select-selector:focus-within]:!ring-1 [&_.ant-select-selector:focus-within]:!ring-blue-700";
 
+    const themeClasses =
+      focusColor === "green"
+        ? "[&_.ant-select-selector]:!text-white [&_.ant-select-selector]:!border-gray-400 [&_.ant-select-arrow]:!text-gray-600 [&_.ant-select-selection-placeholder]:!text-gray-500"
+        : "[&_.ant-select-selector]:!text-white [&_.ant-select-selector]:!border-white/40 [&_.ant-select-arrow]:!text-white [&_.ant-select-selection-placeholder]:!text-white/50";
+
     const refmain = useRef(null);
 
     const memoizedOptions = useMemo(() => options, [options]);
@@ -78,7 +83,7 @@ const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
     };
 
     return (
-      <div ref={refmain} className={`w-full ${focusClasses}`}>
+      <div ref={refmain} className={`w-full `}>
         <Select
           value={value ? value[valueKey] : undefined}
           defaultValue={defaultValue ? defaultValue[valueKey] : undefined}
@@ -86,7 +91,7 @@ const CommonSelect = forwardRef<HTMLDivElement, SingleSelectProps>(
           showSearch={showSearch}
           id={id}
           open={Open}
-         className={`w-full [&_.ant-select-selector]:!bg-transparent [&_.ant-select-selector]:!text-white [&_.ant-select-selector]:!border-white/40 [&_.ant-select-arrow]:!text-white [&_.ant-select-selection-placeholder]:!text-white/50 ${className}`}
+          className={`w-full ${themeClasses} ${className}`}
           placeholder={placeholder}
           disabled={disabled}
           onChange={handleChange}

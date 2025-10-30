@@ -26,6 +26,10 @@ export const apis = {
     deleteProduct: "/auth/admin/product/deleteproduct",
   },
   WITHOUTTOKEN: {
-    getHomeData: '/gethomedata'
+    getHomeData: '/gethomedata',
+
+    // CATEGORY
+    getAllCategoryList: '/category/getallcategorylist',
+    getProductList: '/product/getallproduct',
   }
 };

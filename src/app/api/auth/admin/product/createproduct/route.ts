@@ -1,9 +1,15 @@
 import { commonResponse } from "@/helper/commonResponbeen";
-import { getPublicIdFromUrl, parseFormDataWithFiles } from "@/helper/CommonUtils";
+import {
+  getPublicIdFromUrl,
+  parseFormDataWithFiles,
+} from "@/helper/CommonUtils";
 import { withAuth } from "@/helper/withAuth";
 import { ContexInterface } from "@/interfaces/commonInterace";
 import { ProductCreatePayload } from "@/interfaces/ProductInterface";
-import { deleteFromCloudinary, uploadToCloudinary } from "@/lib/cloudinaryUpload";
+import {
+  deleteFromCloudinary,
+  uploadToCloudinary,
+} from "@/lib/cloudinaryUpload";
 import dbconnect from "@/lib/dbConnect";
 import { toObjectId } from "@/lib/helper";
 import CategoryModal from "@/model/Category";
@@ -74,11 +80,13 @@ export const CreateProduct = async (
       );
     }
 
-    let uploadedImages = data?.images?.map((img) => ({
-      id: img.id,
-      url: img.url,
-      isMain: img.isMain || false,
-    }));
+    let uploadedImages =
+      data?.images?.map((img) => ({
+        id: img.id,
+        url: img.url,
+        isMain: img.isMain || false,
+      })) || [];
+
     // --- Handle new uploads ---
     if (files && files.length > 0) {
       const uploadPromises = files.map((file) =>
@@ -86,13 +94,35 @@ export const CreateProduct = async (
       );
       const uploadedUrls = await Promise.all(uploadPromises);
 
-      const newUploads = uploadedUrls.map((url, i) => ({
+      const newUploads = uploadedUrls.map((url) => ({
         id: new mongoose.Types.ObjectId().toString(),
         url,
-        isMain: uploadedImages?.length ? false : i === 0, // first if none main
+        isMain: false, // initially false for all new uploads
       }));
 
-      uploadedImages = [...(uploadedImages || []), ...newUploads].filter((item) => item?.url);
+      uploadedImages = [...uploadedImages, ...newUploads].filter(
+        (item) => !!item?.url
+      );
+    }
+
+    // --- Ensure exactly one main image ---
+    if (uploadedImages.length > 0) {
+      const hasMain = uploadedImages.some((img) => img.isMain);
+
+      if (!hasMain) {
+        // if none marked as main, set the first image as main
+        uploadedImages[0].isMain = true;
+      } else {
+        // if multiple mains exist, keep only the first main
+        let found = false;
+        uploadedImages = uploadedImages.map((img) => {
+          if (img.isMain && !found) {
+            found = true;
+            return { ...img, isMain: true };
+          }
+          return { ...img, isMain: false };
+        });
+      }
     }
 
     // --- If editing (data.productid exists), remove deleted images from Cloudinary ---

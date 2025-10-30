@@ -87,3 +87,38 @@ export interface ProductInfoSectionData {
   title: string;
   fields: ProductInfoData[];
 }
+
+export interface getAllProductListpayload {
+  page: number;
+  pagesize: number;
+  search: string;
+  categoryid: string[];
+  pricerange: string;
+  sortby: string;
+}
+
+export interface ProductClientGridAPIResponse {
+  success: boolean;
+  message: string;
+  data: ProductClientData;
+  statuscode: number;
+}
+
+export interface ProductClientData {
+  data: ProductClientGridRecord[];
+  recordsFiltered: number;
+  recordsTotal: number;
+}
+
+export interface ProductClientGridRecord {
+  name: string;
+  price: number;
+  stock: number;
+  isNew: boolean;
+  hasValidOffer: boolean;
+  finalPrice: number;
+  id: string;
+  image: string;
+  rating: number;
+  reviews: number;
+}
