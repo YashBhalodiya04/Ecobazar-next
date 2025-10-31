@@ -28,7 +28,7 @@ const CommonProductCard = ({ item }: { item: ProductClientGridRecord }) => {
       <Card
         hoverable
         className="rounded-2xl overflow-hidden border-2 border-transparent hover:border-green-400 transition-all duration-300 shadow-md hover:shadow-2xl"
-        // onClick={() => router.push(`/product/${item?.id}`)}
+        onClick={() => router.push(`/product/${item?.id}`)}
         cover={
           <div className="relative h-64 overflow-hidden bg-gray-100">
             <Image

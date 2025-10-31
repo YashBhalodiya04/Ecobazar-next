@@ -31,5 +31,6 @@ export const apis = {
     // CATEGORY
     getAllCategoryList: '/category/getallcategorylist',
     getProductList: '/product/getallproduct',
+    getProductDetails: '/product/productdetail',
   }
 };

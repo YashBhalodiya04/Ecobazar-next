@@ -7,11 +7,18 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '10mb', // ✅ for Server Actions
+      bodySizeLimit: "10mb", // ✅ for Server Actions
     },
   },
   images: {
-    domains: ['images.unsplash.com'], // ✅ Allow Unsplash
+    domains: ["images.unsplash.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+    ],
   },
 };
 

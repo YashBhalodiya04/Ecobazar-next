@@ -100,7 +100,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
                 onClick={togglePassword}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white"
               >
-                {showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
+                {!showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
               </button>
             )}
           </>

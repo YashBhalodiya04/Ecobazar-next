@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Card, Carousel, Typography, Button, Space, Divider } from "antd";
 import Image from "next/image";
 import {
@@ -10,6 +10,12 @@ import {
   PlusOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
+import { useRequestMutation } from "@/redux/commonApi";
+import { apis } from "@/redux/apiUrls";
+import {
+  ProductDetailData,
+  ProductDetailResponse,
+} from "@/interfaces/ProductInterface";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -33,27 +39,47 @@ const products = [
 ];
 
 const ProductDetail = () => {
+  const router = useRouter();
+  const [request, { isLoading }] = useRequestMutation();
   const params = useParams();
   const { id } = params;
-  const product = products.find((p) => String(p.id) === String(id));
 
-  const [quantity, setQuantity] = useState(1);
+  const [productData, setproductData] = useState<ProductDetailData | null>(
+    null
+  );
 
-  if (!product) {
-    return (
-      <h2 style={{ textAlign: "center", marginTop: 50 }}>Product not found!</h2>
-    );
-  }
+  const fetchProductData = async () => {
+    try {
+      const payload = {
+        productid: id,
+      };
+      const response: ProductDetailResponse = await request({
+        url: apis.WITHOUTTOKEN.getProductDetails,
+        method: "POST",
+        body: payload,
+      }).unwrap();
 
-  const increaseQty = () => setQuantity((q) => q + 1);
-  const decreaseQty = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+      if (response?.success) {
+        setproductData(response?.data);
+        console.log(response);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchProductData();
+    }
+  }, [id]);
 
   return (
     <div className="w-full flex justify-center px-20 sm:px-10">
       <Card
         style={{
           width: "100%",
-        //   maxWidth: 1100,
+          //   maxWidth: 1100,
           borderRadius: 12,
           boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
           overflow: "hidden",
@@ -67,14 +93,13 @@ const ProductDetail = () => {
             justifyContent: "space-between",
           }}
         >
-          {/* LEFT SIDE - Product Slider */}
           <div style={{ flex: "1 1 45%", minWidth: 320 }}>
             <Carousel autoplay autoplaySpeed={4000} effect="fade">
-              {product.images.map((img, idx) => (
-                <div key={idx}>
+              {productData?.imagelist.map((img, idx) => (
+                <div key={img?.id}>
                   <Image
-                    src={img}
-                    alt={product.name}
+                    src={img?.url}
+                    alt={img?.url}
                     width={500}
                     height={400}
                     style={{
@@ -89,7 +114,6 @@ const ProductDetail = () => {
             </Carousel>
           </div>
 
-          {/* RIGHT SIDE - Product Info */}
           <div
             style={{
               flex: "1 1 45%",
@@ -102,15 +126,13 @@ const ProductDetail = () => {
             {/* Product Header */}
             <div>
               <Title level={2} style={{ marginBottom: 4 }}>
-                {product.name}
+                {productData?.name}
               </Title>
               <Text type="secondary" style={{ fontSize: 16 }}>
-                Category: <b>{product.category}</b>
+                Category: <b>{productData?.categoryName}</b>
               </Text>
 
               <Divider />
-
-              {/* Price and Stock Info */}
               <div style={{ marginTop: 10 }}>
                 <Title
                   level={3}
@@ -120,23 +142,22 @@ const ProductDetail = () => {
                     fontWeight: 600,
                   }}
                 >
-                  ${product.price.toFixed(2)}
+                  ${productData?.price.toFixed(2)}
                 </Title>
                 <Text
-                  type={product.inStock > 0 ? "success" : "danger"}
+                  type={productData?.stock > 0 ? "success" : "danger"}
                   style={{
                     fontWeight: 500,
                     display: "block",
                     marginBottom: 12,
                   }}
                 >
-                  {product.inStock > 0
-                    ? `${product.inStock} available in stock`
+                  {productData?.stock > 0
+                    ? `${productData?.stock} available in stock`
                     : "Out of stock"}
                 </Text>
               </div>
 
-              {/* Description */}
               <Paragraph
                 style={{
                   marginTop: 12,
@@ -145,17 +166,16 @@ const ProductDetail = () => {
                   fontSize: 15,
                 }}
               >
-                {product.description}
+                {productData?.description}
               </Paragraph>
 
               <Divider />
 
-              {/* Quantity Selector */}
               <div style={{ marginTop: 10 }}>
                 <Text strong style={{ marginRight: 10 }}>
                   Quantity:
                 </Text>
-                <Space align="center">
+                {/* <Space align="center">
                   <Button
                     icon={<MinusOutlined />}
                     onClick={decreaseQty}
@@ -169,7 +189,7 @@ const ProductDetail = () => {
                     onClick={increaseQty}
                     disabled={quantity >= product.inStock}
                   />
-                </Space>
+                </Space> */}
               </div>
 
               {/* Action Buttons */}
@@ -186,7 +206,7 @@ const ProductDetail = () => {
                   size="large"
                   icon={<ShoppingCartOutlined />}
                   style={{ flex: 1, minWidth: 180 }}
-                  disabled={product.inStock === 0}
+                  disabled={productData?.stock === 0}
                 >
                   Add to Cart
                 </Button>

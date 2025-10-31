@@ -122,3 +122,57 @@ export interface ProductClientGridRecord {
   rating: number;
   reviews: number;
 }
+
+export interface ProductDetailResponse {
+  success: boolean;
+  message: string;
+  data: ProductDetailData;
+  statuscode: number;
+}
+
+export interface ProductDetailData {
+  id: string;
+  name: string;
+  avgrating: number;
+  reviewCount: number;
+  imagelist: ProductImage[];
+  hasValidOffer: boolean;
+  finalPrice: number;
+  offerDiscount: number;
+  categoryName: string;
+  description: string;
+  price: number;
+  productdetailsdata: ProductDetailSection[];
+  reviews: ProductReview[];
+  stock: number;
+}
+
+export interface ProductImage {
+  id: string;
+  url: string;
+  isMain: boolean;
+}
+
+export interface ProductDetailSection {
+  id: string;
+  title: string;
+  fields: ProductDetailField[];
+}
+
+export interface ProductDetailField {
+  id: string;
+  label: string;
+  value: string;
+}
+
+export interface ProductReview {
+  id: string;
+  rating: number;
+  comment: string;
+  date: string;
+  user?: {
+    id: string;
+    name: string;
+    image?: string;
+  };
+}
