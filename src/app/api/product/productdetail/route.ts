@@ -26,6 +26,14 @@ export const GetProductDetail = async (
         $match: { _id: toObjectId(productid), active: true },
       },
       {
+        $lookup: {
+          from: "users",
+          localField: "reviews.user",
+          foreignField: "_id",
+          as: "reviewUsers",
+        },
+      },
+      {
         $addFields: {
           averageRating: {
             $cond: {
@@ -161,8 +169,8 @@ export const GetProductDetail = async (
                     },
                     in: {
                       id: "$$userInfo._id",
-                      name: "$$userInfo.name",
-                      image: "$$userInfo.image",
+                      username: "$$userInfo.username",
+                      userimage: "$$userInfo.userimage",
                     },
                   },
                 },
@@ -177,14 +185,6 @@ export const GetProductDetail = async (
           localField: "categoryid",
           foreignField: "_id",
           as: "categoryInfo",
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "reviews.user",
-          foreignField: "_id",
-          as: "reviewUsers",
         },
       },
       {
@@ -208,8 +208,8 @@ export const GetProductDetail = async (
           price: "$price",
           productdetailsdata: "$additionalInfo",
           reviews: "$reviewData",
-          stock: '$stock',
-          description: '$description' ,
+          stock: "$stock",
+          description: "$description",
         },
       },
     ];

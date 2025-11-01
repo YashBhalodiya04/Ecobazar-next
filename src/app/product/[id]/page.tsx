@@ -1,230 +1,321 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Card, Carousel, Typography, Button, Space, Divider } from "antd";
+import { useParams } from "next/navigation";
+import {
+  Card,
+  Carousel,
+  Typography,
+  Space,
+  Divider,
+  Skeleton,
+  Avatar,
+  Rate,
+  Tag,
+} from "antd";
 import Image from "next/image";
 import {
   HeartOutlined,
   MinusOutlined,
   PlusOutlined,
   ShoppingCartOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useRequestMutation } from "@/redux/commonApi";
 import { apis } from "@/redux/apiUrls";
 import {
   ProductDetailData,
   ProductDetailResponse,
+  ProductReview,
 } from "@/interfaces/ProductInterface";
+import dayjs from "dayjs";
+import { Toast } from "@/components/common/toastUtils";
+import { getCookieValue } from "@/helper/CommonUtils";
+import CommonButton from "@/components/common/CommonButton";
+import { Controller, useForm } from "react-hook-form";
+import { ReviewFormData, reviewSchema } from "@/schemas/authSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import CommonInput from "@/components/common/CommonInput";
+import { FaRupeeSign } from "react-icons/fa6";
 
 const { Title, Paragraph, Text } = Typography;
 
-const products = [
-  {
-    id: 1,
-    name: "Modern Wireless Headphones",
-    category: "Electronics",
-    price: 99.99,
-    inStock: 25,
-    description:
-      "Experience premium sound quality with these wireless headphones. Designed for comfort and superior noise isolation. Enjoy seamless Bluetooth connectivity, a long-lasting battery, and an immersive listening experience.",
-    images: [
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
-      "https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=800&q=80",
-      "https://images.unsplash.com/photo-1580894732444-8ecded7900a0?w=800&q=80",
-      "https://images.unsplash.com/photo-1606813902781-9b6e82f0cbd4?w=800&q=80",
-      "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=800&q=80",
-    ],
-  },
-];
-
 const ProductDetail = () => {
-  const router = useRouter();
+  const user = getCookieValue("user");
   const [request, { isLoading }] = useRequestMutation();
   const params = useParams();
   const { id } = params;
 
-  const [productData, setproductData] = useState<ProductDetailData | null>(
+  const [productData, setProductData] = useState<ProductDetailData | null>(
     null
   );
+  const [loading, setLoading] = useState(true);
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ReviewFormData>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: {
+      rating: 0,
+      comment: "",
+    },
+  });
 
   const fetchProductData = async () => {
     try {
-      const payload = {
-        productid: id,
-      };
+      const payload = { productid: id };
       const response: ProductDetailResponse = await request({
         url: apis.WITHOUTTOKEN.getProductDetails,
         method: "POST",
         body: payload,
       }).unwrap();
 
+      if (response?.success) setProductData(response?.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) fetchProductData();
+  }, [id]);
+
+  const onSubmit = async (data: ReviewFormData) => {
+    try {
+      const payload = {
+        productId: id,
+        rating: data?.rating,
+        comment: data?.comment,
+      };
+      const response = await request({
+        url: apis.USER.addProductReview,
+        method: "POST",
+        body: payload,
+      }).unwrap();
+
       if (response?.success) {
-        setproductData(response?.data);
-        console.log(response);
+        reset();
+        fetchProductData();
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    if (id) {
-      fetchProductData();
-    }
-  }, [id]);
-
   return (
-    <div className="w-full flex justify-center px-20 sm:px-10">
-      <Card
-        style={{
-          width: "100%",
-          //   maxWidth: 1100,
-          borderRadius: 12,
-          boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "40px",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ flex: "1 1 45%", minWidth: 320 }}>
-            <Carousel autoplay autoplaySpeed={4000} effect="fade">
-              {productData?.imagelist.map((img, idx) => (
-                <div key={img?.id}>
-                  <Image
-                    src={img?.url}
-                    alt={img?.url}
-                    width={500}
-                    height={400}
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      borderRadius: 12,
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-              ))}
-            </Carousel>
+    <div className="w-full flex justify-center px-20 sm:px-10 mb-3">
+      <Card className="w-full rounded-xl shadow-lg overflow-hidden">
+        <div className="flex flex-wrap justify-between gap-10">
+          <div className="flex-1 min-w-[320px] max-w-[45%]">
+            {loading ? (
+              <Skeleton.Image active className="w-full h-[400px]" />
+            ) : (
+              <Carousel autoplay autoplaySpeed={4000} effect="fade">
+                {productData?.imagelist?.map((img) => (
+                  <div key={img.id}>
+                    <Image
+                      src={img.url}
+                      alt={img.url}
+                      width={500}
+                      height={400}
+                      className="w-full h-auto rounded-xl object-cover"
+                    />
+                  </div>
+                ))}
+              </Carousel>
+            )}
           </div>
+          <div className="flex flex-col flex-1 min-w-[320px]">
+            {loading ? (
+              <Skeleton active paragraph={{ rows: 8 }} />
+            ) : (
+              <>
+                <Title level={2}>{productData?.name}</Title>
+                <Text type="secondary">
+                  Category: <b>{productData?.categoryName}</b>
+                </Text>
 
-          <div
-            style={{
-              flex: "1 1 45%",
-              minWidth: 320,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            {/* Product Header */}
-            <div>
-              <Title level={2} style={{ marginBottom: 4 }}>
-                {productData?.name}
-              </Title>
-              <Text type="secondary" style={{ fontSize: 16 }}>
-                Category: <b>{productData?.categoryName}</b>
-              </Text>
+                <Divider />
+                <div className="flex items-baseline gap-3 mt-3">
+                  <Title
+                    level={3}
+                    className="text-green-600 font-semibold !m-0 flex items-center"
+                  >
+                    <FaRupeeSign className="mr-1 text-green-600" />
+                    {productData?.finalPrice.toFixed(2)}
+                  </Title>
+                  {productData?.hasValidOffer && (
+                    <>
+                      <Text delete className="text-gray-500 text-base">
+                        <FaRupeeSign className="inline text-gray-500 mr-0.5 mt-[-7px]" />
+                        {productData?.price.toFixed(2)}
+                      </Text>
 
-              <Divider />
-              <div style={{ marginTop: 10 }}>
-                <Title
-                  level={3}
-                  style={{
-                    color: "#52c41a",
-                    marginBottom: 4,
-                    fontWeight: 600,
-                  }}
-                >
-                  ${productData?.price.toFixed(2)}
-                </Title>
+                      <Tag
+                        color="green"
+                        className="text-sm font-medium rounded-full px-2 py-0.5"
+                      >
+                        {productData?.offerDiscount}% OFF
+                      </Tag>
+                    </>
+                  )}
+                </div>
+
                 <Text
                   type={productData?.stock > 0 ? "success" : "danger"}
-                  style={{
-                    fontWeight: 500,
-                    display: "block",
-                    marginBottom: 12,
-                  }}
+                  className="block mb-3"
                 >
                   {productData?.stock > 0
                     ? `${productData?.stock} available in stock`
                     : "Out of stock"}
                 </Text>
-              </div>
 
-              <Paragraph
-                style={{
-                  marginTop: 12,
-                  lineHeight: 1.6,
-                  color: "#555",
-                  fontSize: 15,
-                }}
-              >
-                {productData?.description}
-              </Paragraph>
+                <Paragraph>{productData?.description}</Paragraph>
 
-              <Divider />
-
-              <div style={{ marginTop: 10 }}>
-                <Text strong style={{ marginRight: 10 }}>
-                  Quantity:
-                </Text>
-                {/* <Space align="center">
-                  <Button
-                    icon={<MinusOutlined />}
-                    onClick={decreaseQty}
-                    disabled={quantity === 1}
+                <Divider />
+                <div className="mt-2">
+                  <Text strong>Quantity:</Text>
+                  <Space align="center" className="ml-2">
+                    <CommonButton
+                      onClick={() => {}}
+                      icon={<MinusOutlined />}
+                      disabled={productData?.stock === 1}
+                      themeType="success"
+                      className="!border-hidden"
+                    />
+                    <Text strong>{productData?.stock}</Text>
+                    <CommonButton
+                      onClick={() => {}}
+                      icon={<PlusOutlined />}
+                      themeType="success"
+                      className="!border-hidden"
+                    />
+                  </Space>
+                </div>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <CommonButton
+                    size="large"
+                    themeType="success"
+                    icon={<ShoppingCartOutlined />}
+                    disabled={productData?.stock === 0}
+                    className="flex-1"
+                    children="Add To Cart"
                   />
-                  <Text strong style={{ minWidth: 30, textAlign: "center" }}>
-                    {quantity}
-                  </Text>
-                  <Button
-                    icon={<PlusOutlined />}
-                    onClick={increaseQty}
-                    disabled={quantity >= product.inStock}
+                  <CommonButton
+                    themeType="danger"
+                    size="large"
+                    icon={<HeartOutlined />}
+                    className="flex-1"
+                    onClick={() => Toast.success("Added to wishlist!")}
+                    children="Wishlist"
                   />
-                </Space> */}
-              </div>
-
-              {/* Action Buttons */}
-              <div
-                style={{
-                  marginTop: 30,
-                  display: "flex",
-                  gap: "12px",
-                  flexWrap: "wrap",
-                }}
-              >
-                <Button
-                  type="primary"
-                  size="large"
-                  icon={<ShoppingCartOutlined />}
-                  style={{ flex: 1, minWidth: 180 }}
-                  disabled={productData?.stock === 0}
-                >
-                  Add to Cart
-                </Button>
-                <Button
-                  size="large"
-                  icon={<HeartOutlined />}
-                  style={{
-                    flex: 1,
-                    minWidth: 180,
-                    borderColor: "#ff4d4f",
-                    color: "#ff4d4f",
-                  }}
-                >
-                  Wishlist
-                </Button>
-              </div>
-            </div>
+                </div>
+              </>
+            )}
           </div>
+        </div>
+        <Divider />
+        <div className="mt-8 border-t border-gray-200 pt-6">
+          <Title level={4}>Write a Review</Title>
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4 "
+          >
+            <div className="flex items-center gap-2">
+              <Text strong>Rating:</Text>
+              <Controller
+                name="rating"
+                control={control}
+                render={({ field }) => (
+                  <Rate
+                    {...field}
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                )}
+              />
+              {errors.rating && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.rating.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <CommonInput
+                id="comment"
+                label="Comment"
+                type="text"
+                placeholder="Share your experience..."
+                required
+                {...register("comment")}
+                errorMessage={errors?.comment?.message || ""}
+                istexarea={true}
+                labelClassName="!text-black"
+                focusColor="black"
+              />
+            </div>
+
+            <div className="flex justify-end">
+              <CommonButton
+                themeType="dark"
+                // icon={<HeartOutlined />}
+                htmlType="submit"
+                children={isSubmitting ? "Submitting..." : "Submit Review"}
+              />
+            </div>
+          </form>
+        </div>
+        <div className="mt-5">
+          <Title level={4}>Customer Reviews</Title>
+
+          {isLoading ? (
+            <>
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="mt-5">
+                  <Space align="start" size="middle" className="w-full">
+                    <Skeleton.Avatar active size="large" shape="circle" />
+                    <div className="w-full flex flex-col gap-2">
+                      <Skeleton.Input active size="small" className="w-2/5" />
+                      <Skeleton.Input active size="large" className="w-full" />
+                    </div>
+                  </Space>
+                  <Divider />
+                </div>
+              ))}
+            </>
+          ) : productData?.reviews?.length ? (
+            productData.reviews.map((review: ProductReview) => (
+              <div key={review.id} className="mb-6">
+                <Space align="start">
+                  <Avatar
+                    src={review.user?.userimage || undefined}
+                    icon={<UserOutlined />}
+                    size={50}
+                  />
+                  <div>
+                    <Text strong className="">
+                      {review.user?.username || "Anonymous"}
+                      {/* <Text type="secondary" className="text-xs !text-black ms-3">
+                        {dayjs(review.date).format("DD-MM-YY HH:mm")}
+                      </Text> */}
+                    </Text>
+                    <br />
+                    <Rate disabled defaultValue={review.rating} />
+                    <Paragraph className="mt-1">{review.comment}</Paragraph>
+                  </div>
+                </Space>
+                <Divider />
+              </div>
+            ))
+          ) : (
+            <Text type="secondary">No reviews yet.</Text>
+          )}
         </div>
       </Card>
     </div>

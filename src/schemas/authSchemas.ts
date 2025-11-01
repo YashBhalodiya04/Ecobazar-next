@@ -129,3 +129,16 @@ export const contactSchema = z.object({
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
+
+export const reviewSchema = z.object({
+  rating: z
+    .number()
+    .min(1, { message: "Please select a rating." })
+    .max(5),
+  comment: z
+    .string()
+    .min(5, { message: "Comment must be at least 5 characters long." })
+    .max(500, { message: "Comment cannot exceed 500 characters." }),
+});
+
+export type ReviewFormData = z.infer<typeof reviewSchema>;

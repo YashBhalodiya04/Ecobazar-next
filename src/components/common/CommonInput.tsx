@@ -1,17 +1,20 @@
 "use client";
-import React, { InputHTMLAttributes, TextareaHTMLAttributes, useState } from "react";
+import React, {
+  InputHTMLAttributes,
+  TextareaHTMLAttributes,
+  useState,
+} from "react";
 import Link from "next/link";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import clsx from "clsx";
 
-// ✅ Combine input + textarea props
 type CommonInputProps = {
   id: string;
   label: string;
   errorMessage?: string;
   isForgate?: boolean;
   isPassword?: boolean;
-  focusColor?: "green" | "blue";
+  focusColor?: "green" | "blue" | "black";
   render?: React.ReactNode;
   required?: boolean;
   islabelShow?: boolean;
@@ -37,13 +40,45 @@ const CommonInput: React.FC<CommonInputProps> = ({
   istexarea = false,
   ...rest
 }) => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  const focusClasses =
+  // 🎨 Define color theme variations
+  const themeStyles =
     focusColor === "green"
-      ? "focus:ring-1 focus:ring-green-700 focus:border-green-500 hover:border-green-500"
-      : "focus:ring-1 focus:ring-blue-700 focus:border-blue-500 hover:border-blue-500";
+      ? {
+          base:
+            "bg-transparent text-white placeholder:text-gray-400 border-white",
+          dark:
+            "text-white placeholder:text-white border-green-700",
+          focus:
+            "focus:ring-1 focus:ring-green-700 focus:border-green-500 hover:border-green-500",
+        }
+      : focusColor === "blue"
+      ? {
+          base:
+            "bg-transparent text-white placeholder:text-white border-[#d9d9d9]",
+          dark:
+            "text-black placeholder:text-black border-[#d9d9d9]",
+          focus:
+            "focus:ring-1 focus:ring-blue-700 focus:border-blue-500 hover:border-blue-500",
+        }
+      : {
+          base:
+            "text-black placeholder:!text-black border-gray-400",
+          dark:
+            "text-black  border-black",
+          focus:
+            "focus:ring-1 focus:ring-green-50 focus:border-green-700 hover:border-green-700",
+        };
+
+  const sharedClasses = clsx(
+    "w-full px-3 py-2 rounded-md border outline-none transition-all duration-200",
+    themeStyles.base,
+    themeStyles.dark,
+    themeStyles.focus,
+    className
+  );
 
   return (
     <div className="w-full relative">
@@ -52,13 +87,19 @@ const CommonInput: React.FC<CommonInputProps> = ({
         {islabelShow && (
           <label
             htmlFor={id}
-            className={clsx("text-base font-medium text-gray-900 dark:text-white/90", labelClassName)}
+            className={clsx(
+              "text-base font-medium text-gray-900 dark:text-white/90",
+              labelClassName
+            )}
           >
             {label} {required && <span className="text-red-500">*</span>}
           </label>
         )}
         {isForgate && (
-          <Link href="/" className="text-sm font-semibold text-green-600 hover:underline">
+          <Link
+            href="/"
+            className="text-sm font-semibold text-green-600 hover:underline"
+          >
             Forgot password?
           </Link>
         )}
@@ -71,13 +112,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
         ) : istexarea ? (
           <textarea
             id={id}
-            className={clsx(
-              "w-full px-3 py-2 rounded-md border outline-none transition-all duration-200 resize-none",
-              "bg-white text-gray-900 placeholder:text-gray-400 border-gray-300",
-              "dark:bg-transparent dark:text-white dark:placeholder:text-white/50 dark:border-white/30",
-              focusClasses,
-              className
-            )}
+            className={clsx(sharedClasses, "resize-none")}
             {...(rest as TextareaHTMLAttributes<HTMLTextAreaElement>)}
           />
         ) : (
@@ -85,13 +120,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
             <input
               type={isPassword ? (showPassword ? "text" : "password") : "text"}
               id={id}
-              className={clsx(
-                "w-full px-3 py-2 rounded-md border outline-none transition-all duration-200",
-                "bg-white text-gray-900 placeholder:text-gray-400 border-gray-300",
-                "dark:bg-transparent dark:text-white dark:placeholder:text-white/50 dark:border-white/30",
-                focusClasses,
-                className
-              )}
+              className={sharedClasses}
               {...(rest as InputHTMLAttributes<HTMLInputElement>)}
             />
             {isPassword && (
@@ -100,7 +129,11 @@ const CommonInput: React.FC<CommonInputProps> = ({
                 onClick={togglePassword}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white"
               >
-                {!showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
+                {!showPassword ? (
+                  <MdVisibilityOff size={20} />
+                ) : (
+                  <MdVisibility size={20} />
+                )}
               </button>
             )}
           </>
@@ -108,7 +141,9 @@ const CommonInput: React.FC<CommonInputProps> = ({
       </div>
 
       {/* Error message */}
-      {errorMessage && <span className="mt-1 text-sm text-red-600">{errorMessage}</span>}
+      {errorMessage && (
+        <span className="mt-1 text-sm text-red-600">{errorMessage}</span>
+      )}
     </div>
   );
 };

@@ -24,7 +24,6 @@ export const SaveSlider = async (
     if (!validatePayload(data) || (files?.length === 0 && !data?.imagepath)) {
       return commonResponse(false, "Please Fill All Fields", "", 200);
     }
-    console.log(data)
     let duplicate: any;
     if (!data?.sliderid) {
       duplicate = await MainSliderModal.findOne({

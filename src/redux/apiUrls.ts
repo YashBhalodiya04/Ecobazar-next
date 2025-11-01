@@ -7,6 +7,8 @@ export const apis = {
   },
   USER: {
     getProfile: "/auth/user/profile",
+
+    addProductReview: '/auth/user/createreview',
   },
   ADMIN: {  
     // CATEGORY

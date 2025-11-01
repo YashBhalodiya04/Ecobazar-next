@@ -29,7 +29,6 @@ const ContactUsPage = () => {
   });
   const sendEmail = async (data: ContactFormData) => {
     try {
-      console.log("Form Data:", data);
       const payload: ContactEmailPayload = {
         email: data?.aboutemail,
         message: data?.description,
@@ -95,9 +94,9 @@ const ContactUsPage = () => {
                   placeholder="Enter your email"
                   {...register("aboutemail")}
                   errorMessage={errors.aboutemail?.message}
-                  className="!placeholder-gray-400 !border-gray-500 !text-black"
                   labelClassName="!text-black"
                   required
+                  focusColor="black"
                 />
                 <CommonInput
                   id="description"
@@ -107,9 +106,9 @@ const ContactUsPage = () => {
                   {...register("description")}
                   errorMessage={errors.description?.message}
                   labelClassName="!text-black"
-                  className="!placeholder-gray-400 !border-gray-500 !text-black"
                   required
                   istexarea
+                  focusColor="black"
                 />
                 <button
                   type="submit"

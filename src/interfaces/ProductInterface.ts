@@ -172,7 +172,13 @@ export interface ProductReview {
   date: string;
   user?: {
     id: string;
-    name: string;
-    image?: string;
+    username: string;
+    userimage?: string;
   };
+}
+
+export interface CreateProductReviewPayload {
+  productId: string;
+  rating: number;
+  comment: string;
 }

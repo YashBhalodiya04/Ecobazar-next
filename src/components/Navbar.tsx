@@ -47,9 +47,6 @@ const Navbar = () => {
       url: apis.AUTH.logout,
       method: "POST",
     }).unwrap();
-    if (response?.success) {
-      router.push("/");
-    }
   };
 
   // Prevent body scroll when menu is open
