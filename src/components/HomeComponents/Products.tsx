@@ -4,6 +4,7 @@ import { Card, Row, Col, Skeleton, Rate } from "antd";
 import { GoArrowRight } from "react-icons/go";
 import CommonButton from "../common/CommonButton";
 import { ProductData } from "@/interfaces/commonInterace";
+import { useRouter } from "next/navigation";
 
 const { Meta } = Card;
 
@@ -13,8 +14,9 @@ interface ProductsProps {
 }
 
 const Products: React.FC<ProductsProps> = ({ productList, isLoading }) => {
+  const router = useRouter();
   const handleViewAll = () => {
-    console.log("Navigating to /shop");
+    router.push("/product");
   };
 
   const skeletonCards = Array.from({ length: 6 });
@@ -91,6 +93,7 @@ const Products: React.FC<ProductsProps> = ({ productList, isLoading }) => {
               lg={6}
               xl={4}
               className="flex justify-center"
+              onClick={() => router.push(`/product/${item?.id}`)}
             >
               <Card
                 hoverable

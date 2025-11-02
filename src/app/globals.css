@@ -379,8 +379,38 @@
 }
 
 
+.transition-container {
+  transition: all 0.3s ease-in-out;
+}
 
+.transition-container.fade {
+  opacity: 0;
+  transform: scale(0.95);
+}
 
+.qty-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.cart-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.qty-wrapper {
+  animation: popIn 0.25s ease;
+}
 
 
 @theme inline {

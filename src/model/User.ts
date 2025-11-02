@@ -10,6 +10,7 @@ export interface User  {
   billingAddress?: UserBillingAddress[];
   phone: string;
   active: boolean;
+  finalcartvalue: number;
 }
 
 export interface CartModal {

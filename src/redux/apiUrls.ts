@@ -9,6 +9,8 @@ export const apis = {
     getProfile: "/auth/user/profile",
 
     addProductReview: '/auth/user/createreview',
+    removeFromCart: '/auth/user/usercart/removefromcart',
+    addToCart: '/auth/user/usercart/addtocart',
   },
   ADMIN: {  
     // CATEGORY

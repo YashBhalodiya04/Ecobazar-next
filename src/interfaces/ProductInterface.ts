@@ -145,6 +145,7 @@ export interface ProductDetailData {
   productdetailsdata: ProductDetailSection[];
   reviews: ProductReview[];
   stock: number;
+  productCartQuantity: number;
 }
 
 export interface ProductImage {

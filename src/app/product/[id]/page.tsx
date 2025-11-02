@@ -37,6 +37,7 @@ import { ReviewFormData, reviewSchema } from "@/schemas/authSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CommonInput from "@/components/common/CommonInput";
 import { FaRupeeSign } from "react-icons/fa6";
+import { CommonApiInterface } from "@/interfaces/commonInterace";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -49,7 +50,12 @@ const ProductDetail = () => {
   const [productData, setProductData] = useState<ProductDetailData | null>(
     null
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [quantity, setQuantity] = useState<number>(1);
+
+  const [isInCart, setIsInCart] = useState<boolean>(false);
+  const [showTransition, setShowTransition] = useState<boolean>(false);
+
   const {
     control,
     handleSubmit,
@@ -64,6 +70,7 @@ const ProductDetail = () => {
     },
   });
 
+  // ✅ Fetch product
   const fetchProductData = async () => {
     try {
       const payload = { productid: id };
@@ -72,8 +79,13 @@ const ProductDetail = () => {
         method: "POST",
         body: payload,
       }).unwrap();
-
-      if (response?.success) setProductData(response?.data);
+      if (response?.success) {
+        setProductData(response?.data);
+        if (response?.data?.productCartQuantity > 0) {
+          setIsInCart(true);
+          setQuantity(response?.data?.productCartQuantity);
+        }
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -85,14 +97,112 @@ const ProductDetail = () => {
     if (id) fetchProductData();
   }, [id]);
 
+  const handleAddToCart = async () => {
+    try {
+      if (!user) {
+        Toast.error("Please login to add items to cart");
+        return;
+      }
+
+      const payload = {
+        productid: id,
+        quantity: 1,
+        action: "add",
+      };
+
+      const response: CommonApiInterface = await request({
+        url: apis.USER.addToCart,
+        method: "POST",
+        body: payload,
+      }).unwrap();
+
+      if (response?.success) {
+        setShowTransition(true);
+        setTimeout(() => {
+          setIsInCart(true);
+          setQuantity(1);
+          setShowTransition(false);
+        }, 300);
+      }
+    } catch (error) {
+      console.error(error);
+      Toast.error("Failed to add item to cart");
+    }
+  };
+
+  const handleIncrease = async () => {
+    if (!user) {
+      Toast.error("Please login to update cart");
+      setQuantity(1);
+      setIsInCart(false);
+      return;
+    }
+    if (productData?.stock && quantity < productData.stock) {
+      const newQty = quantity + 1;
+      await updateCartQuantity(newQty, "add");
+    }
+  };
+
+  const handleDecrease = async () => {
+    if (!user) {
+      Toast.error("Please login to update cart");
+      setQuantity(1);
+      setIsInCart(false);
+      return;
+    }
+    if (quantity > 1) {
+      const newQty = quantity - 1;
+      await updateCartQuantity(newQty, "remove");
+    } else {
+      await updateCartQuantity(1, "remove"); // remove last item
+      setShowTransition(true);
+      setTimeout(() => {
+        setIsInCart(false);
+        setShowTransition(false);
+        setQuantity(0);
+      }, 300);
+    }
+  };
+
+  const updateCartQuantity = async (
+    newQuantity: number,
+    action: "add" | "remove"
+  ) => {
+    try {
+      const payload = {
+        productid: id,
+        quantity: newQuantity, // quantity to increment/decrement by 1 each time
+        action: action,
+      };
+
+      const response: CommonApiInterface = await request({
+        url: apis.USER.addToCart,
+        method: "POST",
+        body: payload,
+      }).unwrap();
+
+      if (response?.success) {
+        setQuantity(newQuantity);
+      }
+    } catch (error) {
+      console.error(error);
+      Toast.error("Something went wrong while updating cart");
+    }
+  };
+
+  // ✅ Review Submit
   const onSubmit = async (data: ReviewFormData) => {
+    if (!user) {
+      Toast.error("Please login to add review");
+      return;
+    }
     try {
       const payload = {
         productId: id,
         rating: data?.rating,
         comment: data?.comment,
       };
-      const response = await request({
+      const response: CommonApiInterface = await request({
         url: apis.USER.addProductReview,
         method: "POST",
         body: payload,
@@ -111,6 +221,7 @@ const ProductDetail = () => {
     <div className="w-full flex justify-center px-20 sm:px-10 mb-3">
       <Card className="w-full rounded-xl shadow-lg overflow-hidden">
         <div className="flex flex-wrap justify-between gap-10">
+          {/* LEFT: Product Images */}
           <div className="flex-1 min-w-[320px] max-w-[45%]">
             {loading ? (
               <Skeleton.Image active className="w-full h-[400px]" />
@@ -130,6 +241,8 @@ const ProductDetail = () => {
               </Carousel>
             )}
           </div>
+
+          {/* RIGHT: Product Info */}
           <div className="flex flex-col flex-1 min-w-[320px]">
             {loading ? (
               <Skeleton active paragraph={{ rows: 8 }} />
@@ -140,7 +253,7 @@ const ProductDetail = () => {
                   Category: <b>{productData?.categoryName}</b>
                 </Text>
 
-                <Divider />
+                <Divider className="bg-black" />
                 <div className="flex items-baseline gap-3 mt-3">
                   <Title
                     level={3}
@@ -177,52 +290,72 @@ const ProductDetail = () => {
 
                 <Paragraph>{productData?.description}</Paragraph>
 
-                <Divider />
-                <div className="mt-2">
-                  <Text strong>Quantity:</Text>
-                  <Space align="center" className="ml-2">
+                <Divider className="bg-black" />
+                <div className=" flex flex-wrap gap-3 items-center justify-between">
+                  <div
+                    className={`relative transition-all duration-300 ease-in-out ${
+                      showTransition
+                        ? "opacity-0 scale-95"
+                        : "opacity-100 scale-100"
+                    }`}
+                  >
+                    {!isInCart && !user ? (
+                      <CommonButton
+                        size="large"
+                        themeType="success"
+                        icon={<ShoppingCartOutlined />}
+                        disabled={productData?.stock === 0}
+                        className="min-w-[180px] rounded-md font-medium flex items-center justify-center gap-2"
+                        onClick={handleAddToCart}
+                      >
+                        Add To Cart
+                      </CommonButton>
+                    ) : (
+                      <div className="flex items-center gap-4 border border-green-500 rounded-md px-3 py-1 bg-green-50">
+                        <CommonButton
+                          onClick={handleDecrease}
+                          icon={<MinusOutlined />}
+                          disabled={quantity <= 0}
+                          themeType="success"
+                          className="!border-hidden !shadow-none !bg-transparent hover:!bg-green-100"
+                        />
+                        <Text strong className="text-lg">
+                          {quantity}
+                        </Text>
+
+                        <CommonButton
+                          onClick={handleIncrease}
+                          icon={<PlusOutlined />}
+                          disabled={quantity >= (productData?.stock || 0)}
+                          themeType="success"
+                          className="!border-hidden !shadow-none !bg-transparent hover:!bg-green-100"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {productData?.stock === 0 && (
                     <CommonButton
-                      onClick={() => {}}
-                      icon={<MinusOutlined />}
-                      disabled={productData?.stock === 1}
-                      themeType="success"
-                      className="!border-hidden"
-                    />
-                    <Text strong>{productData?.stock}</Text>
-                    <CommonButton
-                      onClick={() => {}}
-                      icon={<PlusOutlined />}
-                      themeType="success"
-                      className="!border-hidden"
-                    />
-                  </Space>
-                </div>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <CommonButton
-                    size="large"
-                    themeType="success"
-                    icon={<ShoppingCartOutlined />}
-                    disabled={productData?.stock === 0}
-                    className="flex-1"
-                    children="Add To Cart"
-                  />
-                  <CommonButton
-                    themeType="danger"
-                    size="large"
-                    icon={<HeartOutlined />}
-                    className="flex-1"
-                    onClick={() => Toast.success("Added to wishlist!")}
-                    children="Wishlist"
-                  />
+                      themeType="danger"
+                      size="large"
+                      icon={<HeartOutlined />}
+                      className="min-w-[180px] rounded-md font-medium flex items-center justify-center gap-2"
+                      onClick={() => Toast.success("Added to wishlist!")}
+                    >
+                      Wishlist
+                    </CommonButton>
+                  )}
                 </div>
               </>
             )}
           </div>
         </div>
+
         <Divider />
+
+        {/* Review Form */}
         <div className="mt-8 border-t border-gray-200 pt-6">
           <Title level={4}>Write a Review</Title>
-
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 "
@@ -236,7 +369,7 @@ const ProductDetail = () => {
                   <Rate
                     {...field}
                     value={field.value}
-                    onChange={(value) => field.onChange(value)}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -246,49 +379,47 @@ const ProductDetail = () => {
                 </p>
               )}
             </div>
-            <div>
-              <CommonInput
-                id="comment"
-                label="Comment"
-                type="text"
-                placeholder="Share your experience..."
-                required
-                {...register("comment")}
-                errorMessage={errors?.comment?.message || ""}
-                istexarea={true}
-                labelClassName="!text-black"
-                focusColor="black"
-              />
-            </div>
+
+            <CommonInput
+              id="comment"
+              label="Comment"
+              type="text"
+              placeholder="Share your experience..."
+              required
+              {...register("comment")}
+              errorMessage={errors?.comment?.message || ""}
+              istexarea={true}
+              labelClassName="!text-black"
+              focusColor="black"
+            />
 
             <div className="flex justify-end">
               <CommonButton
                 themeType="dark"
-                // icon={<HeartOutlined />}
                 htmlType="submit"
                 children={isSubmitting ? "Submitting..." : "Submit Review"}
               />
             </div>
           </form>
         </div>
+
+        {/* Reviews List */}
         <div className="mt-5">
           <Title level={4}>Customer Reviews</Title>
 
           {isLoading ? (
-            <>
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="mt-5">
-                  <Space align="start" size="middle" className="w-full">
-                    <Skeleton.Avatar active size="large" shape="circle" />
-                    <div className="w-full flex flex-col gap-2">
-                      <Skeleton.Input active size="small" className="w-2/5" />
-                      <Skeleton.Input active size="large" className="w-full" />
-                    </div>
-                  </Space>
-                  <Divider />
-                </div>
-              ))}
-            </>
+            [...Array(3)].map((_, i) => (
+              <div key={i} className="mt-5">
+                <Space align="start" size="middle" className="w-full">
+                  <Skeleton.Avatar active size="large" shape="circle" />
+                  <div className="w-full flex flex-col gap-2">
+                    <Skeleton.Input active size="small" className="w-2/5" />
+                    <Skeleton.Input active size="large" className="w-full" />
+                  </div>
+                </Space>
+                <Divider />
+              </div>
+            ))
           ) : productData?.reviews?.length ? (
             productData.reviews.map((review: ProductReview) => (
               <div key={review.id} className="mb-6">
@@ -299,12 +430,7 @@ const ProductDetail = () => {
                     size={50}
                   />
                   <div>
-                    <Text strong className="">
-                      {review.user?.username || "Anonymous"}
-                      {/* <Text type="secondary" className="text-xs !text-black ms-3">
-                        {dayjs(review.date).format("DD-MM-YY HH:mm")}
-                      </Text> */}
-                    </Text>
+                    <Text strong>{review.user?.username || "Anonymous"}</Text>
                     <br />
                     <Rate disabled defaultValue={review.rating} />
                     <Paragraph className="mt-1">{review.comment}</Paragraph>

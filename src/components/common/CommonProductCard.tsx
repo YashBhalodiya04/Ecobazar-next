@@ -1,14 +1,20 @@
+import { getCookieValue } from "@/helper/CommonUtils";
 import { ProductClientGridRecord } from "@/interfaces/ProductInterface";
 import { Card, Image } from "antd";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { BsCart3, BsHeart, BsStarFill } from "react-icons/bs";
+import { Toast } from "./toastUtils";
+import { useRequestMutation } from "@/redux/commonApi";
+import { apis } from "@/redux/apiUrls";
+import { CommonApiInterface } from "@/interfaces/commonInterace";
 
 const CommonProductCard = ({ item }: { item: ProductClientGridRecord }) => {
+  const user = getCookieValue("user");
+  const [request, { isLoading }] = useRequestMutation();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const router = useRouter();
 
-  // --- Determine stock label & color ---
   const getStockStatus = () => {
     if (item?.stock === 0)
       return { label: "Out of Stock", color: "bg-red-100 text-red-700" };
@@ -18,6 +24,31 @@ const CommonProductCard = ({ item }: { item: ProductClientGridRecord }) => {
   };
 
   const stockStatus = getStockStatus();
+
+  const handleAddToCart = async (id: string) => {
+    try {
+      if (!user) {
+        Toast.error("Please login to add items to cart");
+        return;
+      }
+
+      const payload = {
+        productid: id,
+        quantity: 1,
+        action: "add",
+        isfromproductlist: true,
+      };
+
+      const response: CommonApiInterface = await request({
+        url: apis.USER.addToCart,
+        method: "POST",
+        body: payload,
+      }).unwrap();
+    } catch (error) {
+      console.error(error);
+      Toast.error("Failed to add item to cart");
+    }
+  };
 
   return (
     <div
@@ -44,7 +75,13 @@ const CommonProductCard = ({ item }: { item: ProductClientGridRecord }) => {
                 hoveredCard === item?.id ? "opacity-100" : "opacity-0"
               }`}
             >
-              <button className="bg-white p-3 rounded-full hover:bg-green-500 hover:text-white transition-all transform hover:scale-110">
+              <button
+                className="bg-white p-3 rounded-full hover:bg-green-500 hover:text-white transition-all transform hover:scale-110"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart(item?.id);
+                }}
+              >
                 <BsCart3 size={20} />
               </button>
               <button className="bg-white p-3 rounded-full hover:bg-red-500 hover:text-white transition-all transform hover:scale-110">

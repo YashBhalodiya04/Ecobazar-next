@@ -1,9 +1,7 @@
 "use client";
 import CommonInput from "@/components/common/CommonInput";
 import CommonLoader from "@/components/common/CommonLoader";
-import {
-  SignInResponseAPIData
-} from "@/interfaces/SignInInterface";
+import { SignInResponseAPIData } from "@/interfaces/SignInInterface";
 import { apis } from "@/redux/apiUrls";
 import { useRequestMutation } from "@/redux/commonApi";
 import { loginSchema, LoginSchemaType } from "@/schemas/authSchemas";
@@ -36,7 +34,7 @@ const LoginPage = () => {
         if (response?.data?.isAdmin) {
           router.push("/admin/profile");
         } else {
-          router.push("/");
+          router.back();
         }
       }
     } catch (error) {

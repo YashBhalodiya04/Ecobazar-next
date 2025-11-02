@@ -7,6 +7,7 @@ import {
 import dbconnect from "@/lib/dbConnect";
 import { toObjectId } from "@/lib/helper";
 import ProductModel, { Product } from "@/model/Product";
+import UserModal from "@/model/User";
 import { PipelineStage } from "mongoose";
 import { NextRequest } from "next/server";
 
@@ -19,6 +20,7 @@ export const GetProductDetail = async (
   try {
     const { productid } = body;
 
+    const userId = toObjectId(context?.user?.id);
     const currentDate = new Date();
 
     const mainQuerypipeline: PipelineStage[] = [
@@ -220,6 +222,21 @@ export const GetProductDetail = async (
     if (product?.length > 0) {
       ResponseBody = product[0];
     }
+
+    // 👇 Add this block to include productCartQuantity if user logged in
+    if (userId) {
+      const user = await UserModal.findById(userId, { cart: 1 }).lean();
+      console.log(user)
+      if (user && user.cart?.length > 0) {
+        const item = user.cart.find(
+          (c: any) => c.productId?.toString() === productid
+        );
+        ResponseBody.productCartQuantity = item ? item.quantity : 0;
+      } else {
+        ResponseBody.productCartQuantity = 0;
+      }
+    }
+    // console.log(ResponseBody)
 
     return commonResponse(true, "", ResponseBody, 200);
   } catch (error) {
