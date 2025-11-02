@@ -226,7 +226,6 @@ export const GetProductDetail = async (
     // 👇 Add this block to include productCartQuantity if user logged in
     if (userId) {
       const user = await UserModal.findById(userId, { cart: 1 }).lean();
-      console.log(user)
       if (user && user.cart?.length > 0) {
         const item = user.cart.find(
           (c: any) => c.productId?.toString() === productid

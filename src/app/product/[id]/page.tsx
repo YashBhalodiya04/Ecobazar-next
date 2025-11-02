@@ -55,6 +55,7 @@ const ProductDetail = () => {
 
   const [isInCart, setIsInCart] = useState<boolean>(false);
   const [showTransition, setShowTransition] = useState<boolean>(false);
+  const [cartLoading, setCartLoading] = useState<boolean>(false);
 
   const {
     control,
@@ -99,6 +100,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     try {
+      setCartLoading(true);
       if (!user) {
         Toast.error("Please login to add items to cart");
         return;
@@ -127,6 +129,8 @@ const ProductDetail = () => {
     } catch (error) {
       console.error(error);
       Toast.error("Failed to add item to cart");
+    } finally {
+      setCartLoading(false);
     }
   };
 
@@ -154,13 +158,7 @@ const ProductDetail = () => {
       const newQty = quantity - 1;
       await updateCartQuantity(newQty, "remove");
     } else {
-      await updateCartQuantity(1, "remove"); // remove last item
-      setShowTransition(true);
-      setTimeout(() => {
-        setIsInCart(false);
-        setShowTransition(false);
-        setQuantity(0);
-      }, 300);
+      await updateCartQuantity(0, "remove"); // remove last item
     }
   };
 
@@ -174,6 +172,7 @@ const ProductDetail = () => {
         quantity: newQuantity, // quantity to increment/decrement by 1 each time
         action: action,
       };
+      setCartLoading(true);
 
       const response: CommonApiInterface = await request({
         url: apis.USER.addToCart,
@@ -183,10 +182,19 @@ const ProductDetail = () => {
 
       if (response?.success) {
         setQuantity(newQuantity);
+        if (newQuantity === 0) {
+          setShowTransition(true);
+          setIsInCart(false);
+          setTimeout(() => {
+            setShowTransition(false);
+          }, 300);
+        }
       }
     } catch (error) {
       console.error(error);
       Toast.error("Something went wrong while updating cart");
+    } finally {
+      setCartLoading(false);
     }
   };
 
@@ -299,7 +307,7 @@ const ProductDetail = () => {
                         : "opacity-100 scale-100"
                     }`}
                   >
-                    {!isInCart && !user ? (
+                    {!isInCart ? (
                       <CommonButton
                         size="large"
                         themeType="success"
@@ -307,6 +315,7 @@ const ProductDetail = () => {
                         disabled={productData?.stock === 0}
                         className="min-w-[180px] rounded-md font-medium flex items-center justify-center gap-2"
                         onClick={handleAddToCart}
+                        loading={cartLoading}
                       >
                         Add To Cart
                       </CommonButton>
@@ -316,6 +325,7 @@ const ProductDetail = () => {
                           onClick={handleDecrease}
                           icon={<MinusOutlined />}
                           disabled={quantity <= 0}
+                          loading={cartLoading}
                           themeType="success"
                           className="!border-hidden !shadow-none !bg-transparent hover:!bg-green-100"
                         />
@@ -327,6 +337,7 @@ const ProductDetail = () => {
                           onClick={handleIncrease}
                           icon={<PlusOutlined />}
                           disabled={quantity >= (productData?.stock || 0)}
+                          loading={cartLoading}
                           themeType="success"
                           className="!border-hidden !shadow-none !bg-transparent hover:!bg-green-100"
                         />

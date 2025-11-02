@@ -50,9 +50,10 @@ export const AddToCart = async (
     }
 
     if (existingItemIndex > -1) {
-      existingUser.cart[existingItemIndex].quantity = quantity;
-      if (existingUser.cart[existingItemIndex].quantity <= 0) {
+      if (quantity === 0) {
         existingUser.cart.splice(existingItemIndex, 1);
+      } else {
+        existingUser.cart[existingItemIndex].quantity = quantity;
       }
     } else {
       if (action === "add") {
@@ -67,7 +68,8 @@ export const AddToCart = async (
     }
 
     await existingUser.save();
-    return commonResponse(true, "Cart updated successfully", "");
+
+    return commonResponse(true, "Cart updated successfully", '');
   } catch (error) {
     console.error("Error adding to cart:", error);
     return commonResponse(false, "Failed to update cart", error);
@@ -78,10 +80,11 @@ export const POST = withAuth(AddToCart);
 
 const validatePayload = (payload: AddToCartPayload): string => {
   const { productid, quantity, action } = payload;
-  if (isNullEmpty(productid) || isNullEmpty(quantity) || isNullEmpty(action))
+  if (isNullEmpty(productid) || isNullEmpty(quantity.toString()) || isNullEmpty(action))
     return "All fields are required";
-  if (quantity <= 0) return "Quantity must be greater than zero";
+
   if (!["add", "remove"].includes(action))
     return "Action must be 'add' or 'remove'";
+
   return "";
 };
