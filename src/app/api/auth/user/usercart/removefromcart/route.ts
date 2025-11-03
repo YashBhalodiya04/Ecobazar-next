@@ -42,10 +42,7 @@ export const RemoveFromCart = async (
 
     await existingUser.save();
 
-    return commonResponse(true, "Product removed from cart successfully", {
-      cart: existingUser.cart,
-      finalCartValue: existingUser.finalcartvalue,
-    });
+    return commonResponse(true, "Product removed successfully", "");
   } catch (error) {
     console.error("Error removing from cart:", error);
     return commonResponse(false, "Failed to remove product from cart", error);

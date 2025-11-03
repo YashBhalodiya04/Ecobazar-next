@@ -11,6 +11,7 @@ export const apis = {
     addProductReview: '/auth/user/createreview',
     removeFromCart: '/auth/user/usercart/removefromcart',
     addToCart: '/auth/user/usercart/addtocart',
+    getCart: '/auth/user/usercart/getcartdetail',
   },
   ADMIN: {  
     // CATEGORY
