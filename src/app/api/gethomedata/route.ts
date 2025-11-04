@@ -33,9 +33,22 @@ export const GetSliders = async (
     const categorydata = await CategoryModal.find({ active: true }).select(
       "name image _id"
     );
-    const productdata = await ProductModal.find({ active: true }).select(
-      "name images price _id averageRating"
-    );
+    const productdata = await ProductModal.aggregate([
+      { $match: { active: true } },
+      {
+        $addFields: {
+          averageRating: {
+            $cond: [
+              { $gt: [{ $size: "$reviews" }, 0] },
+              { $avg: "$reviews.rating" },
+              0,
+            ],
+          },
+        },
+      },
+      { $project: { name: 1, images: 1, price: 1, averageRating: 1 } },
+    ]);
+
     const response: HomeDataResponse = {
       slidersData: sliderdata?.map((item) => {
         return {

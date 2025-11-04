@@ -29,7 +29,7 @@ const Products: React.FC<ProductsProps> = ({ productList, isLoading }) => {
         </h2>
         <CommonButton
           type="default"
-          className="!border-none hover:!text-green-600 !rounded-2xl px-5"
+          className="!border-none hover:!text-green-600 !rounded-2xl px-5 !text-base sm:!text-sm"
           onClick={handleViewAll}
           children="View All"
           themeType="success"
@@ -37,14 +37,14 @@ const Products: React.FC<ProductsProps> = ({ productList, isLoading }) => {
         />
       </div>
       {isLoading ? (
-        <Row gutter={[24, 24]}>
+        <Row gutter={[16, 16]} justify="start" className="flex flex-wrap">
           {skeletonCards.map((_, index) => (
             <Col
               key={index}
-              xs={24}
-              sm={12}
-              md={8}
-              lg={6}
+              xs={12}
+              sm={8}
+              md={6}
+              lg={4}
               xl={4}
               className="flex justify-center"
             >
@@ -83,14 +83,14 @@ const Products: React.FC<ProductsProps> = ({ productList, isLoading }) => {
           ))}
         </Row>
       ) : (
-        <Row gutter={[24, 24]}>
+        <Row gutter={[16, 16]} justify="start">
           {productList?.map((item) => (
             <Col
               key={item?.id}
-              xs={24}
-              sm={12}
-              md={8}
-              lg={6}
+              xs={12}
+              sm={8}
+              md={6}
+              lg={4}
               xl={4}
               className="flex justify-center"
               onClick={() => router.push(`/product/${item?.id}`)}
@@ -104,7 +104,7 @@ const Products: React.FC<ProductsProps> = ({ productList, isLoading }) => {
                     <img
                       alt={item?.name}
                       src={item?.image}
-                      className="w-24 h-24 object-contain"
+                      className="w-40 md:w-56 h-14 md:h-16 object-contain mb-3 rounded-xl"
                     />
                   </div>
                 }

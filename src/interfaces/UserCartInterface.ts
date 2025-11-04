@@ -5,7 +5,6 @@ export interface AddToCartPayload {
   isfromproductlist: boolean;
 }
 
-
 export interface CartProduct {
   productId: string;
   name: string;
@@ -26,4 +25,31 @@ export interface CartResponse {
   message: string;
   data: CartData;
   statuscode: number;
+}
+
+export interface UserProfileAPiResponse {
+  success: boolean;
+  message: string;
+  data: UserProfile;
+  statuscode: number;
+}
+
+export interface UserProfile {
+  username: string;
+  email: string;
+  phone: string;
+  userimage: string;
+  billingAddress: BillingAddress[];
+}
+
+export interface BillingAddress {
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phoneNumber: string;
+  isPrimary: boolean;
 }

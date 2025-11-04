@@ -7,9 +7,7 @@ export interface CommonApiInterface {
 
 export interface JWtUserInterface {
   id: string;
-  email: string;
   isadmin: boolean;
-  phone: string;
 }
 
 export interface ContexInterface {

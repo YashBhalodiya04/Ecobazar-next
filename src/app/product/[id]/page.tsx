@@ -226,7 +226,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="w-full flex justify-center px-20 sm:px-10 mb-3">
+    <div className="w-full flex justify-center px-20 md:px-2 mb-3">
       <Card className="w-full rounded-xl shadow-lg overflow-hidden">
         <div className="flex flex-wrap justify-between gap-10">
           {/* LEFT: Product Images */}

@@ -21,7 +21,7 @@ import {
 } from "antd";
 import { useRouter } from "next/navigation";
 import React, { SetStateAction, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { UploadOutlined } from "@ant-design/icons";
 import { ProductCreateInput, ProductCreateSchema } from "@/schemas/authSchemas";
 import { apis } from "@/redux/apiUrls";
@@ -51,7 +51,7 @@ const AddProductModal: React.FC<ModalProps> = ({
   const router = useRouter();
   const [request, { isLoading }] = useRequestMutation();
 
-  const [isOfferEnabled, setIsOfferEnabled] = useState<boolean>(false);
+  // const [isOfferEnabled, setIsOfferEnabled] = useState<boolean>(false);
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
@@ -84,6 +84,8 @@ const AddProductModal: React.FC<ModalProps> = ({
     },
   });
 
+  const hasOffer = useWatch({ control, name: "hasOffer" });
+
   const [selectedCategory, setselectedCategory] =
     useState<CommonDropdownOptions>();
 
@@ -103,7 +105,7 @@ const AddProductModal: React.FC<ModalProps> = ({
         validUntil: editData?.offer?.validUntil || "",
         description: editData?.offer?.description || "",
       };
-      setIsOfferEnabled(!!editData?.offer?.title);
+      // setIsOfferEnabled(!!editData?.offer?.title);
       setValue("offer", offerData);
       setValue("hasOffer", !!editData?.offer?.title);
       if (editData?.images) {
@@ -196,7 +198,7 @@ const AddProductModal: React.FC<ModalProps> = ({
         url: item?.url || "",
       };
     });
-    const offerData = isOfferEnabled
+    const offerData = hasOffer
       ? {
           title: data.offer?.title || "",
           discountPercent: Number(data.offer?.discountPercent) || 0,
@@ -394,14 +396,20 @@ const AddProductModal: React.FC<ModalProps> = ({
         {/* === Offer Section === */}
         <div className="flex items-center justify-between pt-4">
           <label className="font-medium text-gray-300">Offer</label>
-          <Switch
-            checked={isOfferEnabled}
-            onChange={(checked) => setIsOfferEnabled(checked)}
-            className="bg-gray-600"
+          <Controller
+            name="hasOffer"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                checked={field.value}
+                onChange={(checked) => field.onChange(checked)}
+                className={field.value ? "bg-green-500" : "bg-gray-400"}
+              />
+            )}
           />
         </div>
 
-        {isOfferEnabled && (
+        {hasOffer && (
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mt-3 ">
             <CommonInput
               id="offerTitle"

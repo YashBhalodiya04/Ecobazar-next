@@ -48,11 +48,18 @@ const Navbar = () => {
     if (user) setIsLoggedIn(true);
   }, []);
 
+  const patharray = ["/user/userprofile"];
+
   const handleLogout = async () => {
     const response: CommonApiInterface = await request({
       url: apis.AUTH.logout,
       method: "POST",
     }).unwrap();
+    if (response?.success) {
+      if (patharray.includes(pathname)) {
+        router.push("/");
+      }
+    }
     setIsLoggedIn(false);
   };
 
@@ -127,7 +134,7 @@ const Navbar = () => {
                 <BsCartCheck className="text-xl" />
               </button>
 
-              <Link href="/api/v1/user/profile">
+              <Link href="/user/userprofile">
                 <button
                   type="button"
                   className="rounded-md bg-green-600 p-2.5 text-white shadow-sm hover:bg-white hover:text-green-600 border-2 border-green-600 transition-all duration-200"
@@ -232,24 +239,15 @@ const Navbar = () => {
               {isLoggedIn && (
                 <div className="flex flex-col gap-3">
                   <div className="flex gap-3">
-                    <Link
-                      href="/api/v1/user/cart"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex-1"
+                    <button
+                      type="button"
+                      className="w-full rounded-md bg-green-600 p-3 text-white shadow-sm hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                      onClick={() => setIsCartOpen(true)}
                     >
-                      <button
-                        type="button"
-                        className="w-full rounded-md bg-green-600 p-3 text-white shadow-sm hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
-                      >
-                        <BsCartCheck className="text-xl" />
-                        <span className="text-sm font-semibold">Cart</span>
-                      </button>
-                    </Link>
-                    <Link
-                      href="/api/v1/user/profile"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex-1"
-                    >
+                      <BsCartCheck className="text-xl" />
+                      <span className="text-sm font-semibold">Cart</span>
+                    </button>
+                    <Link href="/user/userprofile">
                       <button
                         type="button"
                         className="w-full rounded-md bg-green-600 p-3 text-white shadow-sm hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
@@ -262,8 +260,7 @@ const Navbar = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      // Logoutbtn();
-                      setIsMenuOpen(false);
+                      handleLogout();
                     }}
                     className="w-full rounded-md bg-white border-2 border-green-600 px-4 py-3 text-sm font-semibold text-green-600 shadow-sm hover:bg-green-50 transition-colors duration-200"
                   >

@@ -52,7 +52,7 @@ export default function Home() {
     <>
       {/* <CommonLoader loading={loading} /> */}
       <MasterLayout showNavbar={true} showFooter={true}>
-        <div className="flex flex-col justify-between items-center w-full px-20 sm:px-10 ">
+        <div className="flex flex-col justify-between items-center w-full px-20 md:px-0 ">
           <PosterSlider slides={homeData?.slidersData || []} isLoading={loading} />
           <Features />
           <Categories categories={homeData?.categoryData || []} isLoading={loading} />

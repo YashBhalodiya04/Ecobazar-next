@@ -127,6 +127,11 @@ const ProductPage = () => {
   }, [SearchText, pageSize, sortOption, selectedCategories, page]);
 
   const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+  useEffect(() => {
+    if (isMobile) {
+      fetchProductData();
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -177,7 +182,7 @@ const ProductPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 w-full px-4 sm:px-6 md:px-10 lg:px-20">
+    <div className="min-h-screen bg-gray-50 w-full px-4 sm:px-6 md:px-2 lg:px-20">
       <div className="relative mb-8 overflow-hidden rounded-xl">
         <Carousel autoplay autoplaySpeed={4000} effect="fade">
           {carouselImages.map((img, idx) => (
@@ -260,7 +265,7 @@ const ProductPage = () => {
                       </Card>
                     </Col>
                   ))
-                : gridData.map((item) => (
+                : gridData?.map((item) => (
                     <Col xs={12} sm={12} md={8} lg={8} xl={6} key={item?.id}>
                       <CommonProductCard item={item} />
                     </Col>

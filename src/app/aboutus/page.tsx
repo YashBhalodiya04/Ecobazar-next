@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Col, Row, Skeleton } from "antd";
+import { Row, Col, Skeleton } from "antd";
 import {
   FaLeaf,
   FaHeadset,
@@ -54,7 +54,7 @@ const AboutUsPage = () => {
 
   if (loading) {
     return (
-      <div className="w-full flex flex-col px-20 sm:px-6 mt-10">
+      <div className="w-full flex flex-col px-4 md:px-10 lg:px-20 mt-10">
         <Row gutter={[24, 24]} align="middle">
           <Col xs={24} md={18}>
             <Skeleton active paragraph={{ rows: 6 }} />
@@ -62,32 +62,29 @@ const AboutUsPage = () => {
           <Col xs={24} md={6}>
             <Skeleton.Image
               active
-              style={{ width: 450, height: 300, borderRadius: 16 }}
+              style={{ width: "100%", height: 300, borderRadius: 16 }}
             />
           </Col>
         </Row>
-
         <Row gutter={[24, 24]} align="middle" justify="space-between">
           <Col xs={24} md={6}>
             <Skeleton.Image
               active
-              style={{ width: 450, height: 300, borderRadius: 16 }}
+              style={{ width: "100%", height: 300, borderRadius: 16 }}
             />
           </Col>
           <Col xs={24} md={17}>
             <Skeleton active paragraph={{ rows: 6 }} />
           </Col>
         </Row>
-
         <Row gutter={[24, 24]} align="middle" justify="space-between">
           <Col xs={24} md={18}>
             <Skeleton active paragraph={{ rows: 6 }} />
           </Col>
-
           <Col xs={24} md={6}>
             <Skeleton.Image
               active
-              style={{ width: 450, height: 300, borderRadius: 16 }}
+              style={{ width: "100%", height: 300, borderRadius: 16 }}
             />
           </Col>
         </Row>
@@ -95,23 +92,17 @@ const AboutUsPage = () => {
     );
   }
 
-  // ✅ Actual Content
+  // ✅ Actual Responsive Content
   return (
-    <div className="w-full flex flex-col justify-between items-start gap-16 px-20 sm:px-6 mt-10 font-Poppins text-black">
+    <div className="w-full flex flex-col gap-16 px-4 md:px-10 lg:px-20 mt-10 font-Poppins text-black">
       {/* SECTION 1 */}
-      <div className="w-full flex sm:flex-col md:flex-col justify-between items-center gap-10">
-        <div className="sm:block md:block hidden w-full">
-          <img
-            src="/media/about/aboutPhoto1.svg"
-            alt="About Us"
-            className="w-full rounded-xl shadow-lg"
-          />
-        </div>
-        <div className="w-full flex flex-col justify-center items-start gap-4">
-          <h1 className="text-5xl sm:text-3xl font-semibold leading-tight">
-            100% Trusted <br /> Organic Food Store
+      <div className="flex flex-col-reverse lg:flex-row items-center gap-10">
+        {/* Text */}
+        <div className="flex-1 flex flex-col justify-center items-start gap-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight text-center lg:text-left">
+            100% Trusted <br className="hidden sm:block" /> Organic Food Store
           </h1>
-          <p className="md:w-[550px] text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base lg:w-[550px] text-center lg:text-left">
             We are committed to providing farm-fresh organic produce and
             sustainable grocery essentials. Every product we offer is carefully
             sourced from trusted farms that follow ethical and eco-friendly
@@ -119,29 +110,33 @@ const AboutUsPage = () => {
             and enjoyable for everyone.
           </p>
         </div>
-        <div className="sm:hidden md:hidden block w-full">
+        {/* Image */}
+        <div className="flex-1 w-full">
           <img
             src="/media/about/aboutPhoto1.svg"
             alt="About Us"
-            className="w-full rounded-xl shadow-lg"
+            className="w-full rounded-xl shadow-lg object-cover"
           />
         </div>
       </div>
 
       {/* SECTION 2 */}
-      <div className="w-full flex sm:flex-col md:flex-col justify-between items-center gap-10">
-        <div className="w-full">
+      <div className="flex flex-col lg:flex-row items-center gap-10">
+        {/* Image */}
+        <div className="flex-1 w-full order-2 lg:order-1">
           <img
             src="/media/about/aboutPhoto2.svg"
             alt="Our Mission"
-            className="w-full rounded-xl shadow-lg"
+            className="w-full rounded-xl shadow-lg object-cover"
           />
         </div>
-        <div className="w-full flex flex-col justify-between items-start gap-4">
-          <h1 className="text-5xl sm:text-3xl font-semibold leading-tight">
-            We Grow with Passion <br /> and Deliver with Care
+        {/* Text + Features */}
+        <div className="flex-1 flex flex-col items-start justify-center gap-4 order-1 lg:order-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight text-center lg:text-left">
+            We Grow with Passion <br className="hidden sm:block" /> and Deliver
+            with Care
           </h1>
-          <p className="md:w-[550px] text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base lg:w-[550px] text-center lg:text-left">
             From seed to shelf, we take pride in maintaining the highest
             standards of quality. Our partnerships with local farmers help us
             ensure that each item you receive is naturally grown, freshly
@@ -149,14 +144,14 @@ const AboutUsPage = () => {
             bring nature’s best directly to your table.
           </p>
 
-          {/* FEATURES GRID */}
-          <div className="w-full grid grid-cols-2 sm:grid-cols-1 gap-6 mt-4">
+          {/* Features Grid */}
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
             {features.map((item, i) => (
-              <div key={i} className="flex items-center justify-start gap-4">
-                <div className="w-[60px] h-[60px] flex items-center justify-center bg-green-100 rounded-full">
+              <div key={i} className="flex items-start gap-4">
+                <div className="w-[55px] h-[55px] flex items-center justify-center bg-green-100 rounded-full shrink-0">
                   {item.icon}
                 </div>
-                <div className="flex flex-col items-start justify-center">
+                <div className="flex flex-col items-start">
                   <h2 className="text-base font-medium">{item.title}</h2>
                   <p className="text-sm text-gray-600">{item.desc}</p>
                 </div>
@@ -167,19 +162,13 @@ const AboutUsPage = () => {
       </div>
 
       {/* SECTION 3 */}
-      <div className="w-full flex sm:flex-col md:flex-col justify-between items-center gap-10">
-        <div className="w-full flex flex-col justify-between items-start gap-4">
-          <div className="sm:block md:block hidden w-full">
-            <img
-              src="/media/about/aboutPhoto3.svg"
-              alt="Delivery"
-              className="w-full rounded-xl shadow-lg"
-            />
-          </div>
-          <h1 className="text-5xl sm:text-3xl font-semibold leading-tight">
+      <div className="flex flex-col-reverse lg:flex-row items-center gap-10">
+        {/* Text */}
+        <div className="flex-1 flex flex-col justify-between items-start gap-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight text-center lg:text-left">
             We Deliver, You Enjoy
           </h1>
-          <p className="md:w-[550px] text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base lg:w-[550px] text-center lg:text-left">
             Our logistics team ensures that every order is delivered fresh, on
             time, and in perfect condition. Whether you’re shopping for daily
             groceries or planning a weekend feast, our reliable delivery service
@@ -187,11 +176,12 @@ const AboutUsPage = () => {
             — guaranteed in every bite.
           </p>
         </div>
-        <div className="sm:hidden md:hidden block w-full">
+        {/* Image */}
+        <div className="flex-1 w-full">
           <img
             src="/media/about/aboutPhoto3.svg"
             alt="Delivery"
-            className="w-full rounded-xl shadow-lg"
+            className="w-full rounded-xl shadow-lg object-cover"
           />
         </div>
       </div>

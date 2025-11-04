@@ -55,23 +55,67 @@ export const ProductCreateSchema = z
     hasOffer: z.boolean(),
     offer: z
       .object({
-        title: z.string().trim().min(1, "Offer title is required"),
-        discountPercent: z
-          .string()
-          .trim()
-          .min(1, "Discount is required")
-          .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-            message: "Discount must be a positive number",
-          }),
-        validUntil: z.string().trim().min(1, "Valid until date is required"),
-        description: z
-          .string()
-          .trim()
-          .min(10, "Offer description must be at least 10 characters"),
+        title: z.string().trim(),
+        discountPercent: z.string().trim(),
+        validUntil: z.string().trim(),
+        description: z.string().trim(),
       })
       .optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((data, ctx) => {
+    if (data.hasOffer) {
+      if (!data.offer) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Offer details are required when hasOffer is true",
+          path: ["offer"],
+        });
+        return;
+      }
+
+      if (data.offer.title.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Offer title is required",
+          path: ["offer", "title"],
+        });
+      }
+
+      if (data.offer.discountPercent.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Discount is required",
+          path: ["offer", "discountPercent"],
+        });
+      } else if (
+        isNaN(Number(data.offer.discountPercent)) ||
+        Number(data.offer.discountPercent) <= 0
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Discount must be a positive number",
+          path: ["offer", "discountPercent"],
+        });
+      }
+
+      if (data.offer.validUntil.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Valid until date is required",
+          path: ["offer", "validUntil"],
+        });
+      }
+
+      if (data.offer.description.length < 10) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Offer description must be at least 10 characters",
+          path: ["offer", "description"],
+        });
+      }
+    }
+  });
 
 export type ProductCreateInput = z.infer<typeof ProductCreateSchema>;
 
@@ -131,10 +175,7 @@ export const contactSchema = z.object({
 export type ContactFormData = z.infer<typeof contactSchema>;
 
 export const reviewSchema = z.object({
-  rating: z
-    .number()
-    .min(1, { message: "Please select a rating." })
-    .max(5),
+  rating: z.number().min(1, { message: "Please select a rating." }).max(5),
   comment: z
     .string()
     .min(5, { message: "Comment must be at least 5 characters long." })
@@ -142,3 +183,32 @@ export const reviewSchema = z.object({
 });
 
 export type ReviewFormData = z.infer<typeof reviewSchema>;
+
+export const userProfileSchema = z.object({
+  username: z.string().min(2, "Username is required"),
+  email: z.email("Invalid email address"),
+  phone: z
+    .string()
+    .min(5, "Phone is required")
+    .regex(/^[0-9+\-\s()]*$/, "Invalid phone number format"),
+  userimage: z.url("Invalid image URL").optional().or(z.literal("")),
+  billingAddress: z.array(
+    z.object({
+      firstName: z.string().min(1, "First name required"),
+      lastName: z.string().min(1, "Last name required"),
+      address: z.string().min(1, "Address required"),
+      city: z.string().min(1, "City required"),
+      state: z.string().min(1, "State required"),
+      zipCode: z
+        .string()
+        .regex(/^\d{6}$/, "Invalid ZIP code — must be 6 digits"),
+      country: z.string().min(1, "Country required"),
+      phoneNumber: z
+        .string()
+        .regex(/^[0-9+\-\s()]{10}$/, "Invalid phone number"),
+      isPrimary: z.boolean(),
+    })
+  ),
+});
+
+export type UserProfileForm = z.infer<typeof userProfileSchema>;

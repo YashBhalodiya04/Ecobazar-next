@@ -12,9 +12,7 @@ export interface SignInResponseAPIData {
 
 export interface SignInResponseData {
   username: string;
-  email: string;
   isAdmin: boolean;
-  phone: string;
   userimage: string;
   _id: string;
 }

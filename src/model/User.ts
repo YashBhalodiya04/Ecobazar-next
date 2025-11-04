@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-export interface User  {
+export interface User {
   username: string;
   password: string;
   createAt?: Date;
@@ -28,6 +28,7 @@ export interface UserBillingAddress {
   zipCode: string;
   country: string;
   phoneNumber: string;
+  isPrimary: boolean;
 }
 
 const UserScheme: Schema<User> = new Schema(
@@ -128,6 +129,11 @@ const UserScheme: Schema<User> = new Schema(
           },
           phoneNumber: {
             type: String,
+            required: true,
+          },
+          isPrimary: {
+            type: Boolean,
+            default: false,
             required: true,
           },
         },

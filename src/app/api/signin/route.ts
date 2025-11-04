@@ -36,9 +36,7 @@ export const POSTHandler = async (
     const token = jwt.sign(
       {
         id: user._id?.toString(),
-        email: user.email,
         isadmin: user.isAdmin,
-        phone: user.phone,
       } as JWtUserInterface,
       process.env.JWT_TOKEN as string,
       { expiresIn: "10h" }
@@ -48,9 +46,7 @@ export const POSTHandler = async (
 
     const responseData: SignInResponseData = {
       username: userData?.username || "",
-      email: userData?.email || "",
       isAdmin: Boolean(userData?.isAdmin),
-      phone: userData?.phone || "",
       userimage: userData?.userimage || "",
       _id: userData?._id?.toString() || "",
     };
@@ -64,7 +60,7 @@ export const POSTHandler = async (
     });
 
     (await cookies()).set("user", JSON.stringify(responseData), {
-      httpOnly: false, // 
+      httpOnly: false, //
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",

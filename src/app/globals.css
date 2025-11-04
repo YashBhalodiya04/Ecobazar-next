@@ -226,13 +226,13 @@
 
 /* 🟪 Info / Indigo */
 .btn-info-dark {
-  @apply bg-gradient-to-r from-indigo-600 to-indigo-500 text-white border !border-indigo-700 rounded-md shadow-md transition-all duration-300;
+  @apply bg-gradient-to-r from-blue-700 to-blue-600 text-white border !border-blue-700 rounded-md shadow-md transition-all duration-300;
 }
 .btn-info-dark:hover {
-  @apply !from-indigo-500 !to-indigo-400 !shadow-lg !scale-105 !bg-indigo-200 !text-indigo-700;
+  @apply !from-blue-700 !to-blue-600 !shadow-lg !scale-105 !bg-blue-200 !text-blue-700;
 }
 .btn-info-dark:active {
-  @apply !from-indigo-500 !to-indigo-400 !shadow-inner !scale-95 !bg-indigo-200 !text-indigo-700;
+  @apply !from-blue-700 !to-blue-600 !shadow-inner !scale-95 !bg-blue-200 !text-blue-700;
 }
 
 /* ⚫ Outline / Ghost */
