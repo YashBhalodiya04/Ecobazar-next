@@ -189,8 +189,8 @@ export const userProfileSchema = z.object({
   email: z.email("Invalid email address"),
   phone: z
     .string()
-    .min(5, "Phone is required")
-    .regex(/^[0-9+\-\s()]*$/, "Invalid phone number format"),
+    .min(10, "Phone is required")
+    .regex(/^[0-9+\-\s()]{10}$/, "Invalid phone number"),
   userimage: z.url("Invalid image URL").optional().or(z.literal("")),
   billingAddress: z.array(
     z.object({

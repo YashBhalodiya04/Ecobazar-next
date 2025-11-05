@@ -53,3 +53,11 @@ export interface BillingAddress {
   phoneNumber: string;
   isPrimary: boolean;
 }
+
+export interface SaveUserProfilePayload { 
+  username: string;
+  email: string;
+  phone: string;
+  userimage: string;
+  billingAddress: BillingAddress[];
+}

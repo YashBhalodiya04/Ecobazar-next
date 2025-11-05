@@ -34,6 +34,7 @@ import { UserProfileAPiResponse } from "@/interfaces/UserCartInterface";
 import { getCookieValue, isRestrictedFile } from "@/helper/CommonUtils";
 import { Toast } from "@/components/common/toastUtils";
 import { useRouter } from "next/navigation";
+import { CommonApiInterface } from "@/interfaces/commonInterace";
 
 const UserProfilePage: React.FC = () => {
   const userLogin = getCookieValue("user");
@@ -122,10 +123,32 @@ const UserProfilePage: React.FC = () => {
     setEditAddress(false);
   };
 
-  const onSubmit = (data: UserProfileForm) => {
-    console.log("Form submitted:", data);
-    setEditProfile(false);
-    setEditAddress(false);
+  const onSubmit = async (data: UserProfileForm) => {
+    const payload = {
+      username: data?.username || "",
+      email: data?.email || "",
+      phone: data?.phone || "",
+      userimage: data?.userimage || "",
+      billingAddress: data?.billingAddress || [],
+    };
+    const formdata = new FormData();
+    formdata.append("data", JSON.stringify(payload));
+    if (fileList?.length > 0 && fileList[0].originFileObj) {
+      formdata.append("files", fileList[0].originFileObj);
+    } else {
+      formdata.append("files", "");
+    }
+
+    const response: CommonApiInterface = await request({
+      url: apis.USER.updateProfile,
+      method: "POST",
+      body: formdata,
+    }).unwrap();
+    if (response?.success) {
+      await fetchUserData();
+      setEditProfile(false);
+      setEditAddress(false);
+    }
   };
 
   const handleChange: UploadProps["onChange"] = async ({
@@ -203,7 +226,7 @@ const UserProfilePage: React.FC = () => {
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)}>
                   {/* Profile Info */}
-                  <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-start">
                       <Image
                         src={user?.userimage || "/user.png"}
@@ -217,13 +240,14 @@ const UserProfilePage: React.FC = () => {
                           beforeUpload={() => false}
                           showUploadList={false}
                           onChange={handleChange}
+                          accept="image/*"
                         >
                           <Button icon={<UploadOutlined />}>Upload</Button>
                         </Upload>
                       )}
                     </div>
 
-                    <div className="flex-1 space-y-3">
+                    <div className="flex flex-col items-start space-y-3">
                       {editProfile ? (
                         <>
                           <CommonInput

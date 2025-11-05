@@ -7,6 +7,7 @@ export const apis = {
   },
   USER: {
     getProfile: "/auth/user/getprofiledetail",
+    updateProfile: "/auth/user/saveprofiledetail",
 
     addProductReview: '/auth/user/createreview',
     removeFromCart: '/auth/user/usercart/removefromcart',
