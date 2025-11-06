@@ -12,8 +12,8 @@ import {
   Avatar,
   Rate,
   Tag,
+  Image,
 } from "antd";
-import Image from "next/image";
 import {
   HeartOutlined,
   MinusOutlined,
@@ -236,13 +236,13 @@ const ProductDetail = () => {
             ) : (
               <Carousel autoplay autoplaySpeed={4000} effect="fade">
                 {productData?.imagelist?.map((img) => (
-                  <div key={img.id}>
+                  <div key={img.id} className="!rounded-xl">
                     <Image
                       src={img.url}
                       alt={img.url}
-                      width={500}
-                      height={400}
-                      className="w-full h-auto rounded-xl object-cover"
+                      preview={false}
+                      wrapperClassName="w-full h-[400px]"
+                      className="rounded-xl w-full h-full object-cover"
                     />
                   </div>
                 ))}

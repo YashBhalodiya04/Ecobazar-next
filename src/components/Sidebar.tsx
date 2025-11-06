@@ -19,6 +19,7 @@ import { FaUser } from "react-icons/fa6";
 import { useRequestMutation } from "@/redux/commonApi";
 import { CommonApiInterface } from "@/interfaces/commonInterace";
 import { apis } from "@/redux/apiUrls";
+import { ImCart } from "react-icons/im";
 
 interface SideBarProps {
   isSidebarOpen: boolean;
@@ -55,6 +56,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SideBarProps) => {
       href: "/admin/slider",
       id: 4,
     },
+    {
+      name: "Orders",
+      icon: <ImCart  size={18} />,
+      href: "/admin/orders",
+      id: 5,
+    }
   ];
 
   const handleLogout = async () => {

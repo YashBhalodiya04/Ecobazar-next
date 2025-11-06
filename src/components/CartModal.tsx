@@ -125,6 +125,20 @@ const CartModal: React.FC<CartModalProps> = ({
     <Loading3QuartersOutlined style={{ fontSize: 50, color: "green" }} spin />
   );
 
+  const checkoutOrder = async () => {
+    try {
+      const response: CommonApiInterface = await request({
+        url: apis.USER.checkoutOrder,
+        method: "POST",
+      }).unwrap();
+      if (response?.success) {
+        await fetchCart();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Drawer
       title={
@@ -255,10 +269,8 @@ const CartModal: React.FC<CartModalProps> = ({
               themeType="success"
               icon={<ShoppingCartOutlined />}
               className="w-full"
-              onClick={() => {
-                setIsOpenModal(false);
-                router.push("/checkout");
-              }}
+              disabled={cartItems?.cartdata?.length === 0}
+              onClick={() => checkoutOrder()}
             >
               Proceed to Checkout
             </CommonButton>

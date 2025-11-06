@@ -19,6 +19,9 @@ export const GetProductDetail = async (
   await dbconnect();
   try {
     const { productid } = body;
+    if (!productid) {
+      return commonResponse(false, "Product ID is required", null, 200);
+    }
 
     const userId = toObjectId(context?.user?.id);
     const currentDate = new Date();

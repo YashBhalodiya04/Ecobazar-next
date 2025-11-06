@@ -483,6 +483,24 @@ const UserProfilePage: React.FC = () => {
                             required
                             focusColor="black"
                           />
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="radio"
+                              checked={user.billingAddress[i]?.isPrimary}
+                              onChange={() => {
+                                fields.forEach((_, idx) =>
+                                  setValue(
+                                    `billingAddress.${idx}.isPrimary`,
+                                    false
+                                  )
+                                );
+                                setValue(`billingAddress.${i}.isPrimary`, true);
+                              }}
+                            />
+                            <label className="text-black text-sm font-medium">
+                              Set as Primary Address
+                            </label>
+                          </div>
 
                           {fields.length > 1 && (
                             <Popconfirm
@@ -497,8 +515,13 @@ const UserProfilePage: React.FC = () => {
                         </div>
                       ) : (
                         <div>
-                          <h4 className="font-semibold text-lg">
+                          <h4 className="font-semibold text-lg flex items-center gap-2">
                             {field.firstName} {field.lastName}
+                            {field.isPrimary && (
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md">
+                                Primary
+                              </span>
+                            )}
                           </h4>
                           <p>
                             {field.address}, {field.city}, {field.state} -{" "}
