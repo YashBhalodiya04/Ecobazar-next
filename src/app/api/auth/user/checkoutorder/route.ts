@@ -28,8 +28,6 @@ export const CheckOutOrder = async (
 
     const items = user.cart.map((cartItem: any) => ({
       product: cartItem.productId._id,
-      name: cartItem.productId.name,
-      image: cartItem.productId.images?.[0]?.url || "",
       price: cartItem.price,
       quantity: cartItem.quantity,
       subtotal: cartItem.price * cartItem.quantity,
@@ -58,6 +56,7 @@ export const CheckOutOrder = async (
       totalAmount,
       discount,
       finalAmount,
+      active: true
     });
 
     user.cart = [];

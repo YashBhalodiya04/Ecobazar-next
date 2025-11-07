@@ -3,8 +3,6 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 export interface OrderItem {
   product: Types.ObjectId;
   name: string;
-  image: string;
-  price: number;
   quantity: number;
   subtotal: number;
 }
@@ -46,6 +44,7 @@ export interface Order extends Document {
     courierName?: string;
     expectedDeliveryDate?: Date;
   };
+  active: boolean;
 }
 
 const OrderSchema: Schema<Order> = new Schema(
@@ -58,8 +57,6 @@ const OrderSchema: Schema<Order> = new Schema(
           ref: "Product",
           required: true,
         },
-        name: { type: String, required: true },
-        image: { type: String, required: true },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
         subtotal: { type: Number, required: true },
@@ -110,6 +107,7 @@ const OrderSchema: Schema<Order> = new Schema(
       courierName: { type: String },
       expectedDeliveryDate: { type: Date },
     },
+    active: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

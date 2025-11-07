@@ -42,7 +42,7 @@ export interface Product extends Document {
   description: string;
   price: number;
   images: ProductImage[];
-  category: string;
+  category: Types.ObjectId;
   stock: number;
   reviews: Review[];
   user: Types.ObjectId;
@@ -99,7 +99,8 @@ const ProductSchema: Schema<Product> = new Schema({
   },
 
   category: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Category",
     required: true,
   },
 

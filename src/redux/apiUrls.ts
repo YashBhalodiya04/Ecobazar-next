@@ -31,6 +31,10 @@ export const apis = {
     saveProduct: "/auth/admin/product/createproduct",
     getProduct: "/auth/admin/product/getproduct",
     deleteProduct: "/auth/admin/product/deleteproduct",
+
+    // ORDER
+    getAllOrder: "/auth/admin/orders/getallorders",
+    getOrderDetails: "/auth/admin/orders/getorderdetail",
   },
   WITHOUTTOKEN: {
     getHomeData: '/gethomedata',

@@ -1,12 +1,11 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { getCookieValue } from "@/helper/CommonUtils";
-import { JWtUserInterface } from "@/interfaces/commonInterace";
 import { SignInResponseData } from "@/interfaces/SignInInterface";
 
 interface MasterLayoutProps {
@@ -22,16 +21,26 @@ export default function MasterLayout({
   children,
   showNavbar = true,
   showFooter = true,
-  isAuth = false,
   isShowSidebar = false,
   masterName = "",
 }: MasterLayoutProps) {
-  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const user = getCookieValue("user");
-  const userData: SignInResponseData = JSON.parse(user || "{}");
-  if (userData && userData?.isAdmin === true && isShowSidebar) {
+  useEffect(() => {
+    setIsClient(true);
+    const user = getCookieValue("user");
+    const userData: SignInResponseData = JSON.parse(user || "{}");
+    setIsAdmin(userData?.isAdmin === true);
+  }, []);
+
+  if (!isClient) {
+    // Prevents SSR mismatch
+    return null;
+  }
+
+  if (isAdmin && isShowSidebar) {
     return (
       <div className="flex h-screen bg-black text-white overflow-hidden">
         <Sidebar
