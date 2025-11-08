@@ -8,6 +8,7 @@ import { Product } from "@/model/Product";
 import { FilterQuery } from "mongoose";
 import { NextRequest } from "next/server";
 import ProductModal from "@/model/Product";
+import { toObjectId } from "@/lib/helper";
 
 export const GetAllProduct = async (
   req: NextRequest,
@@ -28,7 +29,7 @@ export const GetAllProduct = async (
 
     // Category filter
     if (categoryid && Array.isArray(categoryid) && categoryid.length > 0) {
-      query.category = { $in: categoryid.map((id) => id.trim()) };
+      query.category = { $in: categoryid.map((id) => toObjectId(id)) };
     }
 
     // Search filter - ensure search is a string

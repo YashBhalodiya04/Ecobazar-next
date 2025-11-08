@@ -253,7 +253,7 @@ const SliderPage: React.FC = () => {
           dataSource={sliderList}
           onChange={handleChange}
           rowKey="sliderid"
-          className="custom-ant-table-new"
+          className="ant-table-Main-Grid"
           pagination={{
             position: ["bottomRight"],
             pageSize: pageSize,

@@ -232,7 +232,7 @@ const CategoryPage: React.FC = () => {
           rowClassName={(record: any, index: number) => {
             return index % 2 === 0 ? "odd-row" : "even-row";
           }}
-          className="custom-ant-table-new"
+          className="ant-table-Main-Grid"
           pagination={{
             position: ["bottomRight"],
             pageSize: pageSize,

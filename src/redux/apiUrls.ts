@@ -35,6 +35,7 @@ export const apis = {
     // ORDER
     getAllOrder: "/auth/admin/orders/getallorders",
     getOrderDetails: "/auth/admin/orders/getorderdetail",
+    changeOrderStatus: "/auth/admin/orders/changeorderstatus",
   },
   WITHOUTTOKEN: {
     getHomeData: '/gethomedata',

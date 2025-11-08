@@ -6,6 +6,8 @@ import CommonPopconfirm from "@/components/common/CommonPopconfirm";
 import CommonTag from "@/components/common/CommonTag";
 import { ColumnSortConfig } from "@/interfaces/commonInterace";
 import {
+  OrderDetailData,
+  OrderDetailResponse,
   OrderListApiResponse,
   OrderListItem,
   orderStatusColors,
@@ -20,6 +22,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaEye } from "react-icons/fa6";
+import ViewOrderDetailModal from "./ViewOrderDetailModal";
 
 const page = () => {
   const router = useRouter();
@@ -36,7 +39,9 @@ const page = () => {
   const [categories, setCategories] = useState<OrderListItem[]>([]);
   const [SearchText, setSearchText] = useState<string>("");
 
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<OrderDetailData | null>(
+    null
+  );
   const [isModalopens, setisModalopens] = useState<boolean>(false);
 
   const handleChange = (pagination: any, filters: any, sorter: any) => {
@@ -101,12 +106,16 @@ const page = () => {
       const payload = {
         id: orderid,
       };
-      const response = await request({
+      const response: OrderDetailResponse = await request({
         url: apis.ADMIN.getOrderDetails,
         method: "POST",
         body: payload,
       }).unwrap();
-      console.log(response);
+
+      if (response?.success) {
+        setOrderDetails(response?.data);
+        setisModalopens(true);
+      }
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message, true);
@@ -118,6 +127,12 @@ const page = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isModalopens) {
+      setOrderDetails(null);
+    }
+  }, [isModalopens]);
 
   const columns: ColumnsType<OrderListItem> = [
     {
@@ -235,7 +250,7 @@ const page = () => {
           rowClassName={(record: any, index: number) => {
             return index % 2 === 0 ? "odd-row" : "even-row";
           }}
-          className="custom-ant-table-new"
+          className="ant-table-Main-Grid"
           pagination={{
             position: ["bottomRight"],
             pageSize: pageSize,
@@ -260,6 +275,13 @@ const page = () => {
           }}
         />
       </div>
+      <ViewOrderDetailModal
+        data={orderDetails}
+        isModalopen={isModalopens}
+        setIsModalopen={setisModalopens}
+        fetchGridData={fetchGridData}
+        setLoading={setLoading}
+      />
     </>
   );
 };

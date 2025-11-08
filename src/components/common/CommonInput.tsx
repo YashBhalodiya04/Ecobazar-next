@@ -47,33 +47,35 @@ const CommonInput: React.FC<CommonInputProps> = ({
   const themeStyles =
     focusColor === "green"
       ? {
-          base:
-            "bg-transparent text-white placeholder:text-gray-400 border-white",
-          dark:
-            "text-white placeholder:text-white border-green-700",
+          base: "bg-transparent text-white placeholder:text-gray-400 border-white",
+          dark: "text-white placeholder:text-white border-green-700",
           focus:
             "focus:ring-1 focus:ring-green-700 focus:border-green-500 hover:border-green-500",
         }
       : focusColor === "blue"
       ? {
-          base:
-            "bg-transparent text-white placeholder:text-white border-[#d9d9d9]",
-          dark:
-            "text-black placeholder:text-black border-[#d9d9d9]",
+          base: "bg-transparent text-white placeholder:text-white border-[#d9d9d9]",
+          dark: "text-black placeholder:text-black border-[#d9d9d9]",
           focus:
             "focus:ring-1 focus:ring-blue-700 focus:border-blue-500 hover:border-blue-500",
         }
       : {
-          base:
-            "text-black placeholder:!text-black border-gray-400",
-          dark:
-            "text-black  border-black",
+          base: "text-black placeholder:!text-black border-gray-400",
+          dark: "text-black  border-black",
           focus:
             "focus:ring-1 focus:ring-green-50 focus:border-green-700 hover:border-green-700",
         };
 
+  // const sharedClasses = clsx(
+  //   "w-full px-3 py-2 rounded-md border outline-none transition-all duration-200",
+  //   themeStyles.base,
+  //   themeStyles.dark,
+  //   themeStyles.focus,
+  //   className
+  // );
   const sharedClasses = clsx(
     "w-full px-3 py-2 rounded-md border outline-none transition-all duration-200",
+    "disabled:bg-[#3a3a3a] disabled:text-gray-100 disabled:cursor-not-allowed disabled:border-gray-600 disabled:opacity-70", // ✅ Disabled Styles
     themeStyles.base,
     themeStyles.dark,
     themeStyles.focus,

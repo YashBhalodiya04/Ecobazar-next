@@ -63,15 +63,6 @@ export const GetProductDetail = async (
               },
             },
           },
-          categoryid: {
-            $cond: [
-              {
-                $regexMatch: { input: "$category", regex: /^[0-9a-fA-F]{24}$/ },
-              },
-              { $toObjectId: "$category" },
-              null,
-            ],
-          },
           hasValidOffer: {
             $cond: {
               if: {
@@ -187,7 +178,7 @@ export const GetProductDetail = async (
       {
         $lookup: {
           from: "categories",
-          localField: "categoryid",
+          localField: "category",
           foreignField: "_id",
           as: "categoryInfo",
         },

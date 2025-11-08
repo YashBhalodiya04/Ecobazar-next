@@ -12,16 +12,14 @@
 }
 
 /* ant-table-wrapper */
-.custom-ant-table-new {
+.ant-table-wrapper {
   @apply w-full bg-transparent 
   /* Placeholder/Empty State */
   [&_tr.ant-table-placeholder]:!bg-transparent
   [&_tr.ant-table-placeholder>.ant-table-cell>.ant-table-expanded-row-fixed>div>.ant-empty-description]:!text-white
   [&_tr.ant-table-placeholder>td]:!bg-transparent
 
-    /* Table Scroll Height and Overflow */
-  [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!h-[calc(100vh-285px)]
-  [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!overflow-auto
+
 
   /* Table Header Styles */
   [&_.ant-table-thead_th]:!bg-[#1f2937] [&_.ant-table-thead_th]:!text-gray-200
@@ -116,6 +114,17 @@
   [&_th.ant-table-cell-fix-right]:!bg-gray-800;
 }
 
+.ant-table-Main-Grid {
+    /* Table Scroll Height and Overflow */
+  @apply  [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!h-[calc(100vh-285px)]
+          [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!overflow-auto
+}
+.ant-table-h-orderModal {
+    /* Table Scroll Height and Overflow */
+  @apply  [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!h-[calc(100vh-721px)]
+          [&_.ant-spin-nested-loading_.ant-spin-container_.ant-table_.ant-table-container_.ant-table-content]:!overflow-auto
+}
+
 .dark-modal {
   @apply [&_.ant-modal-content]:bg-[#1a1a1a] 
          [&_.ant-modal-content]:text-[#f1f1f1]
@@ -126,7 +135,29 @@
          [&_.ant-modal-header]:border-[#333]
          [&_.ant-modal-footer]:bg-[#1a1a1a]
          [&_.ant-modal-footer]:border-t 
-         [&_.ant-modal-footer]:border-[#333];
+         [&_.ant-modal-footer]:border-[#333]
+          [&_.ant-modal-body]:max-h-[calc(100vh-250px)]
+          [&_.ant-modal-body]:pe-2
+          [&_.ant-modal-body]:overflow-y-auto;
+}
+
+/* ✅ BLUE SCROLLBAR ONLY INSIDE MODAL BODY */
+.dark-modal .ant-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark-modal .ant-modal-body::-webkit-scrollbar-track {
+  background: #222; /* dark track */
+  border-radius: 10px;
+}
+
+.dark-modal .ant-modal-body::-webkit-scrollbar-thumb {
+  background: #3B82F6; /* Tailwind blue-500 */
+  border-radius: 10px;
+}
+
+.dark-modal .ant-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #2563EB; /* Tailwind blue-600 */
 }
 
 .dark-popconfirm {

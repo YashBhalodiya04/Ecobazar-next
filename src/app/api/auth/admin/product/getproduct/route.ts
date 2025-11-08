@@ -30,7 +30,7 @@ export const GetProduct = async (
 
     const query: FilterQuery<Product> = {};
     if (categoryid) {
-      query.category = categoryid;
+      query.category = toObjectId(categoryid);
     }
 
     if (search?.trim() != "") {
@@ -54,22 +54,9 @@ export const GetProduct = async (
     const productList = await ProductModal.aggregate([
       { $match: query },
       {
-        $addFields: {
-          categoryObjectId: {
-            $cond: [
-              {
-                $regexMatch: { input: "$category", regex: /^[0-9a-fA-F]{24}$/ },
-              },
-              { $toObjectId: "$category" },
-              null,
-            ],
-          },
-        },
-      },
-      {
         $lookup: {
           from: "categories",
-          localField: "categoryObjectId",
+          localField: "category",
           foreignField: "_id",
           as: "categoryInfo",
         },
