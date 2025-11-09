@@ -12,6 +12,9 @@ import {
   Upload,
   Skeleton,
   UploadProps,
+  Col,
+  Row,
+  Divider,
 } from "antd";
 import {
   EditOutlined,
@@ -24,17 +27,23 @@ import {
   HomeOutlined,
   MailOutlined,
   PhoneOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import CommonInput from "@/components/common/CommonInput";
 import CommonButton from "@/components/common/CommonButton";
 import { apis } from "@/redux/apiUrls";
 import { useRequestMutation } from "@/redux/commonApi";
 import { UserProfileForm, userProfileSchema } from "@/schemas/authSchemas";
-import { UserProfileAPiResponse } from "@/interfaces/UserCartInterface";
+import {
+  UserOrderDetail,
+  UserProfileAPiResponse,
+} from "@/interfaces/UserCartInterface";
 import { getCookieValue, isRestrictedFile } from "@/helper/CommonUtils";
 import { Toast } from "@/components/common/toastUtils";
 import { useRouter } from "next/navigation";
 import { CommonApiInterface } from "@/interfaces/commonInterace";
+import { ImCart } from "react-icons/im";
+import { CiShoppingCart } from "react-icons/ci";
 
 const UserProfilePage: React.FC = () => {
   const userLogin = getCookieValue("user");
@@ -48,6 +57,7 @@ const UserProfilePage: React.FC = () => {
 
   // ✅ Store the API user data separately
   const [userData, setUserData] = useState<UserProfileForm | null>(null);
+  const [orders, setOrders] = useState<UserOrderDetail[]>([]);
 
   const defaultValues: UserProfileForm = {
     username: "",
@@ -99,6 +109,7 @@ const UserProfilePage: React.FC = () => {
       }).unwrap();
       if (response?.success) {
         setUserData(response.data);
+        setOrders(response?.data?.orderDetail || []);
         reset(response.data);
       }
     } catch (error) {
@@ -315,19 +326,26 @@ const UserProfilePage: React.FC = () => {
                           />
                         </>
                       ) : (
-                        <CommonButton
-                          icon={<EditOutlined />}
-                          onClick={() => setEditProfile(true)}
-                          themeType="info"
-                          children="Edit"
-                        />
+                        <>
+                          <CommonButton
+                            icon={<EditOutlined />}
+                            onClick={() => setEditProfile(true)}
+                            themeType="info"
+                            children="Edit"
+                          />
+                          <CommonButton
+                            icon={<EditOutlined />}
+                            onClick={() => fetchUserData()}
+                            themeType="info"
+                            children="fetch"
+                          />
+                        </>
                       )}
                     </div>
                   </div>
                 </form>
               ),
             },
-
             {
               key: "address",
               label: "Billing Address",
@@ -557,6 +575,107 @@ const UserProfilePage: React.FC = () => {
                     </Button>
                   )}
                 </form>
+              ),
+            },
+            {
+              key: "orders",
+              label: (
+                <span className="flex items-center gap-2">
+                  <ShoppingCartOutlined />
+                  My Orders
+                </span>
+              ),
+              children: isLoading ? (
+                <Skeleton active paragraph={{ rows: 4 }} />
+              ) : orders?.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 text-base">No orders found</p>
+                </div>
+              ) : (
+                <Row gutter={[16, 16]}>
+                  {orders?.map((order) => {
+                    return order?.items?.map((item, index) => {
+                      return (
+                        <Col
+                          xs={24}
+                          sm={12}
+                          md={8}
+                          lg={6}
+                          xl={6}
+                          key={`${order._id}-${item?.productid || index}`}
+                        >
+                          <Card className="border border-gray-200 rounded-xl overflow-hidden h-full hover:shadow-lg transition-shadow">
+                            <div className="relative w-full h-[160px] sm:h-[180px] md:h-[200px] bg-gray-100">
+                              <Image
+                                src={
+                                  item?.product?.mainImage || "/placeholder.png"
+                                }
+                                alt={item?.product?.name || "Product"}
+                                preview={true}
+                                className="rounded-t-xl object-cover w-full h-full"
+                                fallback="/placeholder.png"
+                              />
+                              <div className="absolute top-2 right-2">
+                                <span
+                                  className={`text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full ${
+                                    order.orderStatus === "delivered"
+                                      ? "bg-green-100 text-green-700"
+                                      : order.orderStatus === "cancelled"
+                                      ? "bg-red-100 text-red-700"
+                                      : "bg-yellow-100 text-yellow-700"
+                                  }`}
+                                >
+                                  {order.orderStatus.charAt(0).toUpperCase() +
+                                    order.orderStatus.slice(1)}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="p-3 sm:p-4 space-y-2">
+                              <h3 className="font-semibold text-sm sm:text-base md:text-lg line-clamp-2 min-h-[40px] sm:min-h-[48px]">
+                                {item?.product?.name || "Product Name"}
+                              </h3>
+                              <div className="flex items-center justify-between">
+                                <p className="text-gray-600 text-xs sm:text-sm">
+                                  Qty:{" "}
+                                  <span className="font-medium">
+                                    {item?.quantity}
+                                  </span>
+                                </p>
+                                <p className="text-gray-600 text-xs sm:text-sm">
+                                  ₹{item?.price?.toLocaleString()}
+                                </p>
+                              </div>
+                              <Divider
+                                className="!my-2 bg-gray-600"
+                                variant="dashed"
+                              />
+                              {/* <div className="border-t border-gray-200 my-2"></div> */}
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs sm:text-sm text-gray-600">
+                                  Subtotal:
+                                </span>
+                                <span className="font-bold text-sm sm:text-base text-gray-900">
+                                  ₹{item?.subtotal?.toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-[10px] sm:text-xs text-gray-500 text-center pt-2">
+                                Ordered:{" "}
+                                {new Date(order.createdAt).toLocaleDateString(
+                                  "en-IN",
+                                  {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  }
+                                )}
+                              </p>
+                            </div>
+                          </Card>
+                        </Col>
+                      );
+                    });
+                  })}
+                </Row>
               ),
             },
           ]}

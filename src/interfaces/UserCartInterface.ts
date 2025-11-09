@@ -40,6 +40,7 @@ export interface UserProfile {
   phone: string;
   userimage: string;
   billingAddress: BillingAddress[];
+  orderDetail: UserOrderDetail[];
 }
 
 export interface BillingAddress {
@@ -54,10 +55,31 @@ export interface BillingAddress {
   isPrimary: boolean;
 }
 
-export interface SaveUserProfilePayload { 
+export interface SaveUserProfilePayload {
   username: string;
   email: string;
   phone: string;
   userimage: string;
   billingAddress: BillingAddress[];
+}
+
+export interface UserOrderItemProduct {
+  name: string;
+  mainImage: string;
+}
+
+export interface UserOrderItem {
+  quantity: number;
+  price: number;
+  product: UserOrderItemProduct;
+  productid: string;
+  subtotal: number;
+}
+
+export interface UserOrderDetail {
+  _id: string;
+  items: UserOrderItem[];
+  orderStatus: string;
+  finalAmount: number;
+  createdAt: string; // or Date if you convert it
 }
