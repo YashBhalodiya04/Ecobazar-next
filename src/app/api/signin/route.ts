@@ -25,7 +25,7 @@ export const POSTHandler = async (
     if (validationResponse) {
       return commonResponse(false, validationResponse, null, 200);
     }
-    const user = await UserModal.findOne({ email, active: true });
+    const user = await UserModal.findOne({ email, active: true, isverified: true });
     if (!user) {
       return commonResponse(false, "User not found", null, 200);
     }
@@ -37,6 +37,7 @@ export const POSTHandler = async (
       {
         id: user._id?.toString(),
         isadmin: user.isAdmin,
+        isverified: user.isverified,
       } as JWtUserInterface,
       process.env.JWT_TOKEN as string,
       { expiresIn: "10h" }

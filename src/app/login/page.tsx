@@ -22,6 +22,7 @@ const LoginPage = () => {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
+
   const onSubmit = async (data: LoginSchemaType) => {
     try {
       const response: SignInResponseAPIData = await request({
@@ -34,7 +35,7 @@ const LoginPage = () => {
         if (response?.data?.isAdmin) {
           router.push("/admin/profile");
         } else {
-          router.back();
+          router.push("/");
         }
       }
     } catch (error) {

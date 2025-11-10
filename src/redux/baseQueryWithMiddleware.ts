@@ -1,6 +1,7 @@
 "use client";
 import { Toast } from "@/components/common/toastUtils";
 import { SignInResponseData } from "@/interfaces/SignInInterface";
+import encryptDecryptUtil from "@/lib/encrypt-decrypt-utils";
 import { fetchBaseQuery, BaseQueryFn } from "@reduxjs/toolkit/query";
 import type { FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
@@ -21,8 +22,68 @@ export const baseQueryWithMiddleware: BaseQueryFn<
     },
   });
 
+  let newbody = args?.body;
+
+  if (args?.body && !(args?.body instanceof FormData)) {
+    newbody = encryptDecryptUtil.encryptForBackend(JSON.stringify(args?.body));
+  }
+
+  if (args?.body instanceof FormData) {
+    const newFormData = new FormData();
+    let hasFile = false;
+
+    args.body.forEach((value: any) => {
+      if (value instanceof File || value instanceof Blob) {
+        hasFile = true;
+      }
+    });
+
+    if (hasFile) {
+      args.body.forEach((value: any, key) => {
+        if (value instanceof File || value instanceof Blob) {
+          newFormData.append(key, value);
+        } else {
+          try {
+            const parsed = JSON.parse(value);
+            const encrypted = encryptDecryptUtil.encryptForBackend(
+              JSON.stringify(parsed)
+            );
+            newFormData.append(key, encrypted);
+          } catch {
+            newFormData.append(key, value);
+          }
+        }
+      });
+
+      newbody = newFormData;
+    } else {
+      const plainObj: Record<string, any> = {};
+      args.body.forEach((value: any, key) => (plainObj[key] = value));
+      newbody = encryptDecryptUtil.encryptForBackend(JSON.stringify(plainObj));
+    }
+  } else if (args?.body) {
+    newbody = encryptDecryptUtil.encryptForBackend(JSON.stringify(args.body));
+  }
+
   try {
-    const result: any = await rawBaseQuery(args, api, extraOptions);
+    const result: any = await rawBaseQuery(
+      { ...args, body: newbody },
+      api,
+      extraOptions
+    );
+    const newResult = {
+      data: result?.data?.data
+        ? encryptDecryptUtil.decryptJSData(result?.data?.data)
+        : null,
+      success: result?.data?.success,
+      message: result?.data?.message,
+      statuscode: result?.data?.statuscode,
+    };
+
+    const finalrespinse = {
+      ...result,
+      data: newResult,
+    };
     if (result?.data?.success === false && result?.data?.message) {
       Toast.error(result?.data?.message || "An unexpected error occurred");
     }
@@ -60,7 +121,7 @@ export const baseQueryWithMiddleware: BaseQueryFn<
       console.error("API Error:", err);
     }
 
-    return result;
+    return finalrespinse;
   } catch (err: unknown) {
     // Properly format custom error according to FetchBaseQueryError type
     const customError: FetchBaseQueryError = {

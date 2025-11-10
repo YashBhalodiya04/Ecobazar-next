@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/helper/auth";
 import { commonResponse } from "@/helper/commonResponbeen";
 import { JWtUserInterface } from "@/interfaces/commonInterace";
+import encryptDecryptUtil from "@/lib/encrypt-decrypt-utils";
 
 export function withAuth(handler: Function) {
   return async (req: NextRequest, context: any) => {
@@ -21,6 +22,8 @@ export function withAuth(handler: Function) {
         // }
         if (!token || !user) {
           return commonResponse(false, "Invalid token", "", 401);
+        } else if (!user?.isverified) {
+          return commonResponse(false, "User not verified", "", 401);
         }
       }
 
@@ -31,10 +34,57 @@ export function withAuth(handler: Function) {
         try {
           if (contentType.includes("application/json")) {
             const text = await req.text();
-            body = text ? JSON.parse(text) : {};
+            if (text) {
+              const descripttext = encryptDecryptUtil.decryptFromFrontend(text);
+              body = descripttext;
+            } else {
+              body = {};
+            }
           } else if (contentType.includes("multipart/form-data")) {
             const clonedReq = req.clone();
-            body = await clonedReq.formData();
+            const formData = await clonedReq.formData();
+            const decryptedData: Record<string, any> = {};
+            const files: Record<string, File> = {};
+
+            for (const [key, value] of formData.entries() as Iterable<
+              [string, FormDataEntryValue]
+            >) {
+              if (value instanceof File) {
+                files[key] = value;
+                continue;
+              }
+              const strValue = value as string;
+
+              try {
+                const decryptedString =
+                  encryptDecryptUtil.decryptFromFrontend(strValue);
+
+                try {
+                  decryptedData[key] = JSON.parse(decryptedString);
+                } catch {
+                  decryptedData[key] = decryptedString;
+                }
+              } catch {
+                decryptedData[key] = strValue;
+              }
+            }
+
+            const newFormData = new FormData();
+
+            Object.entries(decryptedData).forEach(([key, value]) => {
+              newFormData.append(
+                key,
+                typeof value === "object"
+                  ? JSON.stringify(value)
+                  : String(value)
+              );
+            });
+
+            Object.entries(files).forEach(([key, file]) => {
+              newFormData.append(key, file);
+            });
+
+            body = newFormData;
           }
         } catch (err) {
           console.error("Error parsing body:", err);

@@ -11,6 +11,7 @@ export interface User {
   phone: string;
   active: boolean;
   finalcartvalue?: number;
+  isverified?: boolean;
 }
 
 export interface CartModal {
@@ -139,6 +140,11 @@ const UserScheme: Schema<User> = new Schema(
         },
       ],
       default: [],
+      required: true,
+    },
+    isverified: {
+      type: Boolean,
+      default: false,
       required: true,
     },
   },

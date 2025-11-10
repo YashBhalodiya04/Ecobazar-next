@@ -10,3 +10,7 @@ export function toObjectId(idStr?: string): mongoose.Types.ObjectId | null {
   if (!mongoose.Types.ObjectId.isValid(idStr)) return null;
   return new mongoose.Types.ObjectId(idStr);
 }
+
+export const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};

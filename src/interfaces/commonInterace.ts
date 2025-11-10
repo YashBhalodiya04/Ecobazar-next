@@ -8,6 +8,7 @@ export interface CommonApiInterface {
 export interface JWtUserInterface {
   id: string;
   isadmin: boolean;
+  isverified: boolean;
 }
 
 export interface ContexInterface {
@@ -93,3 +94,11 @@ export interface ContactEmailPayload {
   email: string;
   message: string;
 }
+
+export const DISPOSABLE_DOMAINS = [
+  "yopmail.com",
+  "mailinator.com",
+  "tempmail.com",
+  "10minutemail.com",
+  "guerrillamail.com"
+];

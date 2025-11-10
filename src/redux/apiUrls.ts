@@ -44,5 +44,7 @@ export const apis = {
     getAllCategoryList: '/category/getallcategorylist',
     getProductList: '/product/getallproduct',
     getProductDetails: '/product/productdetail',
+
+    verifyOtp: '/verifyotp',
   }
 };

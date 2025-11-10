@@ -1,6 +1,7 @@
+import encryptDecryptUtil from "@/lib/encrypt-decrypt-utils";
 import { cookies } from "next/headers";
 
-export const commonResponse =  async (
+export const commonResponse = async (
   success: boolean,
   message: string,
   data: any = null,
@@ -10,11 +11,12 @@ export const commonResponse =  async (
     (await cookies()).delete("token");
     (await cookies()).delete("user");
   }
+  const newbody = encryptDecryptUtil.encryptData(JSON.stringify(data || ""));
   return Response.json(
     {
       success,
       message,
-      data,
+      data: newbody,
       statuscode: status,
     },
     { status }

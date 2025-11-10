@@ -5,3 +5,9 @@ export interface SignUpPayload {
     confirmPassword: string;
     phone: string;
 }
+
+export interface VerifyOtpPayload {
+    email: string;
+    otp: string;
+    id: string
+}
