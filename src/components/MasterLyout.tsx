@@ -89,7 +89,9 @@ export default function MasterLayout({
   return (
     <div className="flex flex-col min-h-screen  text-white">
       {showNavbar && <Navbar />}
-      <main className="flex-1 md:p-6 mt-3">{children}</main>
+      <main className={`flex-1 md:p-6 ${!showNavbar ? "" : "mt-3"} `}>
+        {children}
+      </main>
       {showFooter && <Footer />}
     </div>
   );

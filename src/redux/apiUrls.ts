@@ -46,5 +46,8 @@ export const apis = {
     getProductDetails: '/product/productdetail',
 
     verifyOtp: '/verifyotp',
+    sendOtp: '/sendotp',
+    resendOtp: '/resendotp',
+    resetPassword: '/resetpassword'
   }
 };

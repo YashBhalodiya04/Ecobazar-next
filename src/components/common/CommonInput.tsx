@@ -99,7 +99,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
         )}
         {isForgate && (
           <Link
-            href="/"
+            href="/forgotpassword"
             className="text-sm font-semibold text-green-600 hover:underline"
           >
             Forgot password?

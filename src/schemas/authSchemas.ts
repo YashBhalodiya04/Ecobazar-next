@@ -212,3 +212,29 @@ export const userProfileSchema = z.object({
 });
 
 export type UserProfileForm = z.infer<typeof userProfileSchema>;
+
+// Schemas
+export const emailSchema = z.object({
+  email: z.string().email("Enter valid email"),
+});
+export type EmailSchemaType = z.infer<typeof emailSchema>;
+
+export const otpSchema = z.object({
+  otp: z
+    .string()
+    .length(6, "OTP must be 6 digits")
+    .regex(/^\d+$/, "Only numbers allowed"),
+  id: z.string().optional(),
+});
+export type OtpSchemaType = z.infer<typeof otpSchema>;
+
+export const resetSchema = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+export type ResetSchemaType = z.infer<typeof resetSchema>;
