@@ -4,6 +4,8 @@ import { Toaster } from "react-hot-toast";
 import MasterLayout from "@/components/MasterLyout";
 import { Metadata } from "next";
 import ReduxProvider from "@/components/ReduxProvider";
+import SplashScreen from "@/components/SplashScreen";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +31,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-[#f5f5f5]">
         <Toaster />
-        <ReduxProvider>{children}</ReduxProvider>
+        <Suspense fallback={<SplashScreen />}>
+          <SplashScreen />
+          <ReduxProvider>{children}</ReduxProvider>
+        </Suspense>
       </body>
     </html>
   );

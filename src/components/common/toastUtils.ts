@@ -2,7 +2,7 @@
 import { toast, ToastOptions } from "react-hot-toast";
 
 const defaultOptions: ToastOptions = {
-  position: "bottom-right",
+  position: "top-center",
   duration: 3000,
   style: {
     borderRadius: "8px",
