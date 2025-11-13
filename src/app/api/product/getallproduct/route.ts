@@ -84,36 +84,66 @@ export const GetAllProduct = async (
       }
     }
 
-    // Pagination
     const skip = (Number(page) - 1) * Number(pagesize);
     const limit = Number(pagesize);
 
-    // Get counts
     const totalFilteredCount = await ProductModal.countDocuments(query);
     const totalCount = await ProductModal.countDocuments({ active: true });
 
-    // Calculate date threshold for "new" products (e.g., 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const currentDate = new Date();
 
-    // Fetch products with aggregation pipeline
     const ProductList = await ProductModal.aggregate([
       {
         $match: query,
       },
       {
+        $lookup: {
+          from: "users",
+          localField: "reviews.user",
+          foreignField: "_id",
+          as: "reviewUsers",
+        },
+      },
+      {
         $addFields: {
-          averageRating: {
+           validReviews: {
+            $filter: {
+              input: { $ifNull: ["$reviews", []] },
+              as: "r",
+              cond: {
+                $in: [
+                  "$$r.user",
+                  {
+                    $map: {
+                      input: { $ifNull: ["$reviewUsers", []] },
+                      as: "u",
+                      in: "$$u._id",
+                    },
+                  },
+                ],
+              },
+            },
+          },
+           averageRating: {
             $cond: {
-              if: { $gt: [{ $size: "$reviews" }, 0] },
+              if: { $gt: [{ $size: { $ifNull: ["$validReviews", []] } }, 0] },
               then: {
-                $avg: "$reviews.rating",
+                $avg: {
+                  $map: {
+                    input: { $ifNull: ["$validReviews", []] },
+                    as: "r",
+                    in: "$$r.rating",
+                  },
+                },
               },
               else: 0,
             },
           },
-          reviewCount: { $size: "$reviews" },
+          reviewCount: {
+            $size: { $ifNull: ["$validReviews", []] },
+          },
           mainImage: {
             $let: {
               vars: {

@@ -40,17 +40,79 @@ export const GetProductDetail = async (
       },
       {
         $addFields: {
+          validReviews: {
+            $filter: {
+              input: { $ifNull: ["$reviews", []] },
+              as: "r",
+              cond: {
+                $in: [
+                  "$$r.user",
+                  {
+                    $map: {
+                      input: { $ifNull: ["$reviewUsers", []] },
+                      as: "u",
+                      in: "$$u._id",
+                    },
+                  },
+                ],
+              },
+            },
+          },
           averageRating: {
             $cond: {
-              if: { $gt: [{ $size: "$reviews" }, 0] },
+              if: { $gt: [{ $size: { $ifNull: ["$validReviews", []] } }, 0] },
               then: {
-                $avg: "$reviews.rating",
+                $avg: {
+                  $map: {
+                    input: { $ifNull: ["$validReviews", []] },
+                    as: "r",
+                    in: "$$r.rating",
+                  },
+                },
               },
               else: 0,
             },
           },
           reviewCount: {
-            $size: "$reviews",
+            $size: { $ifNull: ["$validReviews", []] },
+          },
+          reviewData: {
+            $filter: {
+              input: {
+                $map: {
+                  input: { $ifNull: ["$validReviews", []] },
+                  as: "r",
+                  in: {
+                    id: "$$r._id",
+                    rating: "$$r.rating",
+                    comment: "$$r.comment",
+                    date: "$$r.date",
+                    user: {
+                      $let: {
+                        vars: {
+                          userInfo: {
+                            $first: {
+                              $filter: {
+                                input: { $ifNull: ["$reviewUsers", []] },
+                                as: "u",
+                                cond: { $eq: ["$$u._id", "$$r.user"] },
+                              },
+                            },
+                          },
+                        },
+                        in: {
+                          id: "$$userInfo._id",
+                          username: "$$userInfo.username",
+                          userimage: "$$userInfo.userimage",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              as: "review",
+              cond: { $ne: ["$$review.user.id", null] },
+            },
           },
           imagelist: {
             $map: {
@@ -141,38 +203,6 @@ export const GetProductDetail = async (
               },
             },
           },
-          reviewData: {
-            $map: {
-              input: "$reviews",
-              as: "r",
-              in: {
-                id: "$$r._id",
-                rating: "$$r.rating",
-                comment: "$$r.comment",
-                date: "$$r.date",
-                user: {
-                  $let: {
-                    vars: {
-                      userInfo: {
-                        $first: {
-                          $filter: {
-                            input: "$reviewUsers",
-                            as: "u",
-                            cond: { $eq: ["$$u._id", "$$r.user"] },
-                          },
-                        },
-                      },
-                    },
-                    in: {
-                      id: "$$userInfo._id",
-                      username: "$$userInfo.username",
-                      userimage: "$$userInfo.userimage",
-                    },
-                  },
-                },
-              },
-            },
-          },
         },
       },
       {
@@ -217,7 +247,6 @@ export const GetProductDetail = async (
       ResponseBody = product[0];
     }
 
-    // 👇 Add this block to include productCartQuantity if user logged in
     if (userId) {
       const user = await UserModal.findById(userId, { cart: 1 }).lean();
       if (user && user.cart?.length > 0) {
@@ -229,7 +258,6 @@ export const GetProductDetail = async (
         ResponseBody.productCartQuantity = 0;
       }
     }
-    // console.log(ResponseBody)
 
     return commonResponse(true, "", ResponseBody, 200);
   } catch (error) {

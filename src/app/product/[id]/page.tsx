@@ -28,7 +28,6 @@ import {
   ProductDetailResponse,
   ProductReview,
 } from "@/interfaces/ProductInterface";
-import dayjs from "dayjs";
 import { Toast } from "@/components/common/toastUtils";
 import { getCookieValue } from "@/helper/CommonUtils";
 import CommonButton from "@/components/common/CommonButton";
@@ -71,7 +70,6 @@ const ProductDetail = () => {
     },
   });
 
-  // ✅ Fetch product
   const fetchProductData = async () => {
     try {
       const payload = { productid: id };
