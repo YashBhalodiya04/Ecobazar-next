@@ -4,6 +4,7 @@ import { Card, Row, Col, Skeleton } from "antd";
 import { GoArrowRight } from "react-icons/go";
 import CommonButton from "../common/CommonButton";
 import { categoryData } from "@/interfaces/commonInterace";
+import { useRouter } from "next/navigation";
 
 const { Meta } = Card;
 
@@ -13,8 +14,13 @@ interface CategoriesProps {
 }
 
 const Categories: React.FC<CategoriesProps> = ({ categories, isLoading }) => {
-  const handleViewCategory = () => {
-    console.log("Navigating to /shop");
+  const router = useRouter()
+  const handleViewCategory = (id?: string) => {
+    if (id) {
+     router.push(`/product?category=${id}`);
+    } else {
+      router.push("/product")
+    }
   };
   const skeletonCards = Array.from({ length: 6 });
 
@@ -27,7 +33,7 @@ const Categories: React.FC<CategoriesProps> = ({ categories, isLoading }) => {
         <CommonButton
           type="default"
           className="!border-none hover:!text-green-600 !rounded-2xl px-5 !text-base sm:!text-sm"
-          onClick={handleViewCategory}
+          onClick={() => handleViewCategory()}
           children="View All"
           themeType="success"
           icon={<GoArrowRight />}
@@ -93,7 +99,7 @@ const Categories: React.FC<CategoriesProps> = ({ categories, isLoading }) => {
                 hoverable
                 variant="borderless"
                 className="[&_.ant-card-body]:!p-4 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl text-center bg-white border border-gray-100 hover:border-green-400 w-full max-w-[160px] sm:max-w-[180px] h-[160px] sm:h-[180px] flex flex-col justify-center items-center"
-                onClick={handleViewCategory}
+                onClick={() => handleViewCategory(category.id)}
               >
                 <div className="flex flex-col justify-center items-center w-full">
                   <img

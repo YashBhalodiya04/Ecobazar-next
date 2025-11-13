@@ -14,7 +14,7 @@ import Image from "next/image";
 import CommonButton from "@/components/common/CommonButton";
 import CommonProductCard from "@/components/common/CommonProductCard";
 import { BsFilter } from "react-icons/bs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useRequestMutation } from "@/redux/commonApi";
 import {
   CommonDropdownAPIResponse,
@@ -45,6 +45,7 @@ const carouselImages = [
 const ProductPage = () => {
   const router = useRouter();
   const [request, { isLoading }] = useRequestMutation();
+  const categoryId = useSearchParams().get("category");
 
   const [timeoutId, setTimeoutId] = useState<any>();
 
@@ -54,7 +55,9 @@ const ProductPage = () => {
   const [gridData, setGridData] = useState<ProductClientGridRecord[]>([]);
   const [SearchText, setSearchText] = useState<string>("");
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    categoryId ? [categoryId] : []
+  );
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   const [sortOption, setSortOption] = useState<CommonDropdownOptions>({});
