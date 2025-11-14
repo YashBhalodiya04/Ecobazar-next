@@ -7,6 +7,7 @@ import UserModal from "@/model/User";
 import ProductModel from "@/model/Product";
 import { NextRequest } from "next/server";
 import OrderModel from "@/model/OrderModal";
+import ProductModal from "@/model/Product";
 
 export const CheckOutOrder = async (
   req: NextRequest,
@@ -26,18 +27,20 @@ export const CheckOutOrder = async (
     if (!shippingAddress)
       return commonResponse(false, "No primary shipping address found");
 
-    const items = user.cart.map((cartItem: any) => ({
-      product: cartItem.productId._id,
+    const items = user.cart.map((cartItem) => ({
+      product: cartItem.productId,
       price: cartItem.price,
       quantity: cartItem.quantity,
       subtotal: cartItem.price * cartItem.quantity,
+      itemStatus: "pending",
+      rejectionReason: "",
     }));
 
     const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
     const discount = 0;
     const finalAmount = totalAmount - discount;
 
-    const newOrder = await OrderModel.create({
+    await OrderModel.create({
       user: user._id,
       items,
       shippingAddress: {
@@ -56,8 +59,18 @@ export const CheckOutOrder = async (
       totalAmount,
       discount,
       finalAmount,
-      active: true
+      active: true,
     });
+    
+    await Promise.all(
+      items.map((item) =>
+        ProductModal.findByIdAndUpdate(
+          item.product,
+          { $inc: { stock: -item.quantity } },
+          { new: true }
+        )
+      )
+    );
 
     user.cart = [];
     await user.save();

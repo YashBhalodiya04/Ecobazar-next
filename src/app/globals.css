@@ -31,7 +31,7 @@
   [&_.ant-table-cell-fix-left-last]:!bg-transparent
   [&_.ant-table-container]:!bg-transparent [&_.ant-table-container]:!text-gray-200
   [&_.ant-table]:!bg-transparent
-  
+
   /* Header Cell Padding & Font */
   [&_.ant-table-thead>tr>th]:!p-[0.7rem] [&_.ant-table-thead>tr>th]:align-middle [&_.ant-table-thead>tr>th]:!bg-[#1f2937] [&_.ant-table-thead>tr>th]:!text-base
   [&_.ant-table-column-title]:text-[13px] [&_.ant-table-column-title]:font-semibold
@@ -43,8 +43,8 @@
   [&_.ant-table-tbody_.ant-table-row>.ant-table-cell-row-hover]:bg-gray-700/30
   
   /* Border Radius */
-  [&_table>thead>tr:first-child>*:first-child]:rounded-tl-2xl [&_table>thead>tr:first-child>*:first-child]:rounded-bl-2xl
-  [&_table>thead>tr:last-child>*:last-child]:rounded-tr-2xl [&_table>thead>tr:last-child>*:last-child]:rounded-br-2xl
+  [&_table>thead>tr:first-child>*:first-child]:!rounded-tl-2xl [&_table>thead>tr:first-child>*:first-child]:!rounded-bl-2xl
+  [&_table>thead>tr:last-child>*:last-child]:!rounded-tr-2xl [&_table>thead>tr:last-child>*:last-child]:!rounded-br-2xl
   [&_td:first-child]:!rounded-tl-2xl [&_td:first-child]:!rounded-bl-2xl
   [&_td:last-child]:!rounded-tr-2xl [&_td:last-child]:!rounded-br-2xl
   

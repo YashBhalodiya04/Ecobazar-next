@@ -618,15 +618,15 @@ const UserProfilePage: React.FC = () => {
                               <div className="absolute top-2 right-2">
                                 <span
                                   className={`text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full ${
-                                    order.orderStatus === "delivered"
+                                    item?.itemStatus === "delivered"
                                       ? "bg-green-100 text-green-700"
-                                      : order.orderStatus === "cancelled"
+                                      : item?.itemStatus === "cancelled"
                                       ? "bg-red-100 text-red-700"
                                       : "bg-yellow-100 text-yellow-700"
                                   }`}
                                 >
-                                  {order.orderStatus.charAt(0).toUpperCase() +
-                                    order.orderStatus.slice(1)}
+                                  {item?.itemStatus.charAt(0).toUpperCase() +
+                                    item?.itemStatus.slice(1)}
                                 </span>
                               </div>
                             </div>

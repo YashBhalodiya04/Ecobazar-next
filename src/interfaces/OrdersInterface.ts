@@ -65,7 +65,13 @@ export interface OrderDetailData {
   items: OrderDetailItem[];
   shippingAddress: ShippingAddress;
   paymentInfo: PaymentInfo;
-  orderStatus: string;
+  orderStatus:
+    | "pending"
+    | "confirmed"
+    | "packed"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
   username: string;
 }
 
@@ -77,6 +83,14 @@ export interface OrderDetailItem {
   mainImage: string;
   categoryName: string;
   stock: number;
+  productstatus:
+    | "pending"
+    | "confirmed"
+    | "packed"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
+  rejectionReason: string;
 }
 
 export interface ShippingAddress {

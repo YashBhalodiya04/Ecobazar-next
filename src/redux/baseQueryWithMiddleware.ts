@@ -30,13 +30,13 @@ export const baseQueryWithMiddleware: BaseQueryFn<
 
   if (args?.body instanceof FormData) {
     const newFormData = new FormData();
-    let hasFile = false;
+    let hasFile = true;
 
-    args.body.forEach((value: any) => {
-      if (value instanceof File || value instanceof Blob) {
-        hasFile = true;
-      }
-    });
+    // args.body.forEach((value: any) => {
+    //   if (value instanceof File || value instanceof Blob) {
+    //     hasFile = true;
+    //   }
+    // });
 
     if (hasFile) {
       args.body.forEach((value: any, key) => {
@@ -56,11 +56,12 @@ export const baseQueryWithMiddleware: BaseQueryFn<
       });
 
       newbody = newFormData;
-    } else {
-      const plainObj: Record<string, any> = {};
-      args.body.forEach((value: any, key) => (plainObj[key] = value));
-      newbody = encryptDecryptUtil.encryptForBackend(JSON.stringify(plainObj));
     }
+    // else {
+    //   const plainObj: Record<string, any> = {};
+    //   args.body.forEach((value: any, key) => (plainObj[key] = value));
+    //   newbody = encryptDecryptUtil.encryptForBackend(JSON.stringify(plainObj));
+    // }
   } else if (args?.body) {
     newbody = encryptDecryptUtil.encryptForBackend(JSON.stringify(args.body));
   }

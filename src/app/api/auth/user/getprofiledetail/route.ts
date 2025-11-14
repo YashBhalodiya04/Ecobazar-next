@@ -43,6 +43,8 @@ export const GetUserProfile = async (
                 price: "$$item.price",
                 productid: "$$item.product",
                 subtotal: "$$item.subtotal",
+                itemStatus: "$$item.itemStatus",
+                rejectionReason: "$$item.rejectionReason",
                 product: {
                   name: {
                     $let: {
@@ -119,6 +121,8 @@ export const GetUserProfile = async (
           "items.subtotal": 1,
           "items.product.name": 1,
           "items.product.mainImage": 1,
+          "items.itemStatus": 1,
+          "items.rejectionReason": 1,
         },
       },
 

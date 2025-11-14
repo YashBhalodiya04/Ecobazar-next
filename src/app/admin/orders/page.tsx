@@ -281,6 +281,7 @@ const page = () => {
         setIsModalopen={setisModalopens}
         fetchGridData={fetchGridData}
         setLoading={setLoading}
+        setOrderDetailData={setOrderDetails}
       />
     </>
   );

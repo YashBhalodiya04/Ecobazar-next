@@ -117,6 +117,8 @@ export const GetOrderDetail = async (
               mainImage: "$items.productDetails.mainImage.url",
               categoryName: "$items.productDetails.categoryDetails.name",
               stock: "$items.productDetails.stock",
+              productstatus: "$items.itemStatus",
+              rejectionReason: "$items.rejectionReason",
             },
           },
           shippingAddress: { $first: "$shippingAddress" },

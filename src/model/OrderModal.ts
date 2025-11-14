@@ -5,6 +5,14 @@ export interface OrderItem {
   name: string;
   quantity: number;
   subtotal: number;
+  orderStatus:
+    | "pending"
+    | "confirmed"
+    | "packed"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
+  rejectionReason?: string;
 }
 
 export interface ShippingAddress {
@@ -60,6 +68,19 @@ const OrderSchema: Schema<Order> = new Schema(
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
         subtotal: { type: Number, required: true },
+        itemStatus: {
+          type: String,
+          enum: [
+            "pending",
+            "confirmed",
+            "packed",
+            "shipped",
+            "delivered",
+            "cancelled",
+          ],
+          default: "pending",
+        },
+        rejectionReason: { type: String },
       },
     ],
     shippingAddress: {

@@ -74,6 +74,8 @@ export interface UserOrderItem {
   product: UserOrderItemProduct;
   productid: string;
   subtotal: number;
+  itemStatus: string;
+  rejectionReason: string;
 }
 
 export interface UserOrderDetail {
