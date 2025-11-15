@@ -5,6 +5,7 @@ import { ContexInterface } from "@/interfaces/commonInterace";
 import { OrderStatusCangePayload } from "@/interfaces/OrdersInterface";
 import dbconnect from "@/lib/dbConnect";
 import OrderModel from "@/model/OrderModal";
+import ProductModel from "@/model/Product";
 import { NextRequest } from "next/server";
 
 export const ChangeOrderStatus = async (
@@ -21,12 +22,57 @@ export const ChangeOrderStatus = async (
       return commonResponse(false, "Parameter is missing", "", 200);
     }
 
-    const { orderid, status } = body;
+    const { orderid, status, itemdata } = body;
     const order = await OrderModel.findOne({ _id: orderid, active: true });
     if (!order) {
       return commonResponse(false, "Order not found", "", 404);
     }
     order.orderStatus = status;
+
+    // If full order is cancelled → restore stock for all items
+    if (status === "cancelled") {
+      for (const item of order.items) {
+        await ProductModel.findByIdAndUpdate(
+          item.product,
+          { $inc: { stock: item.quantity } },
+          { new: true }
+        );
+      }
+      const neworderitems = order.items.map((item) => {
+        return {
+          ...item,
+          itemStatus: status,
+          rejectionReason: "",
+        };
+      });
+      order.items = neworderitems;
+    } else {
+      const neworderitems = await Promise.all(
+        order.items.map(async (item) => {
+          const data = itemdata?.find(
+            (i) => i.productid?.toString() === item?.product?.toString()
+          );
+          if (!data) return item;
+
+          // If this item is cancelled → increase stock
+          if (data.productstatus === "cancelled") {
+            await ProductModel.findByIdAndUpdate(
+              item.product,
+              { $inc: { stock: item.quantity } }, // increase stock based on quantity
+              { new: true }
+            );
+          }
+
+          return {
+            ...item,
+            itemStatus: data.productstatus,
+            rejectionReason: data.rejectionReason,
+          };
+        })
+      );
+      order.items = neworderitems;
+    }
+
     await order.save();
     return commonResponse(true, "Order status changed successfully", "", 200);
   } catch (error) {
@@ -36,7 +82,11 @@ export const ChangeOrderStatus = async (
 };
 
 const validatePayload = (body: OrderStatusCangePayload) => {
-  if (isNullEmpty(body?.orderid) || isNullEmpty(body?.status)) {
+  if (
+    isNullEmpty(body?.orderid) ||
+    isNullEmpty(body?.status) ||
+    !body?.itemdata
+  ) {
     return false;
   }
   return true;

@@ -15,13 +15,18 @@ import CommonInput from "@/components/common/CommonInput";
 import { Row, Col } from "antd";
 import CommonSelect from "@/components/common/CommonSelect";
 import { FaSave } from "react-icons/fa";
-import { OrderDetailData, OrderDetailItem } from "@/interfaces/OrdersInterface";
+import {
+  OrderDetailData,
+  OrderDetailItem,
+  orderStatusColors,
+} from "@/interfaces/OrdersInterface";
 import { useRouter } from "next/navigation";
 import { useRequestMutation } from "@/redux/commonApi";
 import { apis } from "@/redux/apiUrls";
 import { CommonApiInterface } from "@/interfaces/commonInterace";
 import { FaEye } from "react-icons/fa6";
 import ViewProductDetailModal from "./ViewProductDetailModal";
+import CommonTag from "@/components/common/CommonTag";
 
 interface ViewOrderDetailModalProps {
   isModalopen: boolean;
@@ -35,7 +40,7 @@ interface ViewOrderDetailModalProps {
 }
 
 const orderStatusOptions = [
-  { label: "Pending", value: "Pending" },
+  { label: "Pending", value: "pending" },
   { label: "Confirmed", value: "confirmed" },
   { label: "Packed", value: "packed" },
   { label: "Shipped", value: "shipped" },
@@ -120,6 +125,14 @@ const ViewOrderDetailModal = ({
       ),
     },
     {
+      title: "Product Status",
+      dataIndex: "productstatus",
+      key: "productstatus",
+      render: (status) => (
+        <CommonTag value={status} colorMap={orderStatusColors} />
+      ),
+    },
+    {
       title: "Product Name",
       dataIndex: "productName",
       key: "productName",
@@ -149,9 +162,17 @@ const ViewOrderDetailModal = ({
 
   const handleChangeStatus = async () => {
     try {
+      const itemdata = data?.items?.map((item) => {
+        return {
+          productid: item?.product,
+          productstatus: item?.productstatus,
+          rejectionReason: item?.rejectionReason,
+        };
+      });
       const payload = {
         orderid: data?._id,
         status: selectedStatus?.value,
+        itemdata: itemdata,
       };
       const response: CommonApiInterface = await request({
         url: apis.ADMIN.changeOrderStatus,
@@ -174,20 +195,19 @@ const ViewOrderDetailModal = ({
     }
   };
 
-  return (
-    <>
-      <Modal
-        title={
-          <span className="text-white text-lg font-semibold">
-            Order Details - {data?._id}
-          </span>
-        }
-        open={isModalopen}
-        onCancel={() => setIsModalopen(false)}
-        centered
-        width={1200}
-        className="dark-modal rounded-xl"
-        footer={[
+  const renderbutton =
+    data?.orderStatus === "cancelled"
+      ? [
+          <CommonButton
+            themeType="cancel"
+            onClick={() => setIsModalopen(false)}
+            icon={<RxCross1 />}
+            children="Cancel"
+            key="cancel"
+            className="mt-3"
+          />,
+        ]
+      : [
           <CommonButton
             themeType="cancel"
             onClick={() => setIsModalopen(false)}
@@ -204,7 +224,22 @@ const ViewOrderDetailModal = ({
             key="save"
             className="mt-3"
           />,
-        ]}
+        ];
+
+  return (
+    <>
+      <Modal
+        title={
+          <span className="text-white text-lg font-semibold">
+            Order Details - {data?._id}
+          </span>
+        }
+        open={isModalopen}
+        onCancel={() => setIsModalopen(false)}
+        centered
+        width={1200}
+        className="dark-modal rounded-xl"
+        footer={renderbutton}
       >
         {/* USER DETAILS */}
         <Row gutter={[16, 16]} className="mb-4">

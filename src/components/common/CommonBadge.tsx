@@ -14,7 +14,6 @@ export default function CommonBadge({ value, colorMap, capitalize = true }: Comm
   const label = capitalize
     ? value?.charAt(0).toUpperCase() + value?.slice(1)
     : value;
-  console.log(label)
   return (
     <Badge
       color={'green'}

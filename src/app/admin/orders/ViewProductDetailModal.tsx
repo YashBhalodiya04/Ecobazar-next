@@ -8,10 +8,8 @@ import React, { useEffect, useState } from "react";
 import { FaSave } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
 
-const { TextArea } = Input;
-
 const orderStatusOptions = [
-  { label: "Pending", value: "Pending" },
+  { label: "Pending", value: "pending" },
   { label: "Confirmed", value: "confirmed" },
   { label: "Packed", value: "packed" },
   { label: "Shipped", value: "shipped" },
@@ -50,6 +48,9 @@ const ViewProductDetailModal = ({
             data?.productstatus?.toLocaleLowerCase()
         )
       );
+    } else {
+      setProductStatus({});
+      setRejectionReason("");
     }
   }, [isModalopen, data]);
 
@@ -66,17 +67,56 @@ const ViewProductDetailModal = ({
   };
 
   const handleChangeStatus = () => {
-    // Add your save logic here
-    // console.log({
-    //   productStatus,
-    //   rejectionReason,
-    //   orderId,
-    //   productId: data?.product,
-    // })
+    setOrderDetailData((prev) => ({
+      ...prev,
+      items: prev?.items?.map((item) => {
+        if (item?.product == data?.product) {
+          return {
+            ...item,
+            productstatus: productStatus?.value,
+            rejectionReason: rejectionReason,
+          };
+        }
+        return {
+          ...item,
+        };
+      }),
+    }));
     setIsModalopen(false);
   };
 
-  if (!data) return null;
+  if (!data) return <></>;
+
+  const renderbutton =
+    data?.productstatus !== "cancelled"
+      ? [
+          <CommonButton
+            themeType="cancel"
+            onClick={() => setIsModalopen(false)}
+            icon={<RxCross1 />}
+            children="Cancel"
+            key="cancel"
+            className="mt-3"
+          />,
+          <CommonButton
+            themeType="dark"
+            onClick={handleChangeStatus}
+            icon={<FaSave />}
+            children="Save Changes"
+            key="save"
+            className="mt-3"
+          />,
+        ]
+      : [
+          <CommonButton
+            themeType="cancel"
+            onClick={() => setIsModalopen(false)}
+            icon={<RxCross1 />}
+            children="Cancel"
+            key="cancel"
+            className="mt-3"
+          />,
+        ];
 
   return (
     <Modal
@@ -95,24 +135,7 @@ const ViewProductDetailModal = ({
       centered
       width={1000}
       className="dark-modal rounded-xl"
-      footer={[
-        <CommonButton
-          themeType="cancel"
-          onClick={() => setIsModalopen(false)}
-          icon={<RxCross1 />}
-          children="Cancel"
-          key="cancel"
-          className="mt-3"
-        />,
-        <CommonButton
-          themeType="dark"
-          onClick={handleChangeStatus}
-          icon={<FaSave />}
-          children="Save Changes"
-          key="save"
-          className="mt-3"
-        />,
-      ]}
+      footer={renderbutton}
     >
       <div className="space-y-6 py-4">
         {/* Product Image and Basic Info */}

@@ -29,7 +29,6 @@ export const GetOrderDetail = async (
       _id: body?.id,
       active: true,
     });
-    console.log(body?.id);
     if (!CurrentOrder) {
       return commonResponse(false, "Order not found", "", 404);
     }

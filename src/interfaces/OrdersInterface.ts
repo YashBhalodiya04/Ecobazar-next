@@ -117,4 +117,17 @@ export interface OrderStatusCangePayload {
     | "shipped"
     | "delivered"
     | "cancelled";
+  itemdata: OrderStatusChangeItemData[];
+}
+
+export interface OrderStatusChangeItemData {
+  productid: string;
+  productstatus:
+    | "pending"
+    | "confirmed"
+    | "packed"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
+  rejectionReason: string;
 }
