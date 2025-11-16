@@ -28,8 +28,6 @@ export const ChangeOrderStatus = async (
       return commonResponse(false, "Order not found", "", 404);
     }
     order.orderStatus = status;
-
-    // If full order is cancelled → restore stock for all items
     if (status === "cancelled") {
       for (const item of order.items) {
         await ProductModel.findByIdAndUpdate(
@@ -53,12 +51,10 @@ export const ChangeOrderStatus = async (
             (i) => i.productid?.toString() === item?.product?.toString()
           );
           if (!data) return item;
-
-          // If this item is cancelled → increase stock
           if (data.productstatus === "cancelled") {
             await ProductModel.findByIdAndUpdate(
               item.product,
-              { $inc: { stock: item.quantity } }, // increase stock based on quantity
+              { $inc: { stock: item.quantity } },
               { new: true }
             );
           }
