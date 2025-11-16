@@ -16,14 +16,12 @@ export function withAuth(handler: Function) {
         }
       }
       if (req.nextUrl.pathname.startsWith("/api/auth")) {
-        // const authHeader = req.headers.get("authorization");
-        // if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        //   return commonResponse(false, "Unauthorized access", "", 401);
-        // }
         if (!token || !user) {
           return commonResponse(false, "Invalid token", "", 401);
         } else if (!user?.isverified) {
           return commonResponse(false, "User not verified", "", 401);
+        } else if (req.nextUrl.pathname.startsWith("/api/auth/admin") && !user.isadmin) {
+          return commonResponse(false, "Unauthorized access", "", 401);
         }
       }
 

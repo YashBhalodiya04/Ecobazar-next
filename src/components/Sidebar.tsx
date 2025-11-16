@@ -61,7 +61,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SideBarProps) => {
       icon: <ImCart  size={18} />,
       href: "/admin/orders",
       id: 5,
-    }
+    },
+    {
+      name: "Common Master",
+      icon: <FaCog size={18} />,
+      href: "/admin/commonmaster",
+      id: 6,
+    },
   ];
 
   const handleLogout = async () => {
