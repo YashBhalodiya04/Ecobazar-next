@@ -36,6 +36,10 @@ export const apis = {
     getAllOrder: "/auth/admin/orders/getallorders",
     getOrderDetails: "/auth/admin/orders/getorderdetail",
     changeOrderStatus: "/auth/admin/orders/changeorderstatus",
+
+    // COMMON MASTER
+    getAllMasterData: "/auth/admin/commonmaster/getallmasterdata",
+    saveMasterData: "/auth/admin/commonmaster/savemasterdata"
   },
   WITHOUTTOKEN: {
     getHomeData: '/gethomedata',

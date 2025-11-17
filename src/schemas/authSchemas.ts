@@ -238,3 +238,43 @@ export const resetSchema = z
     path: ["confirmPassword"],
   });
 export type ResetSchemaType = z.infer<typeof resetSchema>;
+
+export const SubDataSchema = z.object({
+  keyid: z.string().min(1, "Key ID is required"),
+  keyvalue: z.string().min(1, "Key Value is required"),
+});
+
+export const CommonMasterSchema = z
+  .object({
+    mastername: z.string().min(1, "Master name is required"),
+    remarks: z.string().optional(),
+    subdata: z.array(SubDataSchema).min(1, "At least one row is required"),
+  })
+  .superRefine((data, ctx) => {
+    const keyIdList = data.subdata.map((x) => x.keyid);
+    const keyValueList = data.subdata.map((x) => x.keyvalue);
+
+    // check duplicate keyid
+    keyIdList.forEach((id, index) => {
+      if (keyIdList.indexOf(id) !== index) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Duplicate Key ID: ${id}`,
+          path: ["subdata", index, "keyid"],
+        });
+      }
+    });
+
+    // check duplicate keyvalue
+    keyValueList.forEach((val, index) => {
+      if (keyValueList.indexOf(val) !== index) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Duplicate Key Value: ${val}`,
+          path: ["subdata", index, "keyvalue"],
+        });
+      }
+    });
+  });
+
+export type FormType = z.infer<typeof CommonMasterSchema>;
