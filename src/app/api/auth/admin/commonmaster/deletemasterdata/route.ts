@@ -9,6 +9,7 @@ import dbconnect from "@/lib/dbConnect";
 import { toObjectId } from "@/lib/helper";
 import CommonMasterModel from "@/model/CommonMasterModal";
 import { NextRequest } from "next/server";
+import { withAuth } from '../../../../../../helper/withAuth';
 
 export const DeleteMasterData = async (
   req: NextRequest,
@@ -42,3 +43,5 @@ export const DeleteMasterData = async (
     return commonResponse(false, "Failed to get all master data", error, 500);
   }
 };
+
+export const POST = withAuth(DeleteMasterData)
