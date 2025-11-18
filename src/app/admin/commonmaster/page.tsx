@@ -2,7 +2,10 @@
 import CommonButton from "@/components/common/CommonButton";
 import CommonInput from "@/components/common/CommonInput";
 import CommonLoader from "@/components/common/CommonLoader";
-import { ColumnSortConfig } from "@/interfaces/commonInterace";
+import {
+  ColumnSortConfig,
+  CommonApiInterface,
+} from "@/interfaces/commonInterace";
 import {
   CommonMasterGridAPIResponse,
   CommonMasterGridRecord,
@@ -107,6 +110,22 @@ const CommonMasterPage = () => {
     }
   };
 
+  const handleDelete = async (record: CommonMasterGridRecord) => {
+    setLoading(true);
+    const response: CommonApiInterface = await request({
+      url: apis.ADMIN.deleteMasterData,
+      method: "POST",
+      body: { id: record?.masterid },
+    }).unwrap();
+    if (response?.statuscode === 401) {
+      router.push("/login");
+    }
+    if (response?.success) {
+      await fetchGridData();
+    }
+    setLoading(false);
+  };
+
   const columns: TableColumnsType<CommonMasterGridRecord> = [
     {
       title: "Actions",
@@ -135,8 +154,7 @@ const CommonMasterPage = () => {
             title="Delete Category"
             description={`Are you sure you want to delete ${record.mastername} Master?`}
             icon={<FaTrashAlt color="red" className="mt-1 me-2" />}
-            onConfirm={() => {}}
-            // onConfirm={() => handleDelete(record)}
+            onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >

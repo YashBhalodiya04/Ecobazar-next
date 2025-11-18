@@ -35,7 +35,7 @@ const AddCommonMasterModal = ({
   editData,
 }: Modalprops) => {
   const router = useRouter();
-  const [request, { isLoading }] = useRequestMutation();
+  const [request] = useRequestMutation();
   const {
     control,
     handleSubmit,

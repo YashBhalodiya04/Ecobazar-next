@@ -39,7 +39,8 @@ export const apis = {
 
     // COMMON MASTER
     getAllMasterData: "/auth/admin/commonmaster/getallmasterdata",
-    saveMasterData: "/auth/admin/commonmaster/savemasterdata"
+    saveMasterData: "/auth/admin/commonmaster/savemasterdata",
+    deleteMasterData: "/auth/admin/commonmaster/deletemasterdata",
   },
   WITHOUTTOKEN: {
     getHomeData: '/gethomedata',
