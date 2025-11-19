@@ -61,12 +61,12 @@ const ViewMasterValueModal = ({
           value={masterData?.remarks || ""}
           disabled
         />
-        <div className="border rounded-lg p-4">
+        <div className="">
           {/* Rows */}
           {masterData?.subdata?.map((item, index) => (
             <div
               key={item?.keyid}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-center mb-3"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 p-4 items-center mb-3 md:border-none border rounded-lg"
             >
               <CommonInput
                 focusColor="blue"

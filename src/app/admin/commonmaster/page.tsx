@@ -181,6 +181,7 @@ const CommonMasterPage = () => {
       key: "remarks",
       sorter: (a, b) => a.remarks.localeCompare(b.remarks),
       showSorterTooltip: false,
+      render: (text) => text || "-",
     },
   ];
 
