@@ -22,7 +22,7 @@ export default function CommonTag({
     : value;
 
   return (
-    <Tag color={colorMap[value] || "default"} bordered={true} className="!bg-transparent border-2 font-semibold" >
+    <Tag color={colorMap[value?.toLocaleLowerCase()] || "default"} bordered={true} className="!bg-transparent border-2 font-semibold" >
       {label}
     </Tag>
   );

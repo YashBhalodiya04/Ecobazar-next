@@ -4,7 +4,6 @@ import { ContexInterface } from "@/interfaces/commonInterace";
 import dbconnect from "@/lib/dbConnect";
 import { toObjectId } from "@/lib/helper";
 import UserModal from "@/model/User";
-import ProductModel from "@/model/Product";
 import { NextRequest } from "next/server";
 import OrderModel from "@/model/OrderModal";
 import ProductModal from "@/model/Product";
@@ -32,7 +31,7 @@ export const CheckOutOrder = async (
       price: cartItem.price,
       quantity: cartItem.quantity,
       subtotal: cartItem.price * cartItem.quantity,
-      itemStatus: "pending",
+      itemStatus: "0",
       rejectionReason: "",
     }));
 
@@ -53,9 +52,10 @@ export const CheckOutOrder = async (
         country: shippingAddress.country,
       },
       paymentInfo: {
-        method: body?.paymentMethod || "COD",
-        status: "pending",
+        method: body?.paymentMethod || "1",
+        status: "0",
       },
+      orderStatus: "0",
       totalAmount,
       discount,
       finalAmount,

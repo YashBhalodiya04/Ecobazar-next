@@ -30,11 +30,11 @@ export const GetAllOrders = async (
       const regex = new RegExp(search, "i");
 
       matchStage.$or = [
-        { "userInfo.username": regex }, // username
-        { "userInfo.email": regex }, // username
-        { "userInfo.phone": regex }, // phone number
-        { "paymentInfo.status": regex },
-        { orderStatus: regex },
+        { "userInfo.username": regex },
+        { "userInfo.email": regex },
+        { "userInfo.phone": regex },
+        // { "paymentInfo.status": regex },
+        // { orderStatus: regex },
         { trackingNumber: regex },
       ];
 
@@ -76,6 +76,28 @@ export const GetAllOrders = async (
           as: "userInfo",
         },
       },
+      {
+        $lookup: {
+          from: "commonmasters",
+          pipeline: [
+            { $match: { mastername: "Order Status" } },
+            { $unwind: "$subdata" },
+            { $replaceRoot: { newRoot: "$subdata" } },
+          ],
+          as: "orderStatusData",
+        },
+      },
+      {
+        $lookup: {
+          from: "commonmasters",
+          pipeline: [
+            { $match: { mastername: "Payment Status" } },
+            { $unwind: "$subdata" },
+            { $replaceRoot: { newRoot: "$subdata" } },
+          ],
+          as: "paymentStatusData",
+        },
+      },
       { $unwind: "$userInfo" },
       { $addFields: { trackingNumber: "$tracking.trackingNumber" } },
       { $match: matchStage },
@@ -88,23 +110,63 @@ export const GetAllOrders = async (
           username: "$userInfo.username",
           useremail: "$userInfo.email",
           phone: "$userInfo.phone", // ✅ NOW YOU GET PHONE
-          paymentStatus: "$paymentInfo.status",
-          orderStatus: 1,
+          // paymentStatus: "$paymentInfo.status",
+          // orderStatus: 1,
           totalAmount: 1,
           finalAmount: 1,
           trackingNumber: 1,
           createdAt: 1,
+          orderStatus: {
+            $let: {
+              vars: {
+                match: {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: "$orderStatusData",
+                        as: "st",
+                        cond: { $eq: ["$$st.keyid", "$orderStatus"] },
+                      },
+                    },
+                    0,
+                  ],
+                },
+              },
+              in: "$$match.keyvalue",
+            },
+          },
+          paymentStatus: {
+            $let: {
+              vars: {
+                match: {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: "$paymentStatusData",
+                        as: "pst",
+                        cond: { $eq: ["$$pst.keyid", "$paymentInfo.status"] },
+                      },
+                    },
+                    0,
+                  ],
+                },
+              },
+              in: "$$match.keyvalue",
+            },
+          },
         },
       },
     ]);
 
     const recordsTotal = await OrderModel.countDocuments({ active: true });
 
-    return commonResponse(true, "", {
+    const responseBody = {
       data: orders,
       recordsFiltered,
       recordsTotal,
-    });
+    };
+
+    return commonResponse(true, "", responseBody);
   } catch (error) {
     console.error("Get Orders Error:", error);
     return commonResponse(false, "Failed to fetch orders", error, 500);

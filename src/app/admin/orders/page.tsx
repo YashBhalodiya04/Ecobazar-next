@@ -155,6 +155,7 @@ const page = () => {
       title: "Order Status",
       dataIndex: "orderStatus",
       key: "orderStatus",
+      showSorterTooltip: false,
       render: (status) => (
         <CommonTag value={status} colorMap={orderStatusColors} />
       ),
@@ -163,6 +164,7 @@ const page = () => {
       title: "Payment Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
+      showSorterTooltip: false,
       render: (status) => (
         <CommonTag value={status} colorMap={paymentStatusColors} />
       ),
@@ -172,7 +174,8 @@ const page = () => {
       title: "Username",
       dataIndex: "username",
       key: "username",
-      sorter: (a, b) => a.username.localeCompare(b.username),
+      showSorterTooltip: false,
+      sorter: (a, b) => (a?.username ?? "")?.localeCompare(b?.username ?? ""),
       render: (text) => (
         <span className="text-zinc-100 font-medium tracking-wide">{text}</span>
       ),
@@ -182,7 +185,8 @@ const page = () => {
       title: "Email",
       dataIndex: "useremail",
       key: "useremail",
-      sorter: (a, b) => a.useremail.localeCompare(b.useremail),
+      showSorterTooltip: false,
+      sorter: (a, b) => (a?.useremail ?? "")?.localeCompare(b?.useremail ?? ""),
       render: (text) => <span className="text-zinc-400 text-sm">{text}</span>,
     },
 
@@ -190,23 +194,26 @@ const page = () => {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      sorter: (a, b) => a.phone.localeCompare(b.phone),
+      showSorterTooltip: false,
+      sorter: (a, b) => (a?.phone ?? "")?.localeCompare(b?.phone ?? ""),
       render: (text) => <span className="text-zinc-300">{text}</span>,
     },
 
-    // {
-    //   title: "Total Amount",
-    //   dataIndex: "totalAmount",
-    //   key: "totalAmount",
-    //   sorter: (a, b) => a.totalAmount - b.totalAmount,
-    //   render: (value) => `₹ ${value?.toFixed(2)}`,
-    // },
+    {
+      title: "Total Amount",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      showSorterTooltip: false,
+      sorter: (a, b) => (a?.totalAmount ?? 0) - (b?.totalAmount ?? 0),
+      render: (value) => `₹ ${value?.toFixed(2)}`,
+    },
 
     {
       title: "Final Amount",
       dataIndex: "finalAmount",
       key: "finalAmount",
-      sorter: (a, b) => a.finalAmount - b.finalAmount,
+      showSorterTooltip: false,
+      sorter: (a, b) => (a?.finalAmount ?? 0) - (b?.finalAmount ?? 0),
       render: (value) => `₹ ${value?.toFixed(2)}`,
     },
 
@@ -214,8 +221,9 @@ const page = () => {
       title: "Order Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      showSorterTooltip: false,
       sorter: (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        new Date(a?.createdAt).getTime() - new Date(b?.createdAt).getTime(),
       render: (date) => (
         <span className="text-zinc-400 text-sm">
           {dayjs(date).format("DD MMM YYYY, hh:mm A")}

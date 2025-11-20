@@ -5,13 +5,7 @@ export interface OrderItem {
   name: string;
   quantity: number;
   subtotal: number;
-  orderStatus:
-    | "pending"
-    | "confirmed"
-    | "packed"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
+  orderStatus: string;
   rejectionReason?: string;
 }
 
@@ -27,9 +21,9 @@ export interface ShippingAddress {
 }
 
 export interface PaymentInfo {
-  method: "COD" | "CARD" | "UPI" | "NETBANKING";
+  method: string;
   transactionId?: string;
-  status: "pending" | "paid" | "failed" | "refunded";
+  status: string;
 }
 
 export interface Order extends Document {
@@ -37,13 +31,7 @@ export interface Order extends Document {
   items: OrderItem[];
   shippingAddress: ShippingAddress;
   paymentInfo: PaymentInfo;
-  orderStatus:
-    | "pending"
-    | "confirmed"
-    | "packed"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
+  orderStatus: string;
   totalAmount: number;
   discount: number;
   finalAmount: number;
@@ -70,15 +58,8 @@ const OrderSchema: Schema<Order> = new Schema(
         subtotal: { type: Number, required: true },
         itemStatus: {
           type: String,
-          enum: [
-            "pending",
-            "confirmed",
-            "packed",
-            "shipped",
-            "delivered",
-            "cancelled",
-          ],
-          default: "pending",
+          required: true,
+          default: "0",
         },
         rejectionReason: { type: String },
       },
@@ -96,27 +77,20 @@ const OrderSchema: Schema<Order> = new Schema(
     paymentInfo: {
       method: {
         type: String,
-        enum: ["COD", "CARD", "UPI", "NETBANKING"],
         required: true,
+        default: '1'
       },
       transactionId: { type: String },
       status: {
         type: String,
-        enum: ["pending", "paid", "failed", "refunded"],
-        default: "pending",
+        require: true,
+        default: "0",
       },
     },
     orderStatus: {
       type: String,
-      enum: [
-        "pending",
-        "confirmed",
-        "packed",
-        "shipped",
-        "delivered",
-        "cancelled",
-      ],
-      default: "pending",
+      require: true,
+      default: "0",
     },
 
     totalAmount: { type: Number, required: true },

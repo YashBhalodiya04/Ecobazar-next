@@ -21,8 +21,9 @@ export const GetUserProfile = async (
     );
 
     const UserOrderDetail = await OrderModel.aggregate([
-      { $match: { user: userid, active: true } },
-
+      {
+        $match: { user: userid, active: true },
+      },
       {
         $lookup: {
           from: "products",
@@ -31,7 +32,28 @@ export const GetUserProfile = async (
           as: "productDetails",
         },
       },
-
+      {
+        $lookup: {
+          from: "commonmasters",
+          pipeline: [
+            { $match: { mastername: "Order Status" } },
+            { $unwind: "$subdata" },
+            { $replaceRoot: { newRoot: "$subdata" } },
+          ],
+          as: "itemStatusData",
+        },
+      },
+      {
+        $lookup: {
+          from: "commonmasters",
+          pipeline: [
+            { $match: { mastername: "Order Status" } },
+            { $unwind: "$subdata" },
+            { $replaceRoot: { newRoot: "$subdata" } },
+          ],
+          as: "OrderStatusSubData",
+        },
+      },
       {
         $addFields: {
           items: {
@@ -43,8 +65,28 @@ export const GetUserProfile = async (
                 price: "$$item.price",
                 productid: "$$item.product",
                 subtotal: "$$item.subtotal",
-                itemStatus: "$$item.itemStatus",
                 rejectionReason: "$$item.rejectionReason",
+                itemStatus: {
+                  $let: {
+                    vars: {
+                      statusMatch: {
+                        $arrayElemAt: [
+                          {
+                            $filter: {
+                              input: "$itemStatusData",
+                              as: "status",
+                              cond: {
+                                $eq: ["$$status.keyid", "$$item.itemStatus"],
+                              },
+                            },
+                          },
+                          0,
+                        ],
+                      },
+                    },
+                    in: "$$statusMatch.keyvalue",
+                  },
+                },
                 product: {
                   name: {
                     $let: {
@@ -105,10 +147,26 @@ export const GetUserProfile = async (
               },
             },
           },
+          orderStatus: {
+            $reduce: {
+              input: "$OrderStatusSubData",
+              initialValue: null,
+              in: {
+                $cond: [
+                  {
+                    $and: [
+                      { $eq: ["$$value", null] },
+                      { $eq: ["$$this.keyid", "$orderStatus"] },
+                    ],
+                  },
+                  "$$this.keyvalue",
+                  "$$value",
+                ],
+              },
+            },
+          },
         },
       },
-
-      // ✅ Only keep the fields you want to return
       {
         $project: {
           _id: 1,
@@ -125,8 +183,9 @@ export const GetUserProfile = async (
           "items.rejectionReason": 1,
         },
       },
-
-      { $sort: { createdAt: -1 } },
+      {
+        $sort: { createdAt: -1 },
+      },
     ]);
 
     if (!UserData) {

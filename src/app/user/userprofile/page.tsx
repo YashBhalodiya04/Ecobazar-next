@@ -107,6 +107,7 @@ const UserProfilePage: React.FC = () => {
         method: "POST",
         body: "",
       }).unwrap();
+      // console.log(response?.data)
       if (response?.success) {
         setUserData(response.data);
         setOrders(response?.data?.orderDetail || []);
@@ -297,12 +298,12 @@ const UserProfilePage: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          <p className="font-semibold">{user.username}</p>
+                          <p className="font-semibold">{user?.username}</p>
                           <p className="text-gray-600 flex items-center gap-2">
-                            <MailOutlined /> {user.email}
+                            <MailOutlined /> {user?.email}
                           </p>
                           <p className="text-gray-600 flex items-center gap-2">
-                            <PhoneOutlined /> {user.phone}
+                            <PhoneOutlined /> {user?.phone}
                           </p>
                         </>
                       )}
@@ -383,9 +384,9 @@ const UserProfilePage: React.FC = () => {
                       />
                     )}
                   </div>
-                  {fields.map((field, i) => (
+                  {fields?.map((field, i) => (
                     <Card
-                      key={field.id}
+                      key={field?.id}
                       className="mb-3 border border-gray-200 rounded-xl"
                     >
                       {editAddress ? (
@@ -520,7 +521,7 @@ const UserProfilePage: React.FC = () => {
                             </label>
                           </div>
 
-                          {fields.length > 1 && (
+                          {fields?.length > 1 && (
                             <Popconfirm
                               title="Delete this address?"
                               onConfirm={() => remove(i)}
@@ -534,20 +535,20 @@ const UserProfilePage: React.FC = () => {
                       ) : (
                         <div>
                           <h4 className="font-semibold text-lg flex items-center gap-2">
-                            {field.firstName} {field.lastName}
-                            {field.isPrimary && (
+                            {field?.firstName} {field?.lastName}
+                            {field?.isPrimary && (
                               <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md">
                                 Primary
                               </span>
                             )}
                           </h4>
                           <p>
-                            {field.address}, {field.city}, {field.state} -{" "}
-                            {field.zipCode}
+                            {field?.address}, {field?.city}, {field?.state} -{" "}
+                            {field?.zipCode}
                           </p>
-                          <p>{field.country}</p>
+                          <p>{field?.country}</p>
                           <p className="text-gray-600">
-                            <PhoneOutlined /> {field.phoneNumber}
+                            <PhoneOutlined /> {field?.phoneNumber}
                           </p>
                         </div>
                       )}
@@ -625,8 +626,8 @@ const UserProfilePage: React.FC = () => {
                                       : "bg-yellow-100 text-yellow-700"
                                   }`}
                                 >
-                                  {item?.itemStatus.charAt(0).toUpperCase() +
-                                    item?.itemStatus.slice(1)}
+                                  {item?.itemStatus?.charAt(0)?.toUpperCase() +
+                                    item?.itemStatus?.slice(1)}
                                 </span>
                               </div>
                             </div>
@@ -660,7 +661,7 @@ const UserProfilePage: React.FC = () => {
                               </div>
                               <p className="text-[10px] sm:text-xs text-gray-500 text-center pt-2">
                                 Ordered:{" "}
-                                {new Date(order.createdAt).toLocaleDateString(
+                                {new Date(order?.createdAt)?.toLocaleDateString(
                                   "en-IN",
                                   {
                                     day: "2-digit",
