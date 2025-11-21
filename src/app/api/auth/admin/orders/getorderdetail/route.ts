@@ -49,6 +49,78 @@ export const GetOrderDetail = async (
         },
       },
       {
+        $lookup: {
+          from: "commonmasters",
+          let: { orderstatus: "$orderStatus" },
+          pipeline: [
+            { $match: { mastername: "Order Status" } },
+            { $unwind: "$subdata" },
+            {
+              $match: {
+                $expr: { $eq: ["$subdata.keyid", "$$orderstatus"] },
+              },
+            },
+            { $replaceRoot: { newRoot: "$subdata" } },
+            { $project: { _id: 0 } }
+          ],
+          as: "orderStatusData",
+        },
+      },
+      {
+        $unwind: {
+          path: "$orderStatusData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "commonmasters",
+          let: { paymentstatus: "$paymentInfo.status" },
+          pipeline: [
+            { $match: { mastername: "Payment Status" } },
+            { $unwind: "$subdata" },
+            {
+              $match: {
+                $expr: { $eq: ["$subdata.keyid", "$$paymentstatus"] },
+              },
+            },
+            { $replaceRoot: { newRoot: "$subdata" } },
+            { $project: { _id: 0, } }
+          ],
+          as: "paymentStatusData",
+        },
+      },
+      {
+        $unwind: {
+          path: "$paymentStatusData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "commonmasters",
+          let: { paymentMethod: "$paymentInfo.method" },
+          pipeline: [
+            { $match: { mastername: "Payment Methods" } },
+            { $unwind: "$subdata" },
+            {
+              $match: {
+                $expr: { $eq: ["$subdata.keyid", "$$paymentMethod"] },
+              },
+            },
+            { $replaceRoot: { newRoot: "$subdata" } },
+            { $project: { _id: 0 } }
+          ],
+          as: "paymentMethodData",
+        },
+      },
+      {
+        $unwind: {
+          path: "$paymentMethodData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
         $unwind: {
           path: "$userdetails",
           preserveNullAndEmptyArrays: true,
@@ -71,6 +143,29 @@ export const GetOrderDetail = async (
       {
         $unwind: {
           path: "$items.productDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "commonmasters",
+          let: { productstatus: "$items.itemStatus" },
+          pipeline: [
+            { $match: { mastername: "Order Status" } },
+            { $unwind: "$subdata" },
+            {
+              $match: {
+                $expr: { $eq: ["$subdata.keyid", "$$productstatus"] },
+              },
+            },
+            { $replaceRoot: { newRoot: "$subdata" } },
+          ],
+          as: "items.itemStatus",
+        },
+      },
+      {
+        $unwind: {
+          path: "$items.itemStatus",
           preserveNullAndEmptyArrays: true,
         },
       },
@@ -121,8 +216,9 @@ export const GetOrderDetail = async (
             },
           },
           shippingAddress: { $first: "$shippingAddress" },
-          paymentInfo: { $first: "$paymentInfo" },
-          orderStatus: { $first: "$orderStatus" },
+          paymentMethod: { $first: "$paymentMethodData" },
+          paymentStatus: { $first: "$paymentStatusData" },
+          orderStatus: { $first: "$orderStatusData" },
           username: { $first: "$userdetails.username" },
         },
       },
