@@ -16,6 +16,7 @@ import { Row, Col } from "antd";
 import CommonSelect from "@/components/common/CommonSelect";
 import { FaSave } from "react-icons/fa";
 import {
+  CommondropdownData,
   OrderDetailData,
   OrderDetailItem,
   orderStatusColors,
@@ -23,7 +24,10 @@ import {
 import { useRouter } from "next/navigation";
 import { useRequestMutation } from "@/redux/commonApi";
 import { apis } from "@/redux/apiUrls";
-import { CommonApiInterface } from "@/interfaces/commonInterace";
+import {
+  CommonApiInterface,
+  CommonDropdownOptions,
+} from "@/interfaces/commonInterace";
 import { FaEye } from "react-icons/fa6";
 import ViewProductDetailModal from "./ViewProductDetailModal";
 import CommonTag from "@/components/common/CommonTag";
@@ -37,6 +41,7 @@ interface ViewOrderDetailModalProps {
   setOrderDetailData: React.Dispatch<
     React.SetStateAction<OrderDetailData | null>
   >;
+  commonDropdownData: CommondropdownData | null;
 }
 
 const orderStatusOptions = [
@@ -55,11 +60,16 @@ const ViewOrderDetailModal = ({
   fetchGridData,
   setLoading,
   setOrderDetailData,
+  commonDropdownData,
 }: ViewOrderDetailModalProps) => {
   const router = useRouter();
   const [request, { isLoading }] = useRequestMutation();
 
-  const [selectedStatus, setselectedStatus] = useState<any>({} as any);
+  const [selectedStatus, setselectedStatus] = useState<CommonDropdownOptions>(
+    {}
+  );
+  const [selectedPaymentStatus, setselectedPaymentStatus] =
+    useState<CommonDropdownOptions>({});
   const [viewProductDetailModal, setViewProductDetailModal] =
     useState<boolean>(false);
   const [productDetailData, setProductDetailData] =
@@ -69,14 +79,18 @@ const ViewOrderDetailModal = ({
   useEffect(() => {
     if (isModalopen && data) {
       setselectedStatus(
-        orderStatusOptions?.find(
-          (item) =>
-            item?.value?.toLocaleLowerCase() ===
-            data?.orderStatus?.toLocaleLowerCase()
+        commonDropdownData?.OrderStatus?.find(
+          (item) => item?.id == data?.orderStatus?.keyid
+        )
+      );
+      setselectedPaymentStatus(
+        commonDropdownData?.PaymentStatus?.find(
+          (item) => item?.id == data?.paymentStatus?.keyid
         )
       );
     } else {
       setselectedStatus({});
+      setselectedPaymentStatus({});
     }
   }, [isModalopen, data]);
 
@@ -126,10 +140,13 @@ const ViewOrderDetailModal = ({
     },
     {
       title: "Product Status",
-      dataIndex: "productstatus",
-      key: "productstatus",
-      render: (status) => (
-        <CommonTag value={status} colorMap={orderStatusColors} />
+      dataIndex: "productstatus.keyvalue",
+      key: "productstatus.keyvalue",
+      render: (status, record) => (
+        <CommonTag
+          value={record?.productstatus?.keyvalue}
+          colorMap={orderStatusColors}
+        />
       ),
     },
     {
@@ -196,7 +213,7 @@ const ViewOrderDetailModal = ({
   };
 
   const renderbutton =
-    data?.orderStatus === "cancelled"
+    data?.orderStatus?.keyid === "5"
       ? [
           <CommonButton
             themeType="cancel"
@@ -260,15 +277,15 @@ const ViewOrderDetailModal = ({
                 Order Status <span className="text-red-400">*</span>
               </label>
               <CommonSelect
-                options={orderStatusOptions}
+                options={commonDropdownData?.OrderStatus || []}
                 onChange={(e) => setselectedStatus(e)}
                 value={selectedStatus}
                 placeholder="Select Status"
-                labelKey="label"
-                valueKey="value"
+                labelKey="value"
+                valueKey="id"
                 disabled={
-                  data?.orderStatus === "delivered" ||
-                  data?.orderStatus === "cancelled"
+                  data?.orderStatus?.keyid === "4" ||
+                  data?.orderStatus?.keyid === "5"
                 }
               />
             </div>
@@ -284,16 +301,24 @@ const ViewOrderDetailModal = ({
               disabled
             />
           </Col>
-
           <Col span={12}>
-            <CommonInput
-              id="paymentStatus"
-              label="Payment Status"
-              value={data?.paymentInfo?.status}
-              readOnly
-              focusColor="blue"
-              disabled
-            />
+            <div>
+              <label className="block font-medium mb-2 text-gray-300">
+                Payment Status <span className="text-red-400">*</span>
+              </label>
+              <CommonSelect
+                options={commonDropdownData?.PaymentStatus || []}
+                onChange={(e) => setselectedPaymentStatus(e)}
+                value={selectedPaymentStatus}
+                placeholder="Select Status"
+                labelKey="value"
+                valueKey="id"
+                disabled={
+                  data?.orderStatus?.keyid === "4" ||
+                  data?.orderStatus?.keyid === "5"
+                }
+              />
+            </div>
           </Col>
         </Row>
         {/* SHIPPING ADDRESS */}
@@ -397,6 +422,7 @@ const ViewOrderDetailModal = ({
         setIsModalopen={setViewProductDetailModal}
         orderId={orderId}
         setOrderDetailData={setOrderDetailData}
+        commonDropdownData={commonDropdownData}
       />
     </>
   );

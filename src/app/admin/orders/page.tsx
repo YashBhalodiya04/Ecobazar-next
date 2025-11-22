@@ -6,6 +6,8 @@ import CommonPopconfirm from "@/components/common/CommonPopconfirm";
 import CommonTag from "@/components/common/CommonTag";
 import { ColumnSortConfig } from "@/interfaces/commonInterace";
 import {
+  CommondropdownData,
+  CommondropdownDataAPiresponse,
   OrderDetailData,
   OrderDetailResponse,
   OrderListApiResponse,
@@ -24,12 +26,14 @@ import { FaEdit } from "react-icons/fa";
 import { FaEye } from "react-icons/fa6";
 import ViewOrderDetailModal from "./ViewOrderDetailModal";
 
-const page = () => {
+const OrderPage = () => {
   const router = useRouter();
   const [request, { isLoading }] = useRequestMutation();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [timeoutId, setTimeoutId] = useState<any>();
+
+  const [isFirstTime, setisFirstTime] = useState<boolean>(true);
 
   const [sortedInfo, setSortedInfo] = useState<ColumnSortConfig>();
   const [pageSize, setPageSize] = useState<number>(20);
@@ -39,10 +43,39 @@ const page = () => {
   const [categories, setCategories] = useState<OrderListItem[]>([]);
   const [SearchText, setSearchText] = useState<string>("");
 
+  const [commonDropdownData, setCommonDropdownData] =
+    useState<CommondropdownData | null>(null);
+
   const [orderDetails, setOrderDetails] = useState<OrderDetailData | null>(
     null
   );
   const [isModalopens, setisModalopens] = useState<boolean>(false);
+
+  const fetchDropdownData = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        type: ["Order Status", "Payment Methods", "Payment Status"],
+      };
+      const response: CommondropdownDataAPiresponse = await request({
+        url: apis.WITHOUTTOKEN.commonDropdown,
+        method: "POST",
+        body: payload,
+      }).unwrap();
+      if (response?.success) {
+        setCommonDropdownData(response?.data);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message, true);
+      } else {
+        console.error("An unknown error occurred", error, true);
+      }
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (pagination: any, filters: any, sorter: any) => {
     setSortedInfo(sorter);
@@ -75,6 +108,10 @@ const page = () => {
         setTotalData(0);
         setTotalCountOfFilter(0);
       }
+      if (isFirstTime) {
+        await fetchDropdownData();
+      }
+      setisFirstTime(false);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message, true);
@@ -290,9 +327,10 @@ const page = () => {
         fetchGridData={fetchGridData}
         setLoading={setLoading}
         setOrderDetailData={setOrderDetails}
+        commonDropdownData={commonDropdownData}
       />
     </>
   );
 };
 
-export default page;
+export default OrderPage;

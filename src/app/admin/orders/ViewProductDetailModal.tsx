@@ -2,7 +2,12 @@
 import CommonButton from "@/components/common/CommonButton";
 import CommonInput from "@/components/common/CommonInput";
 import CommonSelect from "@/components/common/CommonSelect";
-import { OrderDetailData, OrderDetailItem } from "@/interfaces/OrdersInterface";
+import { CommonDropdownOptions } from "@/interfaces/commonInterace";
+import {
+  CommondropdownData,
+  OrderDetailData,
+  OrderDetailItem,
+} from "@/interfaces/OrdersInterface";
 import { Modal, Image, Tag, Descriptions, Select, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import { FaSave } from "react-icons/fa";
@@ -25,6 +30,7 @@ interface ModalProps {
   setOrderDetailData: React.Dispatch<
     React.SetStateAction<OrderDetailData | null>
   >;
+  commonDropdownData: CommondropdownData | null;
 }
 
 const ViewProductDetailModal = ({
@@ -32,9 +38,10 @@ const ViewProductDetailModal = ({
   setIsModalopen,
   data,
   orderId,
+  commonDropdownData,
   setOrderDetailData,
 }: ModalProps) => {
-  const [productStatus, setProductStatus] = useState<any>({});
+  const [productStatus, setProductStatus] = useState<CommonDropdownOptions>({});
   const [rejectionReason, setRejectionReason] = useState(
     data?.rejectionReason || ""
   );
@@ -42,10 +49,8 @@ const ViewProductDetailModal = ({
   useEffect(() => {
     if (isModalopen && data) {
       setProductStatus(
-        orderStatusOptions?.find(
-          (item) =>
-            item?.value?.toLocaleLowerCase() ===
-            data?.productstatus?.toLocaleLowerCase()
+        commonDropdownData?.OrderStatus?.find(
+          (item) => item?.id === data?.productstatus?.keyid
         )
       );
     } else {
@@ -63,7 +68,7 @@ const ViewProductDetailModal = ({
       delivered: "green",
       cancelled: "red",
     };
-    return statusColors[status] || "default";
+    return statusColors[status?.toLocaleLowerCase()] || "default";
   };
 
   const handleChangeStatus = () => {
@@ -73,7 +78,10 @@ const ViewProductDetailModal = ({
         if (item?.product == data?.product) {
           return {
             ...item,
-            productstatus: productStatus?.value,
+            productstatus: {
+              keyid: productStatus?.id,
+              keyvalue: productStatus?.value,
+            },
             rejectionReason: rejectionReason,
           };
         }
@@ -88,7 +96,7 @@ const ViewProductDetailModal = ({
   if (!data) return <></>;
 
   const renderbutton =
-    data?.productstatus !== "cancelled"
+    data?.productstatus?.keyid !== "5"
       ? [
           <CommonButton
             themeType="cancel"
@@ -125,8 +133,8 @@ const ViewProductDetailModal = ({
           <span className="text-white text-lg font-semibold">
             Product Details
           </span>
-          <Tag color={getStatusColor(data.productstatus)}>
-            {data.productstatus.toUpperCase()}
+          <Tag color={getStatusColor(data.productstatus?.keyvalue)}>
+            {data.productstatus?.keyvalue.toUpperCase()}
           </Tag>
         </div>
       }
@@ -213,10 +221,10 @@ const ViewProductDetailModal = ({
 
               <Descriptions.Item label="Current Status" className="!text-white">
                 <Tag
-                  color={getStatusColor(data.productstatus)}
+                  color={getStatusColor(data.productstatus?.keyvalue)}
                   className="text-sm"
                 >
-                  {data.productstatus.toUpperCase()}
+                  {data.productstatus?.keyvalue.toUpperCase()}
                 </Tag>
               </Descriptions.Item>
             </Descriptions>
@@ -234,20 +242,18 @@ const ViewProductDetailModal = ({
             </label>
             <CommonSelect
               focusColor="blue"
-              options={orderStatusOptions}
+              options={commonDropdownData?.OrderStatus || []}
               value={productStatus}
               onChange={(value) => setProductStatus(value)}
               placeholder="Select Status"
               labelKey="label"
               valueKey="value"
-              disabled={
-                productStatus === "delivered" || productStatus === "cancelled"
-              }
+              disabled={productStatus?.id === "5" || productStatus?.id === "4"}
             />
           </div>
 
           {/* Rejection Reason (only show if cancelled) */}
-          {(productStatus?.value === "cancelled" || data.rejectionReason) && (
+          {(productStatus?.id === "5" || data?.rejectionReason) && (
             <CommonInput
               focusColor="blue"
               id="rejectionReason"

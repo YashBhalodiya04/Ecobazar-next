@@ -53,6 +53,8 @@ export const apis = {
     verifyOtp: '/verifyotp',
     sendOtp: '/sendotp',
     resendOtp: '/resendotp',
-    resetPassword: '/resetpassword'
+    resetPassword: '/resetpassword',
+
+    commonDropdown: '/commondropdown',
   }
 };

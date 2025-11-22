@@ -102,3 +102,9 @@ export const DISPOSABLE_DOMAINS = [
   "10minutemail.com",
   "guerrillamail.com"
 ];
+
+export interface CommonDropdownPayload {
+  type: CommonDropdownType[] | [];
+}
+
+export type CommonDropdownType = "Order Status" | "Payment Methods" | "Payment Status";

@@ -1,3 +1,5 @@
+import { CommonDropdownOptions } from "./commonInterace";
+
 export interface OrderGetAllPayload {
   search: string;
   page: number;
@@ -65,14 +67,19 @@ export interface OrderDetailData {
   items: OrderDetailItem[];
   shippingAddress: ShippingAddress;
   paymentInfo: PaymentInfo;
-  orderStatus:
-    | "pending"
-    | "confirmed"
-    | "packed"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
+  orderStatus: {
+    keyid: string;
+    keyvalue: string;
+  };
   username: string;
+  paymentMethod: {
+    keyid: string;
+    keyvalue: string;
+  };
+  paymentStatus: {
+    keyid: string;
+    keyvalue: string;
+  };
 }
 
 export interface OrderDetailItem {
@@ -83,13 +90,10 @@ export interface OrderDetailItem {
   mainImage: string;
   categoryName: string;
   stock: number;
-  productstatus:
-    | "pending"
-    | "confirmed"
-    | "packed"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
+  productstatus: {
+    keyid: string;
+    keyvalue: string;
+  };
   rejectionReason: string;
 }
 
@@ -130,4 +134,17 @@ export interface OrderStatusChangeItemData {
     | "delivered"
     | "cancelled";
   rejectionReason: string;
+}
+
+export interface CommondropdownDataAPiresponse {
+  success: boolean;
+  message: string;
+  data: CommondropdownData;
+  statuscode: number;
+}
+
+export interface CommondropdownData {
+  OrderStatus: CommonDropdownOptions[];
+  PaymentMethods: CommonDropdownOptions[];
+  PaymentStatus: CommonDropdownOptions[];
 }
