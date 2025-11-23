@@ -3,7 +3,8 @@ import { withAuth } from "@/helper/withAuth";
 import { ContexInterface } from "@/interfaces/commonInterace";
 import { OrderGetAllPayload } from "@/interfaces/OrdersInterface";
 import dbconnect from "@/lib/dbConnect";
-import OrderModel from "@/model/OrderModal";
+import OrderModel, { Order } from "@/model/OrderModal";
+import { FilterQuery } from "mongoose";
 import { NextRequest } from "next/server";
 
 export const GetAllOrders = async (
@@ -21,10 +22,16 @@ export const GetAllOrders = async (
       return commonResponse(false, "Parameter is missing", "", 200);
     }
 
-    const { search = "", page = 1, pagesize = 10 } = body;
+    const {
+      search = "",
+      page = 1,
+      pagesize = 10,
+      orderstatus,
+      paymentstatus,
+    } = body;
     const skip = (page - 1) * pagesize;
 
-    const matchStage: any = { active: true };
+    const matchStage: FilterQuery<Order> = { active: true };
 
     if (search.trim() !== "") {
       const regex = new RegExp(search, "i");
@@ -33,8 +40,8 @@ export const GetAllOrders = async (
         { "userInfo.username": regex },
         { "userInfo.email": regex },
         { "userInfo.phone": regex },
-        // { "paymentInfo.status": regex },
-        // { orderStatus: regex },
+        { "paymentInfo.status": paymentstatus },
+        { orderStatus: orderstatus },
         { trackingNumber: regex },
       ];
 

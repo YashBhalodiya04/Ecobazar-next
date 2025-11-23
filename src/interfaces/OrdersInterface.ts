@@ -5,6 +5,8 @@ export interface OrderGetAllPayload {
   page: number;
   pagesize: number;
   status: string;
+  paymentstatus: string;
+  orderstatus: string;
 }
 
 export interface OrderListItem {
@@ -114,25 +116,14 @@ export interface PaymentInfo {
 
 export interface OrderStatusCangePayload {
   orderid: string;
-  status:
-    | "pending"
-    | "confirmed"
-    | "packed"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
+  status: string;
+  paymentstatus: string;
   itemdata: OrderStatusChangeItemData[];
 }
 
 export interface OrderStatusChangeItemData {
   productid: string;
-  productstatus:
-    | "pending"
-    | "confirmed"
-    | "packed"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
+  productstatus: string;
   rejectionReason: string;
 }
 

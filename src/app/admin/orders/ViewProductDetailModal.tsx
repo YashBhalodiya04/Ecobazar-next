@@ -165,7 +165,12 @@ const ViewProductDetailModal = ({
               column={1}
               size="small"
               className="custom-descriptions"
-              labelStyle={{ fontWeight: 600, width: "150px" }}
+              styles={{
+                label: {
+                  fontWeight: 600,
+                  width: "150px",
+                },
+              }}
             >
               <Descriptions.Item label="Product Name" className="!text-white">
                 <span className="font-semibold text-base text-white">
@@ -180,7 +185,12 @@ const ViewProductDetailModal = ({
               column={1}
               size="small"
               className="custom-descriptions"
-              labelStyle={{ fontWeight: 600, width: "150px" }}
+              styles={{
+                label: {
+                  fontWeight: 600,
+                  width: "150px",
+                },
+              }}
             >
               <Descriptions.Item label="Category" className="!text-white">
                 <Tag color="blue">{data.categoryName}</Tag>

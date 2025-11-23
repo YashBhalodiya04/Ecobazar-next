@@ -22,13 +22,13 @@ export const ChangeOrderStatus = async (
       return commonResponse(false, "Parameter is missing", "", 200);
     }
 
-    const { orderid, status, itemdata } = body;
+    const { orderid, status, paymentstatus, itemdata } = body;
     const order = await OrderModel.findOne({ _id: orderid, active: true });
     if (!order) {
       return commonResponse(false, "Order not found", "", 404);
     }
     order.orderStatus = status;
-    if (status === "cancelled") {
+    if (status === "5") {
       for (const item of order.items) {
         await ProductModel.findByIdAndUpdate(
           item.product,
@@ -44,6 +44,7 @@ export const ChangeOrderStatus = async (
         };
       });
       order.items = neworderitems;
+      order.paymentInfo.status = paymentstatus;
     } else {
       const neworderitems = await Promise.all(
         order.items.map(async (item) => {
@@ -51,7 +52,7 @@ export const ChangeOrderStatus = async (
             (i) => i.productid?.toString() === item?.product?.toString()
           );
           if (!data) return item;
-          if (data.productstatus === "cancelled") {
+          if (data.productstatus === "5") {
             await ProductModel.findByIdAndUpdate(
               item.product,
               { $inc: { stock: item.quantity } },
@@ -67,6 +68,7 @@ export const ChangeOrderStatus = async (
         })
       );
       order.items = neworderitems;
+      order.paymentInfo.status = paymentstatus;
     }
 
     await order.save();
@@ -81,6 +83,7 @@ const validatePayload = (body: OrderStatusCangePayload) => {
   if (
     isNullEmpty(body?.orderid) ||
     isNullEmpty(body?.status) ||
+    isNullEmpty(body?.paymentstatus) ||
     !body?.itemdata
   ) {
     return false;
