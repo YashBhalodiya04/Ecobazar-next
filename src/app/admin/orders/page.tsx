@@ -4,7 +4,7 @@ import CommonInput from "@/components/common/CommonInput";
 import CommonLoader from "@/components/common/CommonLoader";
 import CommonPopconfirm from "@/components/common/CommonPopconfirm";
 import CommonTag from "@/components/common/CommonTag";
-import { ColumnSortConfig } from "@/interfaces/commonInterace";
+import { ColumnSortConfig, CommonDropdownOptions } from "@/interfaces/commonInterace";
 import {
   CommondropdownData,
   CommondropdownDataAPiresponse,
@@ -23,8 +23,10 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { FaEye } from "react-icons/fa6";
+import { FaEye, FaFilter } from "react-icons/fa6";
 import ViewOrderDetailModal from "./ViewOrderDetailModal";
+import CommonPopover from "@/components/common/CommonPopover";
+import CommonSelect from "@/components/common/CommonSelect";
 
 const OrderPage = () => {
   const router = useRouter();
@@ -42,6 +44,11 @@ const OrderPage = () => {
   const [totalCountOfFilter, setTotalCountOfFilter] = useState<number>(0);
   const [categories, setCategories] = useState<OrderListItem[]>([]);
   const [SearchText, setSearchText] = useState<string>("");
+
+  const [selectedPaymentStatus, setselectedPaymentStatus] = useState<CommonDropdownOptions>()
+  const [selectedOrderStatus, setselectedOrderStatus] = useState<CommonDropdownOptions>()
+  const [isFIlterOpen, setisFIlterOpen] = useState<boolean>(false);
+  
 
   const [commonDropdownData, setCommonDropdownData] =
     useState<CommondropdownData | null>(null);
@@ -83,13 +90,15 @@ const OrderPage = () => {
     setpage(pagination?.current);
   };
 
-  const fetchGridData = async () => {
+  const fetchGridData = async (isreset?:boolean) => {
     try {
       setLoading(true);
       const payload = {
         search: SearchText,
         page: page,
         pagesize: pageSize,
+        paymentstatus: selectedPaymentStatus?.id,
+        orderstatus: selectedOrderStatus?.id,
       };
       const response: OrderListApiResponse = await request({
         url: apis.ADMIN.getAllOrder,
@@ -279,11 +288,80 @@ const OrderPage = () => {
               id="search"
               label=""
               type="text"
-              placeholder="Search order..."
+              placeholder="Search Product..."
               value={SearchText}
               onChange={(e) => setSearchText(e.target.value)}
               focusColor="blue"
             />
+          </div>
+
+          <div className="flex justify-end  sm:w-auto mt-3 gap-2">
+            <CommonPopover
+              title={
+                <span className="text-zinc-300 text-sm">Filter Options</span>
+              }
+              open={isFIlterOpen}
+              setOpen={setisFIlterOpen}
+              placement="bottomRight"
+              className="my-custom-shadow"
+              content={
+                <div className="space-y-3 w-64">
+                  <div className="flex flex-col">
+                    <div className="flex flex-col">
+                      <label className="block text-white text-sm mb-2">
+                        Payment Status
+                      </label>
+                      <CommonSelect
+                        onChange={(e) => setselectedPaymentStatus(e)}
+                        options={commonDropdownData?.PaymentStatus || []}
+                        value={selectedPaymentStatus}
+                        placeholder="select category"
+                        focusColor="blue"
+                        labelKey="value"
+                        valueKey="id"
+                      />
+                    </div>
+                    <div className="flex flex-col mt-2">
+                      <label className="block text-white text-sm mb-2">
+                        Order Status
+                      </label>
+                      <CommonSelect
+                        onChange={(e) => setselectedOrderStatus(e)}
+                        options={commonDropdownData?.OrderStatus || []}
+                        value={selectedOrderStatus}
+                        placeholder="select category"
+                        focusColor="blue"
+                        labelKey="value"
+                        valueKey="id"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <CommonButton
+                      themeType="dark"
+                      onClick={() => {
+                        setselectedPaymentStatus({});
+                        setselectedOrderStatus({});
+                        fetchGridData(true);
+                      }}
+                    >
+                      Reset
+                    </CommonButton>
+                    <CommonButton
+                      themeType="primary"
+                      onClick={() => fetchGridData()}
+                      children="Apply"
+                    />
+                  </div>
+                </div>
+              }
+            >
+              <Tooltip title="Filter Products">
+                <CommonButton themeType="dark" icon={<FaFilter />}>
+                  Filters
+                </CommonButton>
+              </Tooltip>
+            </CommonPopover>
           </div>
         </div>
 

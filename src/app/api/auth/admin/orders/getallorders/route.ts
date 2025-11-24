@@ -33,6 +33,14 @@ export const GetAllOrders = async (
 
     const matchStage: FilterQuery<Order> = { active: true };
 
+    if (paymentstatus && paymentstatus !== "") {
+      matchStage["paymentInfo.status"] = paymentstatus;
+    }
+
+    if (orderstatus && orderstatus !== "") {
+      matchStage.orderStatus = orderstatus;
+    }
+
     if (search.trim() !== "") {
       const regex = new RegExp(search, "i");
 
@@ -40,8 +48,6 @@ export const GetAllOrders = async (
         { "userInfo.username": regex },
         { "userInfo.email": regex },
         { "userInfo.phone": regex },
-        { "paymentInfo.status": paymentstatus },
-        { orderStatus: orderstatus },
         { trackingNumber: regex },
       ];
 
