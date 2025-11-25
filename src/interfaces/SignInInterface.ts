@@ -15,4 +15,5 @@ export interface SignInResponseData {
   isAdmin: boolean;
   userimage: string;
   _id: string;
+  token: string
 }

@@ -4,7 +4,10 @@ import CommonInput from "@/components/common/CommonInput";
 import CommonLoader from "@/components/common/CommonLoader";
 import CommonPopconfirm from "@/components/common/CommonPopconfirm";
 import CommonTag from "@/components/common/CommonTag";
-import { ColumnSortConfig, CommonDropdownOptions } from "@/interfaces/commonInterace";
+import {
+  ColumnSortConfig,
+  CommonDropdownOptions,
+} from "@/interfaces/commonInterace";
 import {
   CommondropdownData,
   CommondropdownDataAPiresponse,
@@ -45,10 +48,11 @@ const OrderPage = () => {
   const [categories, setCategories] = useState<OrderListItem[]>([]);
   const [SearchText, setSearchText] = useState<string>("");
 
-  const [selectedPaymentStatus, setselectedPaymentStatus] = useState<CommonDropdownOptions>()
-  const [selectedOrderStatus, setselectedOrderStatus] = useState<CommonDropdownOptions>()
+  const [selectedPaymentStatus, setselectedPaymentStatus] =
+    useState<CommonDropdownOptions>();
+  const [selectedOrderStatus, setselectedOrderStatus] =
+    useState<CommonDropdownOptions>();
   const [isFIlterOpen, setisFIlterOpen] = useState<boolean>(false);
-  
 
   const [commonDropdownData, setCommonDropdownData] =
     useState<CommondropdownData | null>(null);
@@ -90,15 +94,15 @@ const OrderPage = () => {
     setpage(pagination?.current);
   };
 
-  const fetchGridData = async (isreset?:boolean) => {
+  const fetchGridData = async (isreset?: boolean) => {
     try {
       setLoading(true);
       const payload = {
         search: SearchText,
         page: page,
         pagesize: pageSize,
-        paymentstatus: selectedPaymentStatus?.id,
-        orderstatus: selectedOrderStatus?.id,
+        paymentstatus: isreset ? "" : selectedPaymentStatus?.id,
+        orderstatus: isreset ? "" : selectedOrderStatus?.id,
       };
       const response: OrderListApiResponse = await request({
         url: apis.ADMIN.getAllOrder,
@@ -288,7 +292,7 @@ const OrderPage = () => {
               id="search"
               label=""
               type="text"
-              placeholder="Search Product..."
+              placeholder="Search Order..."
               value={SearchText}
               onChange={(e) => setSearchText(e.target.value)}
               focusColor="blue"
@@ -315,7 +319,7 @@ const OrderPage = () => {
                         onChange={(e) => setselectedPaymentStatus(e)}
                         options={commonDropdownData?.PaymentStatus || []}
                         value={selectedPaymentStatus}
-                        placeholder="select category"
+                        placeholder="select Product Status"
                         focusColor="blue"
                         labelKey="value"
                         valueKey="id"
@@ -329,7 +333,7 @@ const OrderPage = () => {
                         onChange={(e) => setselectedOrderStatus(e)}
                         options={commonDropdownData?.OrderStatus || []}
                         value={selectedOrderStatus}
-                        placeholder="select category"
+                        placeholder="select Order Status"
                         focusColor="blue"
                         labelKey="value"
                         valueKey="id"

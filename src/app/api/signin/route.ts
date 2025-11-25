@@ -50,6 +50,7 @@ export const POSTHandler = async (
       isAdmin: Boolean(userData?.isAdmin),
       userimage: userData?.userimage || "",
       _id: userData?._id?.toString() || "",
+      token: token,
     };
 
     (await cookies()).set("token", token, {

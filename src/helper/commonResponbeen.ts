@@ -1,7 +1,9 @@
+import { corsHeaders } from "@/lib/cors";
 import encryptDecryptUtil from "@/lib/encrypt-decrypt-utils";
 import { cookies } from "next/headers";
 
 export const commonResponse = async (
+  // req: Request, 
   success: boolean,
   message: string,
   data: any = null,
@@ -11,14 +13,22 @@ export const commonResponse = async (
     (await cookies()).delete("token");
     (await cookies()).delete("user");
   }
-  const newbody = encryptDecryptUtil.encryptData(JSON.stringify(data || ""));
+  // let newbody = "";
+  // const isPostman = req.headers.get("postman-token") ? true : false;
+  // if (isPostman) {
+  //   newbody = data;
+  // } else {
+  //   newbody = encryptDecryptUtil.encryptData(JSON.stringify(data || ""));
+  // }
+
+  const returndata = encryptDecryptUtil.encryptData(JSON.stringify(data || ""));
   return Response.json(
     {
       success,
       message,
-      data: newbody,
+      data: returndata,
       statuscode: status,
     },
-    { status }
+    { status, headers: corsHeaders() }
   );
 };
