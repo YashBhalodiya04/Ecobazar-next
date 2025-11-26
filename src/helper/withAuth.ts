@@ -8,7 +8,14 @@ export function withAuth(handler: Function) {
   return async (req: NextRequest, context: any) => {
     try {
       let user: JWtUserInterface | null = null;
-      const token = req.cookies.get("token")?.value;
+      let token: string = "";
+      const tokenFromCookie = req.cookies.get("token")?.value;
+      const tokenFromHeader = req.headers.get("authorization")?.replace("Bearer ", "");
+      if (tokenFromCookie) {
+        token = tokenFromCookie;
+      } else if (tokenFromHeader) {
+        token = tokenFromHeader;
+      }
       if (token) {
         const verified = verifyToken(token);
         if (verified) {
