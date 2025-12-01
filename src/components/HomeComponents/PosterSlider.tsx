@@ -24,7 +24,10 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides, isLoading }) => {
         {/* <Skeleton active avatar paragraph={{ rows: 1 }} className="mb-4" /> */}
         <div className="w-full bg-white p-8 rounded-2xl flex justify-between items-center">
           <div className="w-full flex flex-col items-start justify-center h-full gap-3">
-            <Skeleton.Input active style={{ width: 150, height: 20, marginBottom: 10 }} />
+            <Skeleton.Input
+              active
+              style={{ width: 150, height: 20, marginBottom: 10 }}
+            />
             <Skeleton.Input
               active
               style={{ width: 450, height: 30, marginBottom: 20 }}
@@ -54,22 +57,23 @@ const PosterSlider: React.FC<PosterSliderProps> = ({ slides, isLoading }) => {
     >
       {slides.map((slide) => (
         <SwiperSlide key={slide.id}>
-          <div className="w-full bg-white flex items-center justify-between p-8 rounded-2xl">
+          <div className="w-full bg-white flex items-center justify-between p-8 rounded-2xl h-[420px] sm:h-[200px]">
             <div className="flex flex-col items-start justify-center h-full gap-4 w-1/2 sm:w-full z-10">
-              <p className="text-sm text-green-600 uppercase tracking-wide">
+              <p className="text-sm md:text-base lg:text-lg text-green-600 uppercase tracking-wide">
                 {slide?.title}
               </p>
-              <h1 className="text-5xl font-bold text-gray-900 sm:text-3xl">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-snug">
                 {slide?.description}
               </h1>
               <Link
                 href="/aboutus"
-                className="flex items-center gap-3 justify-center text-white border bg-green-600 rounded-full py-3 px-6 hover:bg-white hover:border-green-600 hover:text-green-600 transition-all sm:py-2 sm:px-4 sm:text-sm"
+                className="flex items-center gap-2 md:gap-3 justify-center text-sm md:text-base text-white border bg-green-600 rounded-full py-2 px-4 md:py-3 md:px-6 hover:bg-white hover:border-green-600 hover:text-green-600 transition-all"
               >
                 Shop now <GoArrowRight className="text-center" />
               </Link>
             </div>
-            <div className="w-1/2 h-full flex items-center justify-end sm:hidden">
+
+            <div className="flex items-center justify-end sm:hidden">
               <img
                 src={slide?.image}
                 alt={slide?.title}
