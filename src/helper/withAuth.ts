@@ -54,7 +54,7 @@ export function withAuth(handler: Function) {
             for (const [key, value] of formData.entries() as Iterable<
               [string, FormDataEntryValue]
             >) {
-              if (value instanceof File) {
+              if (value instanceof Blob) {
                 files[key] = value;
                 continue;
               }

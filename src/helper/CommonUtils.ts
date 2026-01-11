@@ -40,7 +40,7 @@ export function parseFormDataWithFiles<T>(
   }
 
   for (const f of filesRaw) {
-    if (f instanceof File) {
+    if (f instanceof Blob) {
       files.push(f);
     } else if (typeof f === "string" && f.trim() === "") {
       // ignore empty string
