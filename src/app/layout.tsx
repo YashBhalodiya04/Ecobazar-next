@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import ReduxProvider from "@/components/ReduxProvider";
 import SplashScreen from "@/components/SplashScreen";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
           <SplashScreen />
           <ReduxProvider>{children}</ReduxProvider>
         </Suspense>
+        <Analytics />
       </body>
     </html>
   );
